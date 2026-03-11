@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,17 +6,20 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
-import { COLORS, SPACING } from '../constants/theme';
+import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import Button from '../components/Button';
 import OptionPicker from '../components/OptionPicker';
+import Card from '../components/Card';
 import { auth } from '../config/firebase';
 import { PREFERENCE_OPTIONS, savePreferences } from '../services/preferencesService';
-import { completeOnboarding } from '../services/profileService';
+import { completeOnboarding, getProfile } from '../services/profileService';
 
 const PreferencesScreen = ({ navigation }) => {
   const user = auth.currentUser;
   const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState(null);
   const [prefs, setPrefs] = useState({
     positions: '',
     stancePreference: '',
@@ -28,6 +31,19 @@ const PreferencesScreen = ({ navigation }) => {
     trainingPurpose: '',
     practiceDuration: '90 minutes',
   });
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      const prof = await getProfile(user.uid);
+      setProfile(prof);
+    } catch (error) {
+      console.log('Error loading profile for review:', error);
+    }
+  };
 
   const updatePref = (key, value) => {
     setPrefs((prev) => ({ ...prev, [key]: value }));
@@ -51,9 +67,38 @@ const PreferencesScreen = ({ navigation }) => {
     }
   };
 
+  const primaryTeam = profile?.teams?.[0] || {};
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Profile Review Summary */}
+        {profile && (
+          <Card style={styles.reviewCard}>
+            <View style={styles.reviewHeader}>
+              <Text style={styles.reviewTitle}>Your Profile</Text>
+              <TouchableOpacity onPress={() => navigation.replace('Profile')}>
+                <Text style={styles.editLink}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.reviewBody}>
+              <Text style={styles.reviewName}>{profile.fullName}</Text>
+              <Text style={styles.reviewDetail}>{profile.role}</Text>
+              {(primaryTeam.teamName || profile.teamName) && (
+                <Text style={styles.reviewDetail}>
+                  {primaryTeam.teamName || profile.teamName}
+                </Text>
+              )}
+              {(primaryTeam.ageGroup || profile.ageGroup) && (
+                <Text style={styles.reviewDetail}>
+                  {primaryTeam.ageGroup || profile.ageGroup}
+                  {(primaryTeam.gender || profile.gender) ? ` \u2022 ${primaryTeam.gender || profile.gender}` : ''}
+                </Text>
+              )}
+            </View>
+          </Card>
+        )}
+
         <Text style={styles.title}>Training Preferences</Text>
         <Text style={styles.subtitle}>
           Customize how BASE builds your practices. You can change these anytime.
@@ -158,6 +203,45 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     paddingTop: SPACING.xl,
     paddingBottom: SPACING.xxl,
+  },
+  reviewCard: {
+    marginBottom: SPACING.lg,
+    padding: SPACING.md,
+    backgroundColor: '#EBF5FB',
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+    borderRadius: BORDER_RADIUS.lg,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.sm,
+  },
+  reviewTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  editLink: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.primary,
+    textDecorationLine: 'underline',
+  },
+  reviewBody: {},
+  reviewName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+  reviewDetail: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginTop: 2,
   },
   title: {
     fontSize: 26,

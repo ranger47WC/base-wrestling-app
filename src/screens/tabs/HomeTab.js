@@ -8,16 +8,18 @@ import {
   RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS, SPACING, SHADOWS, BORDER_RADIUS } from '../../constants/theme';
 import BASECard from '../../components/BASECard';
 import Card from '../../components/Card';
+import Button from '../../components/Button';
 import TooltipHint from '../../components/TooltipHint';
 import { auth } from '../../config/firebase';
-import { getProfile } from '../../services/profileService';
-import { getRoster } from '../../services/profileService';
+import { getProfile, getRoster } from '../../services/profileService';
 import { getBASEOverview } from '../../services/dashboardService';
 
 const HomeTab = () => {
+  const navigation = useNavigation();
   const user = auth.currentUser;
   const [profile, setProfile] = useState(null);
   const [roster, setRoster] = useState([]);
@@ -61,6 +63,10 @@ const HomeTab = () => {
     setRefreshing(false);
   };
 
+  const handleStartPractice = () => {
+    navigation.getParent()?.navigate('PracticeOutput');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -69,21 +75,14 @@ const HomeTab = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
+        {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>
-              Welcome back{profile?.fullName ? `, ${profile.fullName.split(' ')[0]}` : ''}
-            </Text>
-            <Text style={styles.teamName}>
+            <Text style={styles.teamNameHeader}>
               {profile?.teamName || 'Your Team'}
             </Text>
+            <Text style={styles.baseSubtitle}>BASE Wrestling</Text>
           </View>
-          {profile?.teamCode && (
-            <View style={styles.codeBadge}>
-              <Text style={styles.codeLabel}>Team Code</Text>
-              <Text style={styles.codeText}>{profile.teamCode}</Text>
-            </View>
-          )}
         </View>
 
         {/* Stats Row */}
@@ -122,6 +121,21 @@ const HomeTab = () => {
             />
           ))}
         </View>
+
+        {/* Attendance Button */}
+        <Button
+          title="Take Attendance"
+          variant="secondary"
+          onPress={() => {}}
+          style={styles.attendanceButton}
+        />
+
+        {/* Start Practice Button */}
+        <Button
+          title="Start Practice"
+          onPress={handleStartPractice}
+          style={styles.startButton}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -143,34 +157,15 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
     paddingTop: SPACING.md,
   },
-  greeting: {
+  teamNameHeader: {
     fontSize: 22,
     fontWeight: '700',
     color: COLORS.text,
   },
-  teamName: {
-    fontSize: 14,
+  baseSubtitle: {
+    fontSize: 13,
     color: COLORS.textSecondary,
     marginTop: 2,
-  },
-  codeBadge: {
-    backgroundColor: COLORS.primary,
-    borderRadius: BORDER_RADIUS.md,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-  },
-  codeLabel: {
-    fontSize: 9,
-    color: COLORS.secondary,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-  },
-  codeText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: COLORS.white,
-    letterSpacing: 1,
   },
   statsRow: {
     flexDirection: 'row',
@@ -200,6 +195,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.text,
     marginBottom: SPACING.md,
+  },
+  attendanceButton: {
+    marginTop: SPACING.lg,
+  },
+  startButton: {
+    marginTop: SPACING.sm,
+    backgroundColor: COLORS.accent,
   },
 });
 
