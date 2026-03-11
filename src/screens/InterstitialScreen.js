@@ -34,7 +34,7 @@ const InterstitialScreen = ({ navigation }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSkip = () => {
+  const handleTap = () => {
     navigation.replace('PracticeOutput');
   };
 
@@ -42,7 +42,7 @@ const InterstitialScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <TouchableOpacity
         style={styles.content}
-        onPress={handleSkip}
+        onPress={handleTap}
         activeOpacity={0.9}
       >
         <Animated.View
@@ -51,6 +51,8 @@ const InterstitialScreen = ({ navigation }) => {
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
           ]}
         >
+          <Text style={styles.welcomeText}>Welcome to</Text>
+
           <View style={styles.logoContainer}>
             <Text style={styles.logoB}>B</Text>
             <Text style={styles.logoA}>A</Text>
@@ -58,30 +60,13 @@ const InterstitialScreen = ({ navigation }) => {
             <Text style={styles.logoE}>E</Text>
           </View>
 
-          <Text style={styles.message}>
-            Based on your preferences, BASE builds practices that develop the
-            complete wrestler —
+          <Text style={styles.tagline}>
+            Build the complete wrestler through{'\n'}
+            Battle, Athletic, Skill & Exercise training
           </Text>
 
-          <View style={styles.pillars}>
-            <View style={[styles.pillar, { backgroundColor: COLORS.battle }]}>
-              <Text style={styles.pillarText}>Battle Awareness</Text>
-            </View>
-            <View style={[styles.pillar, { backgroundColor: COLORS.athletic }]}>
-              <Text style={styles.pillarText}>Athletic Ability</Text>
-            </View>
-            <View style={[styles.pillar, { backgroundColor: COLORS.skill }]}>
-              <Text style={styles.pillarText}>Skill Mastery</Text>
-            </View>
-            <View style={[styles.pillar, { backgroundColor: COLORS.exercise }]}>
-              <Text style={styles.pillarText}>Exercise Conditioning</Text>
-            </View>
-          </View>
-
-          <Text style={styles.readyText}>Here's your first practice.</Text>
-
           <View style={styles.button}>
-            <Text style={styles.buttonText}>Show me</Text>
+            <Text style={styles.buttonText}>Show me my first practice</Text>
           </View>
         </Animated.View>
       </TouchableOpacity>
@@ -103,74 +88,57 @@ const styles = StyleSheet.create({
   textContainer: {
     alignItems: 'center',
   },
+  welcomeText: {
+    fontSize: 22,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.8)',
+    marginBottom: SPACING.md,
+  },
   logoContainer: {
     flexDirection: 'row',
     marginBottom: SPACING.xl,
   },
   logoB: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: '900',
     color: COLORS.battle,
     marginHorizontal: 4,
   },
   logoA: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: '900',
     color: COLORS.athletic,
     marginHorizontal: 4,
   },
   logoS: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: '900',
     color: COLORS.skill,
     marginHorizontal: 4,
   },
   logoE: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: '900',
     color: COLORS.exercise,
     marginHorizontal: 4,
   },
-  message: {
-    fontSize: 18,
-    color: COLORS.white,
+  tagline: {
+    fontSize: 17,
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
-    lineHeight: 28,
-    marginBottom: SPACING.lg,
-  },
-  pillars: {
-    width: '100%',
-    marginBottom: SPACING.xl,
-  },
-  pillar: {
-    paddingVertical: 12,
-    paddingHorizontal: SPACING.md,
-    borderRadius: 8,
-    marginBottom: SPACING.sm,
-    alignItems: 'center',
-  },
-  pillarText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  readyText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: COLORS.secondary,
-    textAlign: 'center',
-    marginBottom: SPACING.lg,
+    lineHeight: 26,
+    marginBottom: SPACING.xxl,
   },
   button: {
     backgroundColor: COLORS.secondary,
-    paddingVertical: 14,
-    paddingHorizontal: 40,
+    paddingVertical: 16,
+    paddingHorizontal: 36,
     borderRadius: 30,
     ...SHADOWS.md,
   },
   buttonText: {
     color: COLORS.primary,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
   },
 });

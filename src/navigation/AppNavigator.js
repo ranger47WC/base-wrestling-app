@@ -68,17 +68,17 @@ const AppNavigator = () => {
           animation: 'slide_from_right',
         }}
       >
-        {/* Auth Flow */}
+        {/* Auth / Onboarding Flow */}
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Preferences" component={PreferencesScreen} />
         <Stack.Screen name="Interstitial" component={InterstitialScreen} />
         <Stack.Screen name="PracticeOutput" component={PracticeOutputScreen} />
 
-        {/* Main App (Dashboard with bottom tabs) */}
+        {/* Main App (Dashboard with bottom tabs + drawer) */}
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
 
-        {/* Menu Sub-screens */}
+        {/* Menu Sub-screens (navigated from drawer) */}
         <Stack.Screen
           name="MyProfile"
           component={MyProfileScreen}
