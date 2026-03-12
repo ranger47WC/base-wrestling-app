@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BASE Wrestling</title>
+<style>
+:root {
+  --primary: #1B3A5C;
+  --primary-light: #2A5A8C;
+  --secondary: #D4A843;
+  --secondary-light: #E8C868;
+  --accent: #C0392B;
+  --bg: #F5F6FA;
+  --surface: #FFFFFF;
+  --text: #1A1A2E;
+  --text-sec: #6B7280;
+  --text-light: #9CA3AF;
+  --border: #E5E7EB;
+  --success: #10B981;
+  --error: #EF4444;
+  --battle: #C0392B;
+  --athletic: #2980B9;
+  --skill: #27AE60;
+  --exercise: #F39C12;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+.screen { display:none; min-height:100vh; }
+.screen.active { display:flex; flex-direction:column; }
+.scroll { flex:1; overflow-y:auto; padding:24px; padding-bottom:80px; }
+h1 { font-size:26px; font-weight:700; margin-bottom:4px; }
+h2 { font-size:20px; font-weight:700; margin-bottom:12px; }
+.subtitle { font-size:15px; color:var(--text-sec); margin-bottom:24px; line-height:22px; }
+.input-group { margin-bottom:20px; }
+.input-group label { display:block; font-size:15px; font-weight:600; color:var(--text); margin-bottom:8px; }
+.input-group input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:15px; background:var(--surface); outline:none; transition:border .2s; }
+.input-group input:focus { border-color:var(--primary); }
+.input-group input:disabled { background:#f0f0f0; color:var(--text-sec); }
+.row { display:flex; gap:16px; }
+.row > * { flex:1; }
+.btn { display:block; width:100%; padding:14px; border:2px solid var(--primary); border-radius:24px; font-size:16px; font-weight:600; cursor:pointer; text-align:center; transition:all .2s; }
+.btn-primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+.btn-primary:hover { background:var(--primary-light); }
+.btn-secondary { background:var(--secondary); color:var(--primary); border-color:var(--secondary); }
+.btn-accent { background:var(--accent); color:#fff; border-color:var(--accent); }
+.btn-outline { background:transparent; color:var(--primary); }
+.btn-outline:hover { background:rgba(27,58,92,0.05); }
+.btn-danger { background:transparent; color:var(--error); border-color:var(--error); }
+.btn-sm { padding:10px 16px; font-size:14px; width:auto; display:inline-block; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+.card { background:var(--surface); border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+.option-picker { margin-bottom:20px; }
+.option-picker .label { font-size:15px; font-weight:600; color:var(--text); margin-bottom:8px; }
+.option-picker .hint { font-size:12px; color:var(--text-light); margin-top:2px; }
+.options-wrap { display:flex; flex-wrap:wrap; gap:8px; }
+.opt-btn { padding:10px 14px; border-radius:24px; border:1.5px solid var(--border); background:var(--surface); cursor:pointer; font-size:14px; font-weight:500; color:var(--text); transition:all .2s; }
+.opt-btn.selected { background:var(--primary); border-color:var(--primary); color:#fff; }
+.opt-btn:hover:not(.selected) { border-color:var(--primary-light); }
+/* Tab bar */
+.tab-bar { display:flex; border-top:1px solid var(--border); background:var(--surface); position:sticky; bottom:0; }
+.tab-item { flex:1; padding:8px 0 6px; text-align:center; cursor:pointer; transition:color .2s; }
+.tab-item .tab-icon { font-size:22px; }
+.tab-item .tab-label { font-size:11px; font-weight:500; color:var(--text-light); margin-top:2px; }
+.tab-item.active .tab-label { color:var(--primary); font-weight:600; }
+/* BASE card */
+.base-card { border-left:4px solid; padding:16px; margin-bottom:12px; background:var(--surface); border-radius:10px; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+.base-card .area-header { display:flex; justify-content:space-between; align-items:center; }
+.base-card .area-name { font-size:16px; font-weight:700; }
+.base-card .area-avg { font-size:20px; font-weight:700; }
+.base-card .area-sub { font-size:12px; color:var(--text-sec); margin-top:2px; }
+.base-card .area-desc { font-size:13px; color:var(--text-sec); margin-top:8px; line-height:18px; }
+/* Stats row */
+.stats-row { display:flex; gap:8px; margin-bottom:24px; }
+.stat-card { flex:1; text-align:center; background:var(--surface); border-radius:10px; padding:16px 8px; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+.stat-value { font-size:24px; font-weight:700; color:var(--primary); }
+.stat-label { font-size:12px; color:var(--text-sec); margin-top:2px; }
+/* Athlete row */
+.athlete-row { display:flex; align-items:center; background:var(--surface); border-radius:10px; padding:12px 16px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.1); cursor:pointer; }
+.athlete-avatar { width:40px; height:40px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; margin-right:12px; flex-shrink:0; }
+.athlete-info { flex:1; }
+.athlete-name { font-size:15px; font-weight:600; }
+.athlete-grade { font-size:12px; color:var(--text-sec); }
+.mini-ratings { display:flex; gap:6px; margin-top:4px; font-size:10px; font-weight:600; }
+/* Drill section */
+.drill-section { border-left:4px solid; margin-bottom:16px; background:var(--surface); border-radius:10px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+.drill-section .sec-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.drill-section .sec-name { font-size:16px; font-weight:700; }
+.drill-section .sec-dur { font-size:14px; font-weight:600; color:var(--text-sec); }
+.drill-item { padding:8px 0; border-top:1px solid var(--border); }
+.drill-item:first-of-type { border-top:none; }
+.drill-header { display:flex; justify-content:space-between; }
+.drill-name { font-size:15px; font-weight:600; }
+.drill-dur { font-size:13px; color:var(--text-sec); }
+.drill-cue { font-size:13px; color:var(--text-sec); font-style:italic; margin-top:4px; line-height:19px; }
+/* Week plan */
+.week-day { display:flex; align-items:center; background:var(--surface); border-radius:10px; padding:12px 16px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+.day-indicator { width:4px; height:36px; border-radius:2px; margin-right:12px; }
+.day-content { flex:1; }
+.day-name { font-size:15px; font-weight:600; }
+.day-focus { font-size:13px; color:var(--text-sec); margin-top:2px; }
+.day-meta { text-align:right; }
+.day-type { font-size:13px; font-weight:700; }
+.day-intensity { font-size:11px; color:var(--text-light); margin-top:2px; }
+/* Calendar grid */
+.cal-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.cal-day { width:30%; background:var(--surface); border-radius:10px; padding:8px; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+.cal-day.rest { background:#F3F4F6; }
+.cal-day-num { font-size:13px; font-weight:700; }
+.cal-theme { font-size:10px; color:var(--text-sec); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-int { font-size:10px; font-weight:600; margin-top:2px; }
+/* Drawer overlay */
+.drawer-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; }
+.drawer-overlay.open { display:block; }
+.drawer { position:fixed; top:0; right:-300px; width:280px; height:100%; background:var(--surface); z-index:101; transition:right .3s; box-shadow:-2px 0 8px rgba(0,0,0,0.2); display:flex; flex-direction:column; }
+.drawer.open { right:0; }
+.drawer-header { padding:32px 24px 16px; border-bottom:1px solid var(--border); }
+.drawer-header h3 { font-size:20px; font-weight:700; color:var(--primary); }
+.drawer-items { flex:1; overflow-y:auto; padding-top:8px; }
+.drawer-item { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid var(--border); cursor:pointer; font-size:16px; color:var(--text); }
+.drawer-item:hover { background:var(--bg); }
+.drawer-footer { border-top:1px solid var(--border); padding:24px; text-align:center; }
+.drawer-footer .logout-btn { font-size:16px; color:var(--error); font-weight:600; cursor:pointer; padding:14px; }
+.drawer-footer .version { font-size:12px; color:var(--text-light); margin-top:8px; }
+/* Interstitial */
+.interstitial { background:var(--primary); color:#fff; justify-content:center; align-items:center; text-align:center; padding:32px; }
+.interstitial .welcome-text { font-size:22px; font-weight:500; color:rgba(255,255,255,0.8); margin-bottom:16px; }
+.interstitial .logo-row { display:flex; gap:8px; margin-bottom:32px; justify-content:center; }
+.interstitial .logo-letter { font-size:56px; font-weight:900; }
+.interstitial .tagline { font-size:17px; color:rgba(255,255,255,0.85); line-height:26px; margin-bottom:48px; }
+.interstitial .show-btn { background:var(--secondary); color:var(--primary); padding:16px 36px; border-radius:30px; font-size:17px; font-weight:700; cursor:pointer; border:none; box-shadow:0 2px 4px rgba(0,0,0,0.15); }
+/* Review card */
+.review-card { background:#EBF5FB; border:1px solid var(--primary-light); border-radius:16px; padding:16px; margin-bottom:24px; }
+.review-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.review-title { font-size:14px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1px; }
+.review-edit { font-size:14px; font-weight:600; color:var(--primary); text-decoration:underline; cursor:pointer; }
+.review-name { font-size:18px; font-weight:700; margin-bottom:2px; }
+.review-detail { font-size:14px; color:var(--text-sec); margin-top:2px; }
+/* Timer modal */
+.timer-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:var(--primary); z-index:200; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
+.timer-modal.open { display:flex; }
+.timer-title { font-size:20px; font-weight:600; color:#fff; margin-bottom:16px; }
+.timer-clock { font-size:72px; font-weight:700; color:var(--secondary); margin-bottom:24px; font-variant-numeric:tabular-nums; }
+.timer-drill-card { background:var(--surface); border-radius:16px; padding:16px; width:100%; max-width:400px; margin-bottom:24px; }
+.timer-drill-name { font-size:18px; font-weight:700; margin-bottom:4px; }
+.timer-drill-cue { font-size:14px; color:var(--text-sec); font-style:italic; line-height:20px; margin-bottom:8px; }
+.timer-drill-dur { font-size:14px; font-weight:600; color:var(--primary); }
+.timer-buttons { width:100%; max-width:400px; display:flex; flex-direction:column; gap:8px; }
+.timer-progress { color:#fff; margin-top:16px; font-size:14px; }
+/* Team card in profile */
+.team-card { background:var(--surface); border-radius:16px; padding:16px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+.team-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.team-label { font-size:16px; font-weight:700; color:var(--primary); }
+.remove-text { font-size:14px; color:var(--error); font-weight:500; cursor:pointer; }
+.add-team-btn { padding:12px; text-align:center; font-size:15px; font-weight:600; color:var(--primary); cursor:pointer; margin-bottom:16px; }
+/* Login */
+.login-container { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+.logo-circle { width:100px; height:100px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; margin-bottom:16px; box-shadow:0 4px 8px rgba(0,0,0,0.2); }
+.logo-circle span { font-size:28px; font-weight:900; color:var(--secondary); letter-spacing:2px; }
+.login-title { font-size:28px; font-weight:700; margin-bottom:4px; }
+.login-subtitle { font-size:14px; color:var(--text-sec); text-align:center; line-height:20px; margin-bottom:32px; }
+.login-form { background:var(--surface); border-radius:16px; padding:24px; width:100%; max-width:400px; box-shadow:0 2px 4px rgba(0,0,0,0.15); }
+.divider { display:flex; align-items:center; margin:16px 0; }
+.divider-line { flex:1; height:1px; background:var(--border); }
+.divider-text { margin:0 16px; color:var(--text-light); font-size:13px; }
+.grade-row { display:flex; align-items:center; gap:4px; margin-bottom:16px; flex-wrap:wrap; }
+.grade-label { font-size:14px; font-weight:600; margin-right:8px; }
+.grade-opt { width:36px; height:36px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; font-weight:500; }
+.grade-opt.selected { border-color:var(--primary); background:var(--primary); color:#fff; }
+/* Toast */
+.toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--text); color:#fff; padding:12px 24px; border-radius:24px; font-size:14px; z-index:300; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+.toast.show { display:block; animation:fadeInOut 3s ease; }
+@keyframes fadeInOut { 0%{opacity:0;transform:translateX(-50%) translateY(10px)} 15%{opacity:1;transform:translateX(-50%) translateY(0)} 85%{opacity:1} 100%{opacity:0} }
+/* Responsive */
+@media(min-width:600px) { .scroll { max-width:500px; margin:0 auto; } .login-container { } }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="screen-login" class="screen active">
+  <div class="login-container">
+    <div class="logo-circle"><span>BASE</span></div>
+    <div class="login-title">Wrestling App</div>
+    <div class="login-subtitle">Build the complete wrestler through<br>Battle, Athletic, Skill &amp; Exercise training</div>
+    <div class="login-form">
+      <button class="btn btn-outline" onclick="googleLogin()" style="margin-bottom:12px">Continue with Google</button>
+      <div class="divider"><div class="divider-line"></div><span class="divider-text">or</span><div class="divider-line"></div></div>
+      <div class="input-group"><label>Email</label><input id="login-email" type="email" placeholder="coach@school.edu"></div>
+      <div class="input-group"><label>Password</label><input id="login-password" type="password" placeholder="Enter password"></div>
+      <button id="login-btn" class="btn btn-primary" onclick="handleEmailAuth()">Log In</button>
+      <button id="toggle-btn" class="btn btn-outline" style="margin-top:8px" onclick="toggleAuthMode()">Don't have an account? Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="screen-profile" class="screen">
+  <div class="scroll">
+    <h1>Set Up Your Profile</h1>
+    <p class="subtitle">Tell us about yourself so we can customize your experience.</p>
+    <div class="input-group"><label>Full Name</label><input id="prof-name" placeholder="Enter your full name"></div>
+    <div class="input-group"><label>Email</label><input id="prof-email" disabled placeholder="Email address"></div>
+    <div class="row">
+      <div class="input-group"><label>City</label><input id="prof-city" placeholder="e.g., Lincoln"></div>
+      <div class="input-group"><label>State</label><input id="prof-state" placeholder="e.g., NE" maxlength="2" style="text-transform:uppercase"></div>
+    </div>
+    <div class="option-picker"><div class="label">Your Role</div><div class="options-wrap" id="prof-role"></div></div>
+    <div id="teams-container"></div>
+    <div class="add-team-btn" onclick="addTeamCard()">+ Add Another Team</div>
+    <button class="btn btn-primary" onclick="saveProfile()">Continue</button>
+  </div>
+</div>
+
+<!-- PREFERENCES SCREEN -->
+<div id="screen-preferences" class="screen">
+  <div class="scroll">
+    <div id="pref-review"></div>
+    <h1>Training Preferences</h1>
+    <p class="subtitle">Customize how BASE builds your practices. You can change these anytime.</p>
+    <div class="option-picker"><div class="label">Position Focus</div><div class="options-wrap" id="pref-positions"></div></div>
+    <div class="option-picker"><div class="label">Stance Preference</div><div class="options-wrap" id="pref-stance"></div></div>
+    <div class="option-picker"><div class="label">Battle Awareness Focus</div><div class="hint">Select multiple areas</div><div class="options-wrap" id="pref-battle"></div></div>
+    <div class="option-picker"><div class="label">Athletic Development Focus</div><div class="hint">Select multiple areas</div><div class="options-wrap" id="pref-athletic"></div></div>
+    <div class="option-picker"><div class="label">Skill Mastery Focus</div><div class="hint">Select techniques to emphasize</div><div class="options-wrap" id="pref-skill"></div></div>
+    <div class="option-picker"><div class="label">Exercise Conditioning Focus</div><div class="hint">Select conditioning priorities</div><div class="options-wrap" id="pref-exercise"></div></div>
+    <div class="option-picker"><div class="label">Hard Practice Days Per Week</div><div class="options-wrap" id="pref-harddays"></div></div>
+    <div class="option-picker"><div class="label">Training Purpose</div><div class="options-wrap" id="pref-purpose"></div></div>
+    <div class="option-picker"><div class="label">Practice Duration</div><div class="options-wrap" id="pref-duration"></div></div>
+    <button class="btn btn-primary" onclick="savePreferences()">Build My Practice</button>
+  </div>
+</div>
+
+<!-- INTERSTITIAL SCREEN -->
+<div id="screen-interstitial" class="screen interstitial">
+  <div class="welcome-text">Welcome to</div>
+  <div class="logo-row">
+    <span class="logo-letter" style="color:var(--battle)">B</span>
+    <span class="logo-letter" style="color:var(--athletic)">A</span>
+    <span class="logo-letter" style="color:var(--skill)">S</span>
+    <span class="logo-letter" style="color:var(--exercise)">E</span>
+  </div>
+  <div class="tagline">Build the complete wrestler through<br>Battle, Athletic, Skill &amp; Exercise training</div>
+  <button class="show-btn" onclick="goTo('practice-output')">Show me my first practice</button>
+</div>
+
+<!-- PRACTICE OUTPUT SCREEN (first practice after onboarding) -->
+<div id="screen-practice-output" class="screen">
+  <div class="scroll" id="practice-output-content"></div>
+</div>
+
+<!-- DASHBOARD SCREEN -->
+<div id="screen-dashboard" class="screen">
+  <div id="dashboard-content" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <div id="tab-home" class="tab-panel" style="flex:1;overflow-y:auto;padding:16px;padding-bottom:80px;"></div>
+    <div id="tab-practice" class="tab-panel" style="flex:1;overflow-y:auto;padding:16px;padding-bottom:80px;display:none;"></div>
+    <div id="tab-roster" class="tab-panel" style="flex:1;overflow-y:auto;padding:16px;padding-bottom:80px;display:none;"></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('home')"><div class="tab-icon">&#x1F3E0;</div><div class="tab-label">Home</div></div>
+    <div class="tab-item" onclick="switchTab('practice')"><div class="tab-icon">&#x1F4CB;</div><div class="tab-label">Practice</div></div>
+    <div class="tab-item" onclick="switchTab('roster')"><div class="tab-icon">&#x1F465;</div><div class="tab-label">Roster</div></div>
+    <div class="tab-item" onclick="openDrawer()"><div class="tab-icon">&#x2630;</div><div class="tab-label">Menu</div></div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer" class="drawer">
+  <div class="drawer-header"><h3>BASE Wrestling</h3></div>
+  <div class="drawer-items">
+    <div class="drawer-item" onclick="showToast('My Profile — coming soon')">My Profile <span>&gt;</span></div>
+    <div class="drawer-item" onclick="showToast('My Team — coming soon')">My Team <span>&gt;</span></div>
+    <div class="drawer-item" onclick="showToast('Training Guide — coming soon')">Training Guide <span>&gt;</span></div>
+    <div class="drawer-item" onclick="showToast('My Badges — coming soon')">My Badges <span>&gt;</span></div>
+    <div class="drawer-item" onclick="showToast('Calendar — coming soon')">Calendar <span>&gt;</span></div>
+    <div class="drawer-item" onclick="showToast('Settings — coming soon')">Settings <span>&gt;</span></div>
+    <div class="drawer-item" onclick="showToast('Help — coming soon')">Help / Contact <span>&gt;</span></div>
+  </div>
+  <div class="drawer-footer">
+    <div class="logout-btn" onclick="handleLogout()">Sign Out</div>
+    <div class="version">BASE Wrestling v1.0.0</div>
+  </div>
+</div>
+
+<!-- TIMER MODAL -->
+<div id="timer-modal" class="timer-modal">
+  <div class="timer-title">Practice Timer</div>
+  <div id="timer-clock" class="timer-clock">00:00</div>
+  <div id="timer-drill-card" class="timer-drill-card">
+    <div id="timer-drill-name" class="timer-drill-name"></div>
+    <div id="timer-drill-cue" class="timer-drill-cue"></div>
+    <div id="timer-drill-dur" class="timer-drill-dur"></div>
+  </div>
+  <div class="timer-buttons">
+    <button id="timer-pause-btn" class="btn btn-primary" onclick="toggleTimer()">Pause</button>
+    <button id="timer-next-btn" class="btn btn-secondary" onclick="nextDrill()">Next Drill</button>
+    <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.5)" onclick="stopTimer()">End Practice</button>
+  </div>
+  <div id="timer-progress" class="timer-progress"></div>
+</div>
+
+<!-- FIREBASE + APP JS -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+// ========== FIREBASE CONFIG ==========
+const firebaseConfig = {
+  apiKey: 'AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE',
+  authDomain: 'base-wrestling-app.firebaseapp.com',
+  projectId: 'base-wrestling-app',
+  storageBucket: 'base-wrestling-app.firebasestorage.app',
+  messagingSenderId: '368548684923',
+  appId: '1:368548684923:web:0fc54795d1f375b0e6eede',
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ========== SEED DATA ==========
+const SEED_ATHLETES = [
+  {name:'Spencer Lee',grade:11,baseLevels:{battle:5.0,athletic:4.8,skill:5.0,exercise:4.7}},
+  {name:'Yianni Diakomihalis',grade:12,baseLevels:{battle:4.9,athletic:4.7,skill:4.9,exercise:4.5}},
+  {name:'Carter Starocci',grade:12,baseLevels:{battle:4.3,athletic:4.2,skill:4.4,exercise:4.1}},
+  {name:'Aaron Brooks',grade:11,baseLevels:{battle:4.5,athletic:4.3,skill:4.2,exercise:4.0}},
+  {name:'David Carr',grade:10,baseLevels:{battle:4.2,athletic:4.0,skill:4.3,exercise:4.1}},
+  {name:'Greg Kerkvliet',grade:12,baseLevels:{battle:4.0,athletic:4.2,skill:4.1,exercise:4.3}},
+  {name:'Mason Parris',grade:11,baseLevels:{battle:4.1,athletic:3.9,skill:4.0,exercise:4.4}},
+  {name:'Dean Hamiti',grade:10,baseLevels:{battle:4.5,athletic:3.2,skill:3.5,exercise:3.0}},
+  {name:'Antrell Taylor',grade:9,baseLevels:{battle:4.3,athletic:3.4,skill:3.0,exercise:2.8}},
+  {name:'Mitchell Mesenbrink',grade:10,baseLevels:{battle:4.4,athletic:3.3,skill:3.6,exercise:3.1}},
+  {name:'Richie Figueroa',grade:9,baseLevels:{battle:4.6,athletic:3.5,skill:3.4,exercise:3.2}},
+  {name:'Roman Bravo-Young',grade:11,baseLevels:{battle:3.5,athletic:4.7,skill:3.8,exercise:3.3}},
+  {name:'Real Woods',grade:10,baseLevels:{battle:3.3,athletic:4.5,skill:3.6,exercise:3.1}},
+  {name:'Vito Arujau',grade:9,baseLevels:{battle:3.4,athletic:4.4,skill:3.5,exercise:3.0}},
+  {name:'Drake Ayala',grade:8,baseLevels:{battle:3.2,athletic:4.3,skill:3.3,exercise:2.9}},
+  {name:"Austin O'Connor",grade:12,baseLevels:{battle:3.4,athletic:3.3,skill:4.6,exercise:3.1}},
+  {name:'Nino Bonaccorsi',grade:11,baseLevels:{battle:3.2,athletic:3.1,skill:4.4,exercise:3.3}},
+  {name:"Keegan O'Toole",grade:10,baseLevels:{battle:3.6,athletic:3.4,skill:4.5,exercise:3.0}},
+  {name:'Caleb Henson',grade:9,baseLevels:{battle:3.3,athletic:3.5,skill:4.3,exercise:3.2}},
+  {name:'Wyatt Hendrickson',grade:12,baseLevels:{battle:3.1,athletic:3.4,skill:3.2,exercise:4.6}},
+  {name:'Stephen Buchanan',grade:11,baseLevels:{battle:3.3,athletic:3.5,skill:3.0,exercise:4.5}},
+  {name:'Troy Spratley',grade:10,baseLevels:{battle:3.0,athletic:3.2,skill:3.1,exercise:4.4}},
+  {name:'Vincent Robinson',grade:8,baseLevels:{battle:3.0,athletic:3.2,skill:3.1,exercise:3.0}},
+  {name:'Lucas Byrd',grade:9,baseLevels:{battle:3.3,athletic:3.5,skill:3.4,exercise:3.2}},
+  {name:'Brock Hardy',grade:8,baseLevels:{battle:3.1,athletic:3.3,skill:3.5,exercise:3.0}},
+  {name:'Ridge Lovett',grade:7,baseLevels:{battle:2.8,athletic:3.0,skill:3.2,exercise:2.9}},
+  {name:'Jesse Mendez',grade:9,baseLevels:{battle:3.5,athletic:3.6,skill:3.4,exercise:3.3}},
+  {name:'Levi Haines',grade:10,baseLevels:{battle:3.7,athletic:3.5,skill:3.6,exercise:3.4}},
+  {name:'Parker Keckeisen',grade:7,baseLevels:{battle:2.5,athletic:2.8,skill:2.6,exercise:2.4}},
+  {name:'Josh Barr',grade:8,baseLevels:{battle:2.3,athletic:2.5,skill:2.4,exercise:2.6}},
+];
+
+// ========== PREFERENCE OPTIONS ==========
+const PREFERENCE_OPTIONS = {
+  positions:['Neutral / On Feet','Top / Riding','Bottom / Escapes','All Positions'],
+  stancePreference:['Right Lead','Left Lead','Switch Stance','No Preference'],
+  battleFocus:['Takedowns','Hand Fighting','Chain Wrestling','Scramble Situations','Riding & Turns','Escapes & Reversals'],
+  athleticFocus:['Speed & Agility','Explosiveness','Balance & Coordination','Flexibility & Mobility','Reaction Time'],
+  skillFocus:['Single Leg Attacks','Double Leg Attacks','Upper Body Throws','Tilts & Turns (Top)','Stand-ups & Sit-outs (Bottom)','Front Headlock Series','Leg Riding','Cradles'],
+  exerciseFocus:['Strength Training','Cardio Endurance','Core Strength','Grip Strength','Recovery & Mobility','Plyometrics'],
+  hardDaysPerWeek:['2','3','4','5'],
+  trainingPurpose:['In-Season Practice','Off-Season Development','Pre-Season Conditioning','Tournament Preparation','Technique Focus Camp'],
+  practiceDuration:['60 minutes','75 minutes','90 minutes','105 minutes','120 minutes'],
+};
+
+// ========== APP STATE ==========
+let currentUser = null;
+let appProfile = null;
+let appPrefs = { positions:'',stancePreference:'',battleFocus:[],athleticFocus:[],skillFocus:[],exerciseFocus:[],hardDaysPerWeek:'3',trainingPurpose:'',practiceDuration:'90 minutes' };
+let profileTeams = [{ teamName:'',ageGroup:'',gender:'',teamCode:null }];
+let profileRole = '';
+let isLoginMode = true;
+let currentPractice = null;
+let currentWeekPlan = [];
+let challenge21 = [];
+let rosterData = [];
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+let timerDrillIndex = 0;
+let allDrills = [];
+
+// ========== NAVIGATION ==========
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  if (screen === 'profile') initProfileScreen();
+  if (screen === 'preferences') initPreferencesScreen();
+  if (screen === 'interstitial') startInterstitialTimer();
+  if (screen === 'practice-output') renderPracticeOutput('practice-output-content', true);
+  if (screen === 'dashboard') initDashboard();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('show');
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ========== AUTH ==========
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = user;
+    try {
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists && doc.data().onboardingComplete) {
+        appProfile = doc.data();
+        goTo('dashboard');
+      } else {
+        goTo('profile');
+      }
+    } catch(e) { goTo('profile'); }
+  } else {
+    currentUser = null;
+    goTo('login');
+  }
+});
+
+function toggleAuthMode() {
+  isLoginMode = !isLoginMode;
+  document.getElementById('login-btn').textContent = isLoginMode ? 'Log In' : 'Create Account';
+  document.getElementById('toggle-btn').textContent = isLoginMode ? "Don't have an account? Sign Up" : 'Already have an account? Log In';
+}
+
+async function handleEmailAuth() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-password').value;
+  if (!email || !pw) { showToast('Please enter email and password.'); return; }
+  try {
+    if (isLoginMode) await auth.signInWithEmailAndPassword(email, pw);
+    else await auth.createUserWithEmailAndPassword(email, pw);
+  } catch(e) {
+    const msg = e.code === 'auth/user-not-found' ? 'No account found. Create one instead?' :
+      e.code === 'auth/wrong-password' ? 'Incorrect password.' :
+      e.code === 'auth/email-already-in-use' ? 'Email already in use. Try logging in.' : e.message;
+    showToast(msg);
+  }
+}
+
+async function googleLogin() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+  } catch(e) { showToast('Google sign-in failed: ' + e.message); }
+}
+
+async function handleLogout() {
+  if (confirm('Are you sure you want to log out?')) {
+    closeDrawer();
+    await auth.signOut();
+  }
+}
+
+// ========== PROFILE SCREEN ==========
+function initProfileScreen() {
+  const el = document.getElementById('prof-email');
+  el.value = currentUser?.email || '';
+  document.getElementById('prof-name').value = currentUser?.displayName || '';
+  renderRolePicker();
+  profileTeams = [{ teamName:'',ageGroup:'',gender:'',teamCode:null }];
+  renderTeams();
+  // Load existing profile
+  if (currentUser) {
+    db.collection('users').doc(currentUser.uid).get().then(doc => {
+      if (doc.exists) {
+        const p = doc.data();
+        document.getElementById('prof-name').value = p.fullName || '';
+        document.getElementById('prof-city').value = p.city || '';
+        document.getElementById('prof-state').value = p.state || '';
+        if (p.role) { profileRole = p.role; renderRolePicker(); }
+        if (p.teams && p.teams.length) { profileTeams = p.teams; renderTeams(); }
+        else if (p.teamName) { profileTeams = [{teamName:p.teamName,ageGroup:p.ageGroup||'',gender:p.gender||'',teamCode:p.teamCode||null}]; renderTeams(); }
+      }
+    });
+  }
+}
+
+function renderRolePicker() {
+  const c = document.getElementById('prof-role');
+  c.innerHTML = ['Head Coach','Assistant Coach','Volunteer Coach'].map(r =>
+    `<div class="opt-btn ${profileRole===r?'selected':''}" onclick="profileRole='${r}';renderRolePicker()">${r}</div>`
+  ).join('');
+}
+
+function renderTeams() {
+  const c = document.getElementById('teams-container');
+  c.innerHTML = profileTeams.map((t, i) => `
+    <div class="team-card">
+      <div class="team-header">
+        <span class="team-label">${profileTeams.length>1?'Team '+(i+1):'Team Info'}</span>
+        ${profileTeams.length>1?`<span class="remove-text" onclick="removeTeam(${i})">Remove</span>`:''}
+      </div>
+      <div class="input-group"><label>Team Name</label><input value="${t.teamName}" onchange="profileTeams[${i}].teamName=this.value" placeholder="e.g., Lincoln High Wrestling"></div>
+      <div class="option-picker"><div class="label">Age Group</div><div class="options-wrap">${['Middle School','High School','Club'].map(o=>`<div class="opt-btn ${t.ageGroup===o?'selected':''}" onclick="profileTeams[${i}].ageGroup='${o}';renderTeams()">${o}</div>`).join('')}</div></div>
+      <div class="option-picker"><div class="label">Gender</div><div class="options-wrap">${['Coed','Boys Only','Girls Only'].map(o=>`<div class="opt-btn ${t.gender===o?'selected':''}" onclick="profileTeams[${i}].gender='${o}';renderTeams()">${o}</div>`).join('')}</div></div>
+    </div>
+  `).join('');
+}
+
+function addTeamCard() { profileTeams.push({teamName:'',ageGroup:'',gender:'',teamCode:null}); renderTeams(); }
+function removeTeam(i) { if(profileTeams.length<=1) return; profileTeams.splice(i,1); renderTeams(); }
+
+function generateTeamCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i=0; i<6; i++) code += chars.charAt(Math.floor(Math.random()*chars.length));
+  return code;
+}
+
+async function saveProfile() {
+  const fullName = document.getElementById('prof-name').value.trim();
+  const city = document.getElementById('prof-city').value.trim();
+  const state = document.getElementById('prof-state').value.trim().toUpperCase();
+  if (!fullName || !profileRole) { showToast('Please fill in your name and select a role.'); return; }
+  if (!profileTeams[0].teamName) { showToast('Please enter at least one team name.'); return; }
+  try {
+    const updatedTeams = [];
+    for (const team of profileTeams) {
+      if (!team.teamName) continue;
+      let code = team.teamCode;
+      if (!code) {
+        code = generateTeamCode();
+        await db.collection('teams').doc(code).set({ name:team.teamName, code, coachId:currentUser.uid, createdAt:new Date().toISOString() });
+        for (const ath of SEED_ATHLETES) {
+          await db.collection('teams').doc(code).collection('roster').add({ ...ath, addedAt:new Date().toISOString() });
+        }
+      }
+      updatedTeams.push({ teamName:team.teamName, ageGroup:team.ageGroup, gender:team.gender, teamCode:code });
+    }
+    const profileData = {
+      fullName, email:currentUser.email, city, state, role:profileRole,
+      teams:updatedTeams, teamName:updatedTeams[0]?.teamName||'', teamCode:updatedTeams[0]?.teamCode||'',
+      ageGroup:updatedTeams[0]?.ageGroup||'', gender:updatedTeams[0]?.gender||'',
+      createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(),
+    };
+    await db.collection('users').doc(currentUser.uid).set(profileData, {merge:true});
+    appProfile = profileData;
+    goTo('preferences');
+  } catch(e) { showToast('Failed to save profile: '+e.message); }
+}
+
+// ========== PREFERENCES SCREEN ==========
+function initPreferencesScreen() {
+  // Review card
+  if (appProfile) {
+    const t = appProfile.teams?.[0] || {};
+    document.getElementById('pref-review').innerHTML = `
+      <div class="review-card">
+        <div class="review-header"><span class="review-title">Your Profile</span><span class="review-edit" onclick="goTo('profile')">Edit</span></div>
+        <div class="review-name">${appProfile.fullName||''}</div>
+        <div class="review-detail">${appProfile.role||''}</div>
+        ${(t.teamName||appProfile.teamName)?`<div class="review-detail">${t.teamName||appProfile.teamName}</div>`:''}
+        ${(t.ageGroup||appProfile.ageGroup)?`<div class="review-detail">${t.ageGroup||appProfile.ageGroup}${(t.gender||appProfile.gender)?' \u2022 '+(t.gender||appProfile.gender):''}</div>`:''}
+      </div>`;
+  }
+  // Render pickers
+  renderPicker('pref-positions', PREFERENCE_OPTIONS.positions, appPrefs.positions, v=>{appPrefs.positions=v});
+  renderPicker('pref-stance', PREFERENCE_OPTIONS.stancePreference, appPrefs.stancePreference, v=>{appPrefs.stancePreference=v});
+  renderMultiPicker('pref-battle', PREFERENCE_OPTIONS.battleFocus, appPrefs.battleFocus, v=>{appPrefs.battleFocus=v});
+  renderMultiPicker('pref-athletic', PREFERENCE_OPTIONS.athleticFocus, appPrefs.athleticFocus, v=>{appPrefs.athleticFocus=v});
+  renderMultiPicker('pref-skill', PREFERENCE_OPTIONS.skillFocus, appPrefs.skillFocus, v=>{appPrefs.skillFocus=v});
+  renderMultiPicker('pref-exercise', PREFERENCE_OPTIONS.exerciseFocus, appPrefs.exerciseFocus, v=>{appPrefs.exerciseFocus=v});
+  renderPicker('pref-harddays', PREFERENCE_OPTIONS.hardDaysPerWeek, appPrefs.hardDaysPerWeek, v=>{appPrefs.hardDaysPerWeek=v});
+  renderPicker('pref-purpose', PREFERENCE_OPTIONS.trainingPurpose, appPrefs.trainingPurpose, v=>{appPrefs.trainingPurpose=v});
+  renderPicker('pref-duration', PREFERENCE_OPTIONS.practiceDuration, appPrefs.practiceDuration, v=>{appPrefs.practiceDuration=v});
+}
+
+function renderPicker(elId, options, selected, onChange) {
+  const el = document.getElementById(elId);
+  el.innerHTML = options.map(o => {
+    const sel = selected === o ? 'selected' : '';
+    return `<div class="opt-btn ${sel}" data-val="${o}">${o}</div>`;
+  }).join('');
+  el.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.onclick = () => { onChange(btn.dataset.val); renderPicker(elId, options, btn.dataset.val, onChange); };
+  });
+}
+
+function renderMultiPicker(elId, options, selected, onChange) {
+  const el = document.getElementById(elId);
+  const sel = Array.isArray(selected) ? selected : [];
+  el.innerHTML = options.map(o => {
+    const isSel = sel.includes(o) ? 'selected' : '';
+    return `<div class="opt-btn ${isSel}" data-val="${o}">${o}</div>`;
+  }).join('');
+  el.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.onclick = () => {
+      const v = btn.dataset.val;
+      const cur = Array.isArray(selected) ? [...selected] : [];
+      const idx = cur.indexOf(v);
+      if (idx >= 0) cur.splice(idx, 1); else cur.push(v);
+      onChange(cur);
+      selected = cur;
+      renderMultiPicker(elId, options, cur, onChange);
+    };
+  });
+}
+
+async function savePreferences() {
+  if (!appPrefs.positions || !appPrefs.trainingPurpose) { showToast('Please select at least positions and training purpose.'); return; }
+  try {
+    await db.collection('users').doc(currentUser.uid).collection('settings').doc('preferences').set({
+      ...appPrefs, updatedAt:new Date().toISOString()
+    }, {merge:true});
+    await db.collection('users').doc(currentUser.uid).update({onboardingComplete:true});
+    goTo('interstitial');
+  } catch(e) { showToast('Failed to save: '+e.message); }
+}
+
+// ========== INTERSTITIAL ==========
+let interstitialTimer = null;
+function startInterstitialTimer() {
+  clearTimeout(interstitialTimer);
+  interstitialTimer = setTimeout(() => goTo('practice-output'), 4000);
+}
+
+// ========== PRACTICE GENERATION ==========
+function generatePractice(prefs) {
+  const duration = parseInt(prefs?.practiceDuration) || 90;
+  const wu = Math.round(duration*0.12), tech = Math.round(duration*0.30), bat = Math.round(duration*0.35), ex = Math.round(duration*0.18);
+  const cd = duration - wu - tech - bat - ex;
+  const stance = prefs?.stancePreference || 'Right Lead';
+  return {
+    title: "Today's BASE Practice", totalDuration: duration,
+    sections: [
+      { name:'Warm-Up & Movement', area:'athletic', duration:wu, drills:[
+        {name:'Dynamic Stretching Circuit',duration:Math.round(wu*0.4),cue:'Arm circles, leg swings, hip openers — keep moving, increase range each rep.'},
+        {name:'Wrestling-Specific Agility',duration:Math.round(wu*0.3),cue:`${stance} stance — level changes, sprawls, penetration steps. Stay low, drive through.`},
+        {name:'Partner Mirror Drill',duration:Math.round(wu*0.3),cue:"Match your partner's movement. React, don't predict. Keep hands active."},
+      ]},
+      { name:'Skill Mastery — Technique', area:'skill', duration:tech, drills:buildTechniqueDrills(prefs,tech) },
+      { name:'Battle Awareness — Live Situations', area:'battle', duration:bat, drills:buildBattleDrills(prefs,bat) },
+      { name:'Exercise Conditioning', area:'exercise', duration:ex, drills:buildExerciseDrills(prefs,ex) },
+      { name:'Cool Down & Recovery', area:'athletic', duration:cd, drills:[
+        {name:'Light Jogging / Walking',duration:Math.round(cd*0.4),cue:'Bring heart rate down gradually.'},
+        {name:'Static Stretching',duration:Math.round(cd*0.6),cue:'Hold each stretch 30 seconds. Focus on hips, shoulders, hamstrings.'},
+      ]},
+    ],
+  };
+}
+
+function buildTechniqueDrills(prefs, minutes) {
+  const skills = (prefs?.skillFocus?.length) ? prefs.skillFocus : ['Single Leg Attacks','Stand-ups & Sit-outs (Bottom)'];
+  const bank = {
+    'Single Leg Attacks':[{name:'Single Leg Setup Drill',cue:'Inside tie to snap, level change, attack lead leg. Finish with a high crotch turn.'},{name:'Single Leg Chains',cue:'Attack → block → re-attack. Run the pipe, trip, or limp arm finish.'}],
+    'Double Leg Attacks':[{name:'Double Leg Penetration Step',cue:"Deep step, head on hip, drive through. Don't reach — change levels first."},{name:'Setup to Double',cue:'Club, snap, fake, then shoot. Make them react before you attack.'}],
+    'Upper Body Throws':[{name:'Underhook Series',cue:'Pummel to deep underhook. Hip pop throw or duck under. Stay tight.'},{name:'Headlock Defense to Counter',cue:'Block the hip, circle away, counter with a throw-by or ankle pick.'}],
+    'Tilts & Turns (Top)':[{name:'Half Nelson Series',cue:'Control wrist, drive half. If they post, switch to a tilt or chop.'},{name:'Tight Waist Tilt',cue:'Lock tight waist, chop the arm. Drive into them and look for back points.'}],
+    'Stand-ups & Sit-outs (Bottom)':[{name:'Stand-Up Drill',cue:'Hands on theirs, base up, cut the corner. Clear the hands and face them.'},{name:'Sit-out Turn-in',cue:'Pop the hips, sit through hard. Turn in and come to a squaring position.'}],
+    'Front Headlock Series':[{name:'Snap to Front Headlock',cue:'Heavy hands, snap down, lock the chin. Spin behind or go-behind.'},{name:'Front Head Cement Job',cue:'Lock around chin and arm. Walk the hips and squeeze. Look for the Darce.'}],
+    'Leg Riding':[{name:'Leg Ride Insertion',cue:'Control far ankle, insert the leg ride. Grapevine and flatten.'},{name:'Leg Ride to Turk',cue:'From leg ride, reach for the far arm. Lock the turk and drive for back exposure.'}],
+    'Cradles':[{name:'Near-Side Cradle',cue:'From top, control head and far knee. Lock hands, squeeze and roll.'},{name:'Far-Side Cradle',cue:'Crossface, drive into them, catch the far knee. Lock up and roll for back points.'}],
+  };
+  const drills = [];
+  const perSkill = Math.round(minutes / Math.max(skills.length, 1));
+  skills.forEach(s => {
+    const b = bank[s] || bank['Single Leg Attacks'];
+    b.forEach(d => drills.push({...d, duration:Math.round(perSkill/b.length)}));
+  });
+  return drills;
+}
+
+function buildBattleDrills(prefs, minutes) {
+  const focus = (prefs?.battleFocus?.length) ? prefs.battleFocus : ['Takedowns','Scramble Situations'];
+  const bank = {
+    'Takedowns':[{name:'Live Takedown Sparring',cue:'Reset on feet after each score. 30-second bursts, full speed.'},{name:'King of the Mat (Takedowns)',cue:'Winner stays. First takedown wins. Loser rotates out.'}],
+    'Hand Fighting':[{name:'Tie-Up Battles',cue:'Collar tie, 2-on-1, underhook battles. Control position, create angles.'},{name:'Handfight to Shot Drill',cue:'Work ties for 10 seconds, then attack. Score within 5 seconds of shooting.'}],
+    'Chain Wrestling':[{name:'Chain Attack Series',cue:'Shot → stuff → re-attack. Never stop with one attempt. Link 3 moves minimum.'},{name:'Reaction Chain Drill',cue:'Coach calls position, wrestlers chain 3 moves from that position.'}],
+    'Scramble Situations':[{name:'Scramble Go-Live',cue:'Start from bad positions. Fight out. First to control wins the rep.'},{name:'50/50 Scramble Drill',cue:'Both start on knees. Whistle — fight for position. Pure scramble instincts.'}],
+    'Riding & Turns':[{name:'Ride & Turn Challenge',cue:'Top wrestler has 30 seconds to turn. Bottom tries to escape. Switch roles.'},{name:'Breakdown to Turn Drill',cue:'Spiral ride, chop, flatten. Then work your turn series — tilts, halfs, or cradles.'}],
+    'Escapes & Reversals':[{name:'Bottom Escape Gauntlet',cue:'Bottom wrestler must escape 3 different top wrestlers. 20 seconds each.'},{name:'Reversal Drill',cue:"From bottom referee's position, work switch or roll. Score the reversal."}],
+  };
+  const drills = [];
+  const perF = Math.round(minutes / Math.max(focus.length, 1));
+  focus.forEach(f => {
+    const b = bank[f] || bank['Takedowns'];
+    b.forEach(d => drills.push({...d, duration:Math.round(perF/b.length)}));
+  });
+  return drills;
+}
+
+function buildExerciseDrills(prefs, minutes) {
+  const focus = (prefs?.exerciseFocus?.length) ? prefs.exerciseFocus : ['Cardio Endurance','Core Strength'];
+  const bank = {
+    'Strength Training':[{name:"Partner Carry / Fireman's Walk",cue:'Carry your partner 40 yards. Switch. Build functional wrestling strength.'},{name:'Buddy Squats',cue:'Partner on back, squat 10 reps. Explode up each rep.'}],
+    'Cardio Endurance':[{name:'Mat Sprints',cue:'Down-and-backs across the mat. 30 seconds on, 15 off. Match pace intensity.'},{name:'Shadow Wrestling Cardio',cue:"Full speed shadow wrestling. Shots, sprawls, spins. Don't stop moving."}],
+    'Core Strength':[{name:'Wrestling Plank Series',cue:'Front plank, side plank each side, bridge hold. 30 seconds each. No sagging.'},{name:'Leg Lifts & V-Ups',cue:'Controlled reps. Core tight. Build the mat strength you need on bottom.'}],
+    'Grip Strength':[{name:'Towel Pull-Ups / Rope Climbs',cue:'Grip the towel, pull. Build the grip that wins in the third period.'},{name:'Wrist Roller',cue:'Roll up, roll down. Forearms should be burning. This wins hand fights.'}],
+    'Recovery & Mobility':[{name:'Yoga Flow for Wrestlers',cue:'Down dog, pigeon pose, lizard pose. Open up the hips and shoulders.'},{name:'Foam Rolling',cue:'Hit quads, IT band, upper back. 60 seconds per area. Slow and controlled.'}],
+    'Plyometrics':[{name:'Box Jumps',cue:'Explode up, soft landing. Reset each rep. Build the explosive power for shots.'},{name:'Lateral Bounds',cue:'Side to side, stick each landing. Mimics lateral movement in a match.'}],
+  };
+  const drills = [];
+  const perF = Math.round(minutes / Math.max(focus.length, 1));
+  focus.forEach(f => {
+    const b = bank[f] || bank['Cardio Endurance'];
+    b.forEach(d => drills.push({...d, duration:Math.round(perF/b.length)}));
+  });
+  return drills;
+}
+
+function generateWeekPlan(prefs) {
+  const hardDays = parseInt(prefs?.hardDaysPerWeek) || 3;
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const focusAreas = ['Battle','Skill','Athletic','Exercise'];
+  return days.map((day,i) => {
+    if (day==='Sunday') return {day,type:'Rest',focus:'Recovery & Mobility',intensity:'Low'};
+    if (i < hardDays+1 && day!=='Saturday') return {day,type:'Hard',focus:`${focusAreas[i%4]}-Focused Practice`,intensity:'High'};
+    if (day==='Saturday') return {day,type:'Competition / Live',focus:'Full Match Simulation',intensity:'High'};
+    return {day,type:'Light',focus:'Technique & Film',intensity:'Moderate'};
+  });
+}
+
+function generate21DayPlan() {
+  const themes = ['Battle Focus','Athletic Development','Skill Mastery','Exercise Conditioning','Live Wrestling','Recovery','Technique Refinement'];
+  const plan = [];
+  for (let i=1;i<=21;i++) {
+    const dow = (i-1)%7;
+    if (dow===6) plan.push({day:i,theme:'Rest & Recovery',intensity:'Rest',completed:false});
+    else plan.push({day:i,theme:themes[dow%themes.length],intensity:dow<4?'Hard':'Moderate',completed:false});
+  }
+  return plan;
+}
+
+// ========== PRACTICE OUTPUT RENDERING ==========
+const AREA_COLORS = {battle:'var(--battle)',athletic:'var(--athletic)',skill:'var(--skill)',exercise:'var(--exercise)'};
+
+function renderPracticeOutput(containerId, showDashBtn) {
+  currentPractice = generatePractice(appPrefs);
+  currentWeekPlan = generateWeekPlan(appPrefs);
+  challenge21 = generate21DayPlan();
+  allDrills = currentPractice.sections.flatMap(s => s.drills);
+
+  const c = document.getElementById(containerId);
+  let html = `<h1 style="margin-bottom:4px">${currentPractice.title}</h1>
+    <p style="color:var(--text-sec);margin-bottom:24px">Total Duration: ${currentPractice.totalDuration} minutes</p>`;
+
+  currentPractice.sections.forEach(sec => {
+    html += `<div class="drill-section" style="border-left-color:${AREA_COLORS[sec.area]||'var(--primary)'}">
+      <div class="sec-header"><span class="sec-name" style="color:${AREA_COLORS[sec.area]||'var(--primary)'}">${sec.name}</span><span class="sec-dur">${sec.duration} min</span></div>`;
+    sec.drills.forEach(d => {
+      html += `<div class="drill-item"><div class="drill-header"><span class="drill-name">${d.name}</span><span class="drill-dur">${d.duration} min</span></div><div class="drill-cue">${d.cue}</div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `<button class="btn btn-accent" style="margin:24px 0" onclick="startTimer()">Start This Practice</button>`;
+  html += `<h2>Week Plan</h2>`;
+  currentWeekPlan.forEach(d => {
+    const color = d.type==='Hard'?'var(--battle)':d.type==='Rest'?'var(--text-light)':'var(--skill)';
+    html += `<div class="week-day"><div class="day-indicator" style="background:${color}"></div><div class="day-content"><div class="day-name">${d.day}</div><div class="day-focus">${d.focus}</div></div><div class="day-meta"><div class="day-type" style="color:${color}">${d.type}</div><div class="day-intensity">${d.intensity}</div></div></div>`;
+  });
+
+  html += `<h2 style="margin-top:24px">21-Day Challenge</h2><div class="cal-grid">`;
+  challenge21.forEach(d => {
+    const color = d.intensity==='Hard'?'var(--battle)':d.intensity==='Rest'?'var(--text-light)':'var(--skill)';
+    html += `<div class="cal-day ${d.intensity==='Rest'?'rest':''}"><div class="cal-day-num">Day ${d.day}</div><div class="cal-theme">${d.theme}</div><div class="cal-int" style="color:${color}">${d.intensity}</div></div>`;
+  });
+  html += `</div>`;
+
+  if (showDashBtn) {
+    html += `<button class="btn btn-secondary" style="margin-top:32px;margin-bottom:24px" onclick="goTo('dashboard')">Go to Dashboard</button>`;
+  }
+
+  c.innerHTML = html;
+}
+
+// ========== TIMER ==========
+function startTimer() {
+  timerSeconds = 0; timerDrillIndex = 0; timerRunning = true;
+  document.getElementById('timer-modal').classList.add('open');
+  updateTimerDisplay();
+  timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds/60).toString().padStart(2,'0');
+  const s = (timerSeconds%60).toString().padStart(2,'0');
+  document.getElementById('timer-clock').textContent = `${m}:${s}`;
+  const drill = allDrills[timerDrillIndex];
+  if (drill) {
+    document.getElementById('timer-drill-name').textContent = drill.name;
+    document.getElementById('timer-drill-cue').textContent = drill.cue;
+    document.getElementById('timer-drill-dur').textContent = drill.duration + ' minutes';
+  }
+  document.getElementById('timer-progress').textContent = `Drill ${timerDrillIndex+1} of ${allDrills.length}`;
+  document.getElementById('timer-next-btn').style.display = timerDrillIndex < allDrills.length-1 ? '' : 'none';
+  document.getElementById('timer-pause-btn').textContent = timerRunning ? 'Pause' : 'Resume';
+}
+
+function toggleTimer() {
+  timerRunning = !timerRunning;
+  if (timerRunning) timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+  else clearInterval(timerInterval);
+  updateTimerDisplay();
+}
+
+function nextDrill() { if (timerDrillIndex < allDrills.length-1) { timerDrillIndex++; updateTimerDisplay(); } }
+
+function stopTimer() {
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('timer-modal').classList.remove('open');
+}
+
+// ========== DASHBOARD ==========
+function getBASEOverview(roster) {
+  const avg = (athletes, area) => {
+    if (!athletes.length) return 0;
+    return Math.round(athletes.reduce((s,a) => s + (a.baseLevels?.[area]||0), 0) / athletes.length * 10) / 10;
+  };
+  return [
+    {area:'Battle',key:'battle',subtitle:'Awareness & Compete',average:avg(roster,'battle'),color:'var(--battle)',icon:'\u2694\uFE0F',description:'Live wrestling IQ, scramble ability, compete level, and match awareness.'},
+    {area:'Athletic',key:'athletic',subtitle:'Physical Development',average:avg(roster,'athletic'),color:'var(--athletic)',icon:'\uD83C\uDFC3',description:'Speed, agility, explosiveness, balance, and overall athleticism.'},
+    {area:'Skill',key:'skill',subtitle:'Technical Mastery',average:avg(roster,'skill'),color:'var(--skill)',icon:'\uD83C\uDFAF',description:'Technique proficiency across all positions — feet, top, and bottom.'},
+    {area:'Exercise',key:'exercise',subtitle:'Conditioning & Strength',average:avg(roster,'exercise'),color:'var(--exercise)',icon:'\uD83D\uDCAA',description:'Strength, endurance, conditioning, and physical preparation.'},
+  ];
+}
+
+async function initDashboard() {
+  // Load profile if needed
+  if (!appProfile && currentUser) {
+    const doc = await db.collection('users').doc(currentUser.uid).get();
+    if (doc.exists) appProfile = doc.data();
+  }
+  // Load prefs if needed
+  if (!appPrefs.positions && currentUser) {
+    const prefDoc = await db.collection('users').doc(currentUser.uid).collection('settings').doc('preferences').get();
+    if (prefDoc.exists) appPrefs = prefDoc.data();
+  }
+  // Load roster
+  rosterData = [];
+  if (appProfile?.teamCode) {
+    const snap = await db.collection('teams').doc(appProfile.teamCode).collection('roster').get();
+    rosterData = snap.docs.map(d => ({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+  }
+  renderHomeTab();
+  renderPracticeTab();
+  renderRosterTab();
+  switchTab('home');
+}
+
+function renderHomeTab() {
+  const baseData = getBASEOverview(rosterData);
+  let html = `
+    <div style="padding-top:8px;margin-bottom:24px">
+      <div style="font-size:22px;font-weight:700">${appProfile?.teamName||'Your Team'}</div>
+      <div style="font-size:13px;color:var(--text-sec);margin-top:2px">BASE Wrestling</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value">${rosterData.length}</div><div class="stat-label">Athletes</div></div>
+      <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Practices</div></div>
+      <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">This Week</div></div>
+    </div>
+    <h2>Team BASE Overview</h2>`;
+  baseData.forEach(b => {
+    html += `<div class="base-card" style="border-left-color:${b.color}">
+      <div class="area-header"><div><div class="area-name" style="color:${b.color}">${b.icon} ${b.area}</div><div class="area-sub">${b.subtitle}</div></div><div class="area-avg" style="color:${b.color}">${b.average}</div></div>
+      <div class="area-desc">${b.description}</div>
+    </div>`;
+  });
+  html += `<button class="btn btn-outline" style="margin-top:24px" onclick="showToast('Attendance — coming soon')">Take Attendance</button>`;
+  html += `<button class="btn btn-accent" style="margin-top:8px" onclick="switchTab('practice')">Start Practice</button>`;
+  document.getElementById('tab-home').innerHTML = html;
+}
+
+function renderPracticeTab() {
+  renderPracticeOutput('tab-practice', false);
+}
+
+function renderRosterTab() {
+  const el = document.getElementById('tab-roster');
+  let html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;margin-bottom:16px">
+      <div><div style="font-size:24px;font-weight:700">Roster</div><div style="font-size:14px;color:var(--text-sec);margin-top:2px">${rosterData.length} athletes</div></div>
+      <button class="btn btn-primary btn-sm" onclick="toggleAddForm()">+ Add</button>
+    </div>
+    <div id="add-form" style="display:none" class="card" style="margin-bottom:16px">
+      <div class="input-group"><label>Athlete Name</label><input id="new-athlete-name" placeholder="First and last name"></div>
+      <div class="grade-row"><span class="grade-label">Grade:</span>
+        ${['7','8','9','10','11','12'].map(g=>`<div class="grade-opt ${g==='9'?'selected':''}" data-grade="${g}" onclick="selectGrade(this)">${g}</div>`).join('')}
+      </div>
+      <button class="btn btn-primary" onclick="addAthlete()">Add Athlete</button>
+    </div>`;
+  rosterData.forEach(a => {
+    const initials = a.name.split(' ').map(n=>n[0]).join('').slice(0,2);
+    const overall = a.baseLevels ? Math.round(((a.baseLevels.battle||0)+(a.baseLevels.athletic||0)+(a.baseLevels.skill||0)+(a.baseLevels.exercise||0))/4*10)/10 : 0;
+    const stars = '\u2605'.repeat(Math.round(overall)) + '\u2606'.repeat(5-Math.round(overall));
+    html += `<div class="athlete-row" onclick="if(confirm('Remove ${a.name.replace(/'/g,"\\'")} from roster?'))deleteAthleteById('${a.id}')">
+      <div class="athlete-avatar">${initials}</div>
+      <div class="athlete-info"><div class="athlete-name">${a.name}</div><div class="athlete-grade">Grade ${a.grade}</div></div>
+      <div style="text-align:right"><div style="color:var(--secondary);font-size:12px;letter-spacing:1px">${stars}</div>
+        <div class="mini-ratings">
+          <span style="color:var(--battle)">B:${a.baseLevels?.battle?.toFixed(1)||'—'}</span>
+          <span style="color:var(--athletic)">A:${a.baseLevels?.athletic?.toFixed(1)||'—'}</span>
+          <span style="color:var(--skill)">S:${a.baseLevels?.skill?.toFixed(1)||'—'}</span>
+          <span style="color:var(--exercise)">E:${a.baseLevels?.exercise?.toFixed(1)||'—'}</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  if (!rosterData.length) html += `<div class="card" style="text-align:center;padding:32px"><div style="font-size:16px;font-weight:600;color:var(--text-sec)">No athletes yet.</div><div style="font-size:13px;color:var(--text-light);margin-top:4px">Tap "+ Add" to add athletes to your roster.</div></div>`;
+  else html += `<div style="font-size:12px;color:var(--text-light);text-align:center;margin-top:16px;font-style:italic">Click an athlete to remove them from the roster.</div>`;
+  el.innerHTML = html;
+}
+
+let newAthleteGrade = '9';
+function toggleAddForm() {
+  const f = document.getElementById('add-form');
+  f.style.display = f.style.display==='none' ? 'block' : 'none';
+}
+function selectGrade(el) {
+  document.querySelectorAll('.grade-opt').forEach(g=>g.classList.remove('selected'));
+  el.classList.add('selected');
+  newAthleteGrade = el.dataset.grade;
+}
+async function addAthlete() {
+  const name = document.getElementById('new-athlete-name').value.trim();
+  if (!name) { showToast('Please enter a name.'); return; }
+  if (!appProfile?.teamCode) { showToast('No team found.'); return; }
+  await db.collection('teams').doc(appProfile.teamCode).collection('roster').add({
+    name, grade:parseInt(newAthleteGrade), baseLevels:{battle:2.0,athletic:2.0,skill:2.0,exercise:2.0}, addedAt:new Date().toISOString()
+  });
+  document.getElementById('new-athlete-name').value = '';
+  await reloadRoster();
+}
+async function deleteAthleteById(id) {
+  if (!appProfile?.teamCode) return;
+  await db.collection('teams').doc(appProfile.teamCode).collection('roster').doc(id).delete();
+  await reloadRoster();
+}
+async function reloadRoster() {
+  const snap = await db.collection('teams').doc(appProfile.teamCode).collection('roster').get();
+  rosterData = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+  renderRosterTab();
+  renderHomeTab();
+}
+
+function switchTab(name) {
+  ['home','practice','roster'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===name?'block':'none';
+  });
+  document.querySelectorAll('.tab-item').forEach((el,i) => {
+    el.classList.toggle('active', ['home','practice','roster','menu'][i]===name);
+  });
+}
+
+function openDrawer() {
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+</script>
+</body>
+</html>

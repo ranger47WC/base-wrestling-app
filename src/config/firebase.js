@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE',
+  authDomain: 'base-wrestling-app.firebaseapp.com',
+  projectId: 'base-wrestling-app',
+  storageBucket: 'base-wrestling-app.firebasestorage.app',
+  messagingSenderId: '368548684923',
+  appId: '1:368548684923:web:0fc54795d1f375b0e6eede',
 };
 
 const app = initializeApp(firebaseConfig);
