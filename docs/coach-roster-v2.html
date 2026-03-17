@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Roster</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--org:#e67e22;--orgg:rgba(230,126,34,.12);--pur:#9b59b6;--purg:rgba(155,89,182,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative;overflow:hidden}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;font-size:16px;color:var(--gr)}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-search{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:14px;color:var(--gr)}
+.hd-search:hover{border-color:var(--gd);color:var(--gd)}
+
+/* ── TEAM SUMMARY BAR ── */
+.team-bar{padding:12px 20px;border-bottom:1px solid var(--bd);display:flex;gap:12px;flex-shrink:0}
+.tb-stat{flex:1;text-align:center;padding:8px;background:var(--cd);border-radius:var(--r);border:1px solid var(--bd)}
+.tb-num{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--gd)}
+.tb-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-top:2px}
+
+/* ── YEAR GROUP HEADERS ── */
+.yr-hdr{padding:10px 20px 6px;display:flex;align-items:center;gap:8px}
+.yr-hdr .yr-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gdd)}
+.yr-hdr .yr-line{flex:1;height:1px;background:var(--bd)}
+.yr-hdr .yr-count{font-size:10px;color:var(--gr);font-weight:600}
+
+/* ── ROSTER LIST ── */
+.roster-list{flex:1;overflow-y:auto;padding:0 20px 20px}
+
+/* ── ATHLETE CARD ── */
+.ath-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}
+.ath-card:hover{border-color:var(--gdd);transform:translateX(4px)}
+.ath-card:active{transform:translateX(2px)}
+
+/* Left: year box */
+.ath-yr-box{width:42px;height:42px;border-radius:10px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ath-yr-txt{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gd)}
+
+/* Middle: info */
+.ath-info{flex:1;min-width:0}
+.ath-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;color:var(--wh);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ath-wt{font-size:11px;color:var(--gr);margin-top:1px}
+/* Star rows */
+.ath-star-row{display:flex;align-items:center;gap:4px;margin-top:4px}
+.ath-star-row .star-label{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--gr);font-weight:700;width:32px;flex-shrink:0}
+.ath-star-row .stars{display:flex;gap:1px}
+.ath-star-row .stars .s{font-size:11px}
+.ath-star-row .stars .s.on{color:var(--gd)}
+.ath-star-row .stars .s.off{color:var(--bd)}
+
+/* Right: record */
+.ath-record{text-align:right;flex-shrink:0}
+.ath-wl{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px}
+.ath-wl .w{color:var(--gn)}
+.ath-wl .d{color:var(--gr)}
+.ath-wl .l{color:var(--rd)}
+.ath-pct{font-size:10px;color:var(--gr);margin-top:2px;font-weight:600}
+
+/* ── ATHLETE PROFILE SCREEN ── */
+.profile-screen{display:none;flex-direction:column;position:absolute;top:0;left:0;width:100%;height:100%;background:var(--dk);z-index:50}
+.profile-screen.open{display:flex;animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+
+.prof-hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.prof-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr);transition:all .2s}
+.prof-back:hover{border-color:var(--gd);color:var(--gd)}
+.prof-hd-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gd)}
+.prof-hd-spacer{width:36px}
+
+.prof-body{flex:1;overflow-y:auto;padding:0 20px 20px}
+
+/* Profile hero */
+.prof-hero{text-align:center;padding:20px 0 16px}
+.prof-avatar{width:64px;height:64px;border-radius:16px;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;box-shadow:0 0 24px rgba(200,168,78,.1)}
+.prof-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--wh)}
+.prof-sub{font-size:12px;color:var(--gr);margin-top:4px}
+
+/* Profile star display */
+.prof-star-block{display:flex;flex-direction:column;align-items:center;gap:4px;margin:12px 0 16px}
+.prof-star-row{display:flex;align-items:center;gap:6px}
+.prof-star-row .ps-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:700;width:36px;text-align:right}
+.prof-star-row .ps-stars{display:flex;gap:2px}
+.prof-star-row .ps-stars .s{font-size:18px}
+.prof-star-row .ps-stars .s.on{color:var(--gd)}
+.prof-star-row .ps-stars .s.off{color:var(--bd)}
+.prof-star-row .ps-tier{font-size:10px;color:var(--gdd);margin-left:4px;font-weight:600}
+
+/* Profile stats row */
+.prof-stats{display:flex;gap:8px;margin-bottom:16px}
+.ps-box{flex:1;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:10px 8px;text-align:center}
+.ps-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gd);letter-spacing:1px}
+.ps-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-top:2px}
+
+/* Section label */
+.sec-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ── ASSESSMENT CARDS ── */
+.assess-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.assess-card:hover{border-color:var(--gdd)}
+.assess-card.completed{border-left:3px solid var(--gn)}
+.assess-card.pending{border-left:3px solid var(--org)}
+
+.ac-top{padding:14px 16px;display:flex;align-items:center;gap:12px}
+.ac-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ac-icon.athletic{background:var(--blug);border:1px solid rgba(59,130,246,.3)}
+.ac-icon.exercise{background:var(--gng);border:1px solid rgba(39,174,96,.3)}
+.ac-icon.skill{background:var(--orgg);border:1px solid rgba(230,126,34,.3)}
+.ac-icon.battle{background:var(--rdg);border:1px solid rgba(200,16,46,.3)}
+
+.ac-info{flex:1}
+.ac-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh)}
+.ac-status{font-size:11px;margin-top:2px}
+.ac-status.done{color:var(--gn)}
+.ac-status.not-done{color:var(--org)}
+.ac-arrow{color:var(--bd);font-size:14px;transition:transform .2s}
+
+.ac-detail{display:none;padding:0 16px 14px;border-top:1px solid var(--bd)}
+.ac-detail.open{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.ac-detail-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.ac-detail-row:last-child{border-bottom:none}
+.ac-detail-name{font-size:12px;color:var(--lt)}
+.ac-detail-val{font-size:12px;font-weight:600}
+.ac-detail-val.pass{color:var(--gn)}
+.ac-detail-val.fail{color:var(--rd)}
+.ac-detail-val.below{color:var(--rd)}
+.ac-detail-val.at{color:var(--gd)}
+.ac-detail-val.above{color:var(--gn)}
+
+/* Battle bars */
+.battle-group{margin-bottom:12px}
+.bg-label{font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.bg-bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.bg-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.bg-fill.good{background:var(--gn)}
+.bg-fill.ok{background:var(--gd)}
+.bg-fill.weak{background:var(--rd)}
+.bg-scores{display:flex;justify-content:space-between;font-size:10px;color:var(--gr)}
+
+.ac-badge{padding:6px 10px;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;display:inline-block;margin-top:8px}
+.ac-badge.super{background:var(--gng);color:var(--gn);border:1px solid rgba(39,174,96,.3)}
+.ac-badge.solid{background:var(--blug);color:var(--blu);border:1px solid rgba(59,130,246,.3)}
+.ac-badge.working{background:var(--orgg);color:var(--org);border:1px solid rgba(230,126,34,.3)}
+
+/* ── ACTIVITY CARDS ── */
+.act-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.act-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.act-icon.video{background:var(--purg);border:1px solid rgba(155,89,182,.3)}
+.act-icon.extra{background:var(--gdg);border:1px solid var(--gdd)}
+.act-icon.private{background:var(--blug);border:1px solid rgba(59,130,246,.3)}
+.act-icon.content{background:var(--gng);border:1px solid rgba(39,174,96,.3)}
+.act-info{flex:1}
+.act-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh)}
+.act-detail{font-size:11px;color:var(--gr);margin-top:2px}
+.act-val{text-align:right;flex-shrink:0}
+.act-num{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gd)}
+.act-unit{font-size:9px;color:var(--gr);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+
+/* ── ROSTER TOGGLE ── */
+.roster-toggle{display:flex;gap:4px;padding:10px 20px 6px;flex-shrink:0}
+.rt-btn{flex:1;padding:10px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;transition:all .2s;text-align:center;border:2px solid var(--bd);background:var(--cd);color:var(--gr)}
+.rt-btn:hover{border-color:var(--gdd)}
+.rt-btn.active{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.rt-btn .rt-count{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;letter-spacing:0;margin-left:4px;opacity:.6}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" onclick="toast('← Back to Dashboard')">←</div>
+      <div class="hd-info">
+        <div>ROSTER</div>
+        <div>Ranger 47 Wrestling</div>
+      </div>
+    </div>
+    <div class="hd-search" onclick="toast('Search roster...')">🔍</div>
+  </div>
+
+  <!-- ═══ TEAM SUMMARY ═══ -->
+  <div class="team-bar">
+    <div class="tb-stat"><div class="tb-num">24</div><div class="tb-label">Athletes</div></div>
+    <div class="tb-stat"><div class="tb-num" style="color:var(--gn)">187</div><div class="tb-label">Team Wins</div></div>
+    <div class="tb-stat"><div class="tb-num" style="color:var(--rd)">94</div><div class="tb-label">Team Losses</div></div>
+    <div class="tb-stat"><div class="tb-num">66%</div><div class="tb-label">Win Rate</div></div>
+  </div>
+
+  <!-- ═══ BOYS / GIRLS TOGGLE ═══ -->
+  <div class="roster-toggle">
+    <div class="rt-btn active" id="rt-boys" onclick="switchRoster('boys')">BOYS<span class="rt-count" id="rt-boys-ct">24</span></div>
+    <div class="rt-btn" id="rt-girls" onclick="switchRoster('girls')">GIRLS<span class="rt-count" id="rt-girls-ct">18</span></div>
+  </div>
+
+  <!-- ═══ ROSTER LIST ═══ -->
+  <div class="roster-list" id="roster-list"></div>
+
+  <!-- ═══ ATHLETE PROFILE SCREEN ═══ -->
+  <div class="profile-screen" id="profile-screen">
+    <div class="prof-hd">
+      <div class="prof-back" onclick="closeProfile()">←</div>
+      <div class="prof-hd-title" id="prof-hd-name">ATHLETE</div>
+      <div class="prof-hd-spacer"></div>
+    </div>
+    <div class="prof-body" id="prof-body"></div>
+  </div>
+
+</div>
+<div class="toast" id="toast-el"></div>
+
+<script>
+function toast(msg){var t=document.getElementById('toast-el');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);}
+
+// ── HELPERS ──
+function makeStars(n,max){
+  var h='';
+  for(var i=1;i<=max;i++) h+='<span class="s '+(i<=n?'on':'off')+'">★</span>';
+  return h;
+}
+
+// ── ROSTER DATA ──
+var ATH_MOVES=['Forward Roll','Backward Extension','Cartwheel Right','Cartwheel Left','Round Off Jump','Round Off Back Ext','Round Off Handspring','Round Off Back Flip','Front Handspring','Back Handspring','Walk on Hands','Bridge Kicks','Bridge Circles R','Bridge Circles L'];
+
+var roster=[
+  // Seniors
+  {name:'Tyler Rodriguez',wt:152,yr:'Sr',yrN:4,star:5,goal:5,goalTier:'Gold',w:32,l:2,
+    athletic:{done:true,score:13,results:[1,1,1,1,1,1,1,1,1,1,1,1,1,0],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'12:34'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'Above'},attacks:{uo:'Above',lo:'At',ud:'At',ld:'Above',to:'Above',bo:'At'},situations:{ub:85,hi:78,ho:72,fa:90,tb:80}},
+    activity:{vids:42,vidMin:186,extra:6,private:3,content:18}},
+  {name:'Marcus Johnson',wt:145,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:24,l:8,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:22'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'Above',ud:'At',ld:'At',to:'At',bo:'Below'},situations:{ub:70,hi:75,ho:60,fa:65,tb:55}},
+    activity:{vids:28,vidMin:124,extra:3,private:2,content:12}},
+  {name:'Aiden Park',wt:170,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:22,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'13:45'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'Above'},attacks:{uo:'Above',lo:'At',ud:'At',ld:'At',to:'Above',bo:'At'},situations:{ub:80,hi:65,ho:70,fa:75,tb:72}},
+    activity:{vids:35,vidMin:155,extra:4,private:1,content:15}},
+  {name:'Mason Lee',wt:195,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:20,l:9,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:false,time:'—'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'Below',ud:'At',ld:'Below',to:'Above',bo:'At'},situations:{ub:72,hi:50,ho:45,fa:60,tb:78}},
+    activity:{vids:15,vidMin:67,extra:1,private:0,content:6}},
+  {name:'Daniel Lewis',wt:220,yr:'Sr',yrN:4,star:3,goal:4,goalTier:'',w:15,l:12,
+    athletic:{done:true,score:5,results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0],tier:'Keep Working'},
+    exercise:{done:true,completed:false,time:'—'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'Below',d:'At'},attacks:{uo:'At',lo:'Below',ud:'At',ld:'Below',to:'At',bo:'Below'},situations:{ub:60,hi:35,ho:30,fa:50,tb:55}},
+    activity:{vids:8,vidMin:36,extra:0,private:0,content:3}},
+  {name:'Omar King',wt:285,yr:'Sr',yrN:4,star:3,goal:4,goalTier:'',w:14,l:11,
+    athletic:{done:true,score:4,results:[1,1,0,0,0,0,0,0,0,0,1,1,0,0],tier:'Keep Working'},
+    exercise:{done:false},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'Below',ud:'At',ld:'Below',to:'At',bo:'At'},situations:{ub:65,hi:30,ho:25,fa:45,tb:60}},
+    activity:{vids:5,vidMin:22,extra:0,private:0,content:2}},
+  // Juniors
+  {name:'Jake Thompson',wt:160,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:18,l:9,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'13:10'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:68,hi:70,ho:62,fa:58,tb:65}},
+    activity:{vids:31,vidMin:138,extra:5,private:2,content:14}},
+  {name:'Chris Williams',wt:138,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:16,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:50'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'Below'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:62,hi:65,ho:55,fa:50,tb:52}},
+    activity:{vids:22,vidMin:98,extra:2,private:1,content:10}},
+  {name:'Ryan Mitchell',wt:126,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:17,l:8,
+    athletic:{done:true,score:12,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,1],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'11:45'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'At'},attacks:{uo:'At',lo:'Above',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:72,hi:80,ho:68,fa:70,tb:65}},
+    activity:{vids:45,vidMin:200,extra:8,private:4,content:20}},
+  {name:'Lucas Brown',wt:182,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:14,l:11,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:30'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'Below',lo:'At',ud:'At',ld:'At',to:'At',bo:'Below'},situations:{ub:55,hi:60,ho:58,fa:52,tb:60}},
+    activity:{vids:12,vidMin:53,extra:1,private:0,content:5}},
+  {name:'Jordan Clark',wt:145,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:13,l:12,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:55'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'Below',to:'At',bo:'At'},situations:{ub:65,hi:62,ho:55,fa:60,tb:58}},
+    activity:{vids:18,vidMin:80,extra:2,private:0,content:8}},
+  {name:'Jayden Allen',wt:152,yr:'Jr',yrN:3,star:3,goal:5,goalTier:'',w:15,l:10,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'12:55'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'Above',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:68,hi:78,ho:65,fa:62,tb:60}},
+    activity:{vids:38,vidMin:170,extra:6,private:3,content:16}},
+  {name:'Sean Adams',wt:170,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:12,l:13,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:40'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'Below',d:'At'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'Below',bo:'Below'},situations:{ub:58,hi:55,ho:50,fa:48,tb:52}},
+    activity:{vids:9,vidMin:40,extra:0,private:0,content:4}},
+  // Sophomores
+  {name:'Devon Brooks',wt:132,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:8,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:58'},skill:{done:false},battle:{done:false},
+    activity:{vids:14,vidMin:62,extra:1,private:0,content:6}},
+  {name:'Elijah Davis',wt:113,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:7,l:11,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'13:40'},skill:{done:false},battle:{done:false},
+    activity:{vids:20,vidMin:89,extra:2,private:1,content:9}},
+  {name:'Caleb White',wt:120,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:6,l:9,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:6,vidMin:27,extra:0,private:0,content:2}},
+  {name:'Ethan Walker',wt:138,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:9,l:8,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:45'},skill:{done:false},battle:{done:false},
+    activity:{vids:16,vidMin:71,extra:1,private:0,content:7}},
+  {name:'Xavier Young',wt:160,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:5,l:12,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0],tier:'Keep Working'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:3,vidMin:13,extra:0,private:0,content:1}},
+  {name:'Trevor Scott',wt:145,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:7,l:7,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:20'},skill:{done:false},battle:{done:false},
+    activity:{vids:19,vidMin:85,extra:2,private:0,content:8}},
+  // Freshmen
+  {name:'Noah Garcia',wt:106,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:3,l:8,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:10,vidMin:44,extra:0,private:0,content:4}},
+  {name:'Isaiah Harris',wt:113,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:2,l:9,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,1,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:8,vidMin:35,extra:0,private:0,content:3}},
+  {name:'Brandon Hall',wt:126,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:4,l:7,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0],tier:'Keep Working'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:5,vidMin:22,extra:0,private:0,content:2}},
+  {name:'Patrick Wright',wt:120,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:1,l:10,
+    athletic:{done:true,score:5,results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0],tier:'Keep Working'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:2,vidMin:9,extra:0,private:0,content:1}},
+  {name:'Will Turner',wt:132,yr:'Fr',yrN:1,star:1,goal:3,goalTier:'',w:5,l:6,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:50'},skill:{done:false},battle:{done:false},
+    activity:{vids:25,vidMin:111,extra:3,private:1,content:11}}
+];
+
+var girlsRoster=[
+  // Seniors
+  {name:'Sofia Martinez',wt:120,yr:'Sr',yrN:4,star:5,goal:5,goalTier:'Silver',w:28,l:3,
+    athletic:{done:true,score:14,results:[1,1,1,1,1,1,1,1,1,1,1,1,1,1],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'11:20'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'Above'},attacks:{uo:'Above',lo:'Above',ud:'At',ld:'Above',to:'Above',bo:'At'},situations:{ub:88,hi:82,ho:78,fa:92,tb:85}},
+    activity:{vids:48,vidMin:215,extra:7,private:4,content:22}},
+  {name:'Emma Wilson',wt:138,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:21,l:7,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'13:15'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'Above'},attacks:{uo:'At',lo:'At',ud:'At',ld:'At',to:'Above',bo:'At'},situations:{ub:75,hi:70,ho:65,fa:72,tb:78}},
+    activity:{vids:30,vidMin:134,extra:4,private:2,content:14}},
+  {name:'Mia Thompson',wt:155,yr:'Sr',yrN:4,star:3,goal:4,goalTier:'',w:16,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:30'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:65,hi:60,ho:55,fa:58,tb:62}},
+    activity:{vids:20,vidMin:89,extra:2,private:1,content:10}},
+  // Juniors
+  {name:'Ava Chen',wt:106,yr:'Jr',yrN:3,star:4,goal:5,goalTier:'',w:23,l:5,
+    athletic:{done:true,score:13,results:[1,1,1,1,1,1,1,1,1,1,1,1,1,0],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'12:05'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'At'},attacks:{uo:'At',lo:'Above',ud:'At',ld:'At',to:'At',bo:'Above'},situations:{ub:72,hi:85,ho:70,fa:75,tb:68}},
+    activity:{vids:40,vidMin:178,extra:6,private:3,content:18}},
+  {name:'Isabella Brooks',wt:126,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:14,l:9,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:10'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'Below',to:'At',bo:'At'},situations:{ub:62,hi:65,ho:58,fa:55,tb:60}},
+    activity:{vids:22,vidMin:98,extra:3,private:1,content:10}},
+  {name:'Olivia Davis',wt:132,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:13,l:11,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:45'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'Below'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:60,hi:58,ho:52,fa:48,tb:55}},
+    activity:{vids:16,vidMin:71,extra:2,private:0,content:7}},
+  {name:'Zoe Garcia',wt:145,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:12,l:10,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:55'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'Below',lo:'At',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:55,hi:62,ho:60,fa:52,tb:58}},
+    activity:{vids:14,vidMin:62,extra:1,private:0,content:6}},
+  // Sophomores
+  {name:'Lily Anderson',wt:113,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:8,l:8,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'13:50'},skill:{done:false},battle:{done:false},
+    activity:{vids:18,vidMin:80,extra:2,private:1,content:8}},
+  {name:'Chloe Kim',wt:120,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:6,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:30'},skill:{done:false},battle:{done:false},
+    activity:{vids:12,vidMin:53,extra:1,private:0,content:5}},
+  {name:'Harper Lee',wt:138,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:7,l:9,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:8,vidMin:35,extra:0,private:0,content:3}},
+  {name:'Aria Patel',wt:155,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:5,l:11,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0],tier:'Keep Working'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:4,vidMin:18,extra:0,private:0,content:2}},
+  // Freshmen
+  {name:'Luna Rivera',wt:100,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:4,l:6,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0],tier:'Super Athlete'},
+    exercise:{done:true,completed:true,time:'13:30'},skill:{done:false},battle:{done:false},
+    activity:{vids:20,vidMin:89,extra:2,private:1,content:9}},
+  {name:'Ella Nguyen',wt:106,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:3,l:7,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,1,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:10,vidMin:44,extra:0,private:0,content:4}},
+  {name:'Scarlett Moore',wt:113,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:2,l:8,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:6,vidMin:27,extra:0,private:0,content:2}},
+  {name:'Grace Taylor',wt:120,yr:'Fr',yrN:1,star:1,goal:3,goalTier:'',w:5,l:5,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0],tier:'Solid Foundation'},
+    exercise:{done:true,completed:true,time:'14:40'},skill:{done:false},battle:{done:false},
+    activity:{vids:15,vidMin:67,extra:1,private:0,content:6}},
+  {name:'Nora James',wt:126,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:1,l:9,
+    athletic:{done:true,score:5,results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0],tier:'Keep Working'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:3,vidMin:13,extra:0,private:0,content:1}},
+  {name:'Violet Sanders',wt:132,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:2,l:7,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0],tier:'Keep Working'},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:4,vidMin:18,extra:0,private:0,content:2}}
+];
+
+var currentRoster='boys';
+var activeRoster=roster;
+
+function switchRoster(which){
+  currentRoster=which;
+  activeRoster=(which==='boys')?roster:girlsRoster;
+  document.getElementById('rt-boys').classList.toggle('active',which==='boys');
+  document.getElementById('rt-girls').classList.toggle('active',which==='girls');
+  updateTeamBar();
+  buildRoster();
+}
+
+function updateTeamBar(){
+  var r=activeRoster;
+  var totalW=0,totalL=0;
+  r.forEach(function(a){totalW+=a.w;totalL+=a.l;});
+  var total=totalW+totalL;var pct=total>0?Math.round((totalW/total)*100):0;
+  var stats=document.querySelectorAll('.tb-stat');
+  stats[0].querySelector('.tb-num').textContent=r.length;
+  stats[1].querySelector('.tb-num').textContent=totalW;
+  stats[2].querySelector('.tb-num').textContent=totalL;
+  stats[3].querySelector('.tb-num').textContent=pct+'%';
+}
+function buildRoster(){
+  var list=document.getElementById('roster-list');
+  activeRoster.sort(function(a,b){if(b.yrN!==a.yrN)return b.yrN-a.yrN;return b.w-a.w;});
+
+  var h='';var lastYr='';
+  var yrCounts={Sr:0,Jr:0,So:0,Fr:0};
+  activeRoster.forEach(function(r){yrCounts[r.yr]++;});
+
+  activeRoster.forEach(function(r,i){
+    if(r.yr!==lastYr){
+      var yrFull={Sr:'Seniors',Jr:'Juniors',So:'Sophomores',Fr:'Freshmen'}[r.yr];
+      h+='<div class="yr-hdr"><div class="yr-label">'+yrFull.toUpperCase()+'</div><div class="yr-line"></div><div class="yr-count">'+yrCounts[r.yr]+'</div></div>';
+      lastYr=r.yr;
+    }
+
+    var total=r.w+r.l;var pct=total>0?Math.round((r.w/total)*100):0;
+
+    h+='<div class="ath-card" onclick="openProfile('+i+')">'+
+      '<div class="ath-yr-box"><div class="ath-yr-txt">'+r.yr.toUpperCase()+'</div></div>'+
+      '<div class="ath-info">'+
+        '<div class="ath-name">'+r.name.toUpperCase()+'</div>'+
+        '<div class="ath-wt">'+r.wt+' lbs</div>'+
+        '<div class="ath-star-row"><div class="star-label">Rank</div><div class="stars">'+makeStars(r.star,5)+'</div></div>'+
+        '<div class="ath-star-row"><div class="star-label">Goal</div><div class="stars">'+makeStars(r.goal,5)+'</div>'+(r.goalTier?'<span style="font-size:8px;color:var(--gdd);margin-left:4px;letter-spacing:1px">'+r.goalTier+'</span>':'')+'</div>'+
+      '</div>'+
+      '<div class="ath-record">'+
+        '<div class="ath-wl"><span class="w">'+r.w+'</span><span class="d"> - </span><span class="l">'+r.l+'</span></div>'+
+        '<div class="ath-pct">'+pct+'% WIN</div>'+
+      '</div></div>';
+  });
+  list.innerHTML=h;
+}
+
+// ── PROFILE ──
+function openProfile(idx){
+  var r=activeRoster[idx];
+  document.getElementById('prof-hd-name').textContent=r.name.split(' ')[1].toUpperCase();
+  var body=document.getElementById('prof-body');
+  var total=r.w+r.l;var pct=total>0?Math.round((r.w/total)*100):0;
+  var h='';
+
+  // Hero
+  h+='<div class="prof-hero">';
+  h+='<div class="prof-avatar">🤼</div>';
+  h+='<div class="prof-name">'+r.name.toUpperCase()+'</div>';
+  h+='<div class="prof-sub">'+r.yr+' · '+r.wt+' lbs</div>';
+  // Star block with labels
+  h+='<div class="prof-star-block">';
+  h+='<div class="prof-star-row"><div class="ps-label">Rank</div><div class="ps-stars">'+makeStars(r.star,5).replace(/s\b/g,'s')+'</div></div>';
+  h+='<div class="prof-star-row"><div class="ps-label">Goal</div><div class="ps-stars">'+makeStars(r.goal,5)+'</div>'+(r.goalTier?'<div class="ps-tier">('+r.goalTier+')</div>':'')+'</div>';
+  h+='</div></div>';
+
+  // Stats
+  h+='<div class="prof-stats">';
+  h+='<div class="ps-box"><div class="ps-val" style="color:var(--gn)">'+r.w+'</div><div class="ps-lbl">Wins</div></div>';
+  h+='<div class="ps-box"><div class="ps-val" style="color:var(--rd)">'+r.l+'</div><div class="ps-lbl">Losses</div></div>';
+  h+='<div class="ps-box"><div class="ps-val">'+pct+'%</div><div class="ps-lbl">Win Rate</div></div>';
+  h+='</div>';
+
+  // ── ASSESSMENTS ──
+  h+='<div class="sec-label">Assessments</div>';
+
+  // Athletic
+  h+=assessCard(idx,'athletic','🤸','ATHLETIC ASSESSMENT',
+    r.athletic.done?'Completed · '+r.athletic.score+'/14 passed':null,
+    function(){
+      if(!r.athletic.done)return'';
+      var d='<div class="ac-badge '+(r.athletic.tier==='Super Athlete'?'super':r.athletic.tier==='Solid Foundation'?'solid':'working')+'">'+r.athletic.tier.toUpperCase()+'</div>';
+      for(var m=0;m<ATH_MOVES.length;m++) d+='<div class="ac-detail-row"><div class="ac-detail-name">'+ATH_MOVES[m]+'</div><div class="ac-detail-val '+(r.athletic.results[m]?'pass':'fail')+'">'+(r.athletic.results[m]?'✓ Pass':'✕ Fail')+'</div></div>';
+      return d;
+    });
+
+  // Exercise
+  var exStatus=null;
+  if(r.exercise&&r.exercise.done) exStatus=r.exercise.completed?'Completed · '+r.exercise.time:'Did not finish circuit';
+  h+=assessCard(idx,'exercise','💪','EXERCISE ASSESSMENT',exStatus,
+    function(){
+      if(!r.exercise||!r.exercise.done)return'';
+      var d='<div class="ac-detail-row"><div class="ac-detail-name">Gold Standard Circuit</div><div class="ac-detail-val '+(r.exercise.completed?'pass':'fail')+'">'+(r.exercise.completed?'✓ Completed':'✕ Incomplete')+'</div></div>';
+      if(r.exercise.completed){
+        d+='<div class="ac-detail-row"><div class="ac-detail-name">Completion Time</div><div class="ac-detail-val" style="color:var(--gd)">'+r.exercise.time+'</div></div>';
+        d+='<div class="ac-detail-row"><div class="ac-detail-name">Under 15 Minutes?</div><div class="ac-detail-val pass">✓ Yes</div></div>';
+      }
+      return d;
+    });
+
+  // Skill
+  h+=assessCard(idx,'skill','🎯','SKILL ASSESSMENT',
+    r.skill&&r.skill.done?'Completed · '+r.skill.score:null,
+    function(){
+      if(!r.skill||!r.skill.done)return'';
+      return '<div class="ac-detail-row"><div class="ac-detail-name">Technique Level</div><div class="ac-detail-val" style="color:var(--gd)">'+r.skill.score+'</div></div>';
+    });
+
+  // Battle
+  var btStatus=null;
+  if(r.battle&&r.battle.done){var sits=r.battle.situations;var avg=Math.round((sits.ub+sits.hi+sits.ho+sits.fa+sits.tb)/5);btStatus='Completed · '+avg+'% avg confidence';}
+  else if(r.star<3){btStatus=null;}
+  h+=assessCard(idx,'battle','⚔️','BATTLE ASSESSMENT',btStatus,
+    function(){
+      if(!r.battle||!r.battle.done)return'';
+      var d='';
+      d+='<div style="font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin:8px 0 6px">Mat Control</div>';
+      d+='<div class="ac-detail-row"><div class="ac-detail-name">Neutral Offense</div><div class="ac-detail-val '+r.battle.mat.o.toLowerCase()+'">'+r.battle.mat.o+'</div></div>';
+      d+='<div class="ac-detail-row"><div class="ac-detail-name">Neutral Defense</div><div class="ac-detail-val '+r.battle.mat.d.toLowerCase()+'">'+r.battle.mat.d+'</div></div>';
+      d+='<div style="font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px">Attacks</div>';
+      var al={uo:'Upper Body Off',lo:'Leg Attacks Off',ud:'Upper Body Def',ld:'Leg Attacks Def',to:'Top Attacks',bo:'Bottom Attacks'};
+      for(var k in al) d+='<div class="ac-detail-row"><div class="ac-detail-name">'+al[k]+'</div><div class="ac-detail-val '+r.battle.attacks[k].toLowerCase()+'">'+r.battle.attacks[k]+'</div></div>';
+      d+='<div style="font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px">Situation Confidence</div>';
+      var sl={ub:'Upper Body',hi:'Head Inside',ho:'Head Outside',fa:'Failed Attacks',tb:'Top / Bottom'};
+      for(var k in sl){var v=r.battle.situations[k];var cls=v>=75?'good':v>=50?'ok':'weak';d+='<div class="battle-group"><div class="bg-label">'+sl[k]+'</div><div class="bg-bar"><div class="bg-fill '+cls+'" style="width:'+v+'%"></div></div><div class="bg-scores"><span>'+v+'%</span><span>'+(v>=75?'Strong':v>=50?'Developing':'Needs Work')+'</span></div></div>';}
+      return d;
+    },r.star<3&&(!r.battle||!r.battle.done)?'Available after 10 wins':'Not yet completed');
+
+  // ── ACTIVITY TRACKING ──
+  h+='<div class="sec-label">Activity</div>';
+  var a=r.activity||{vids:0,vidMin:0,extra:0,private:0,content:0};
+  h+='<div class="act-card"><div class="act-icon video">📹</div><div class="act-info"><div class="act-title">VIDEOS WATCHED</div><div class="act-detail">'+Math.round(a.vidMin/60*10)/10+' hrs total watch time</div></div><div class="act-val"><div class="act-num">'+a.vids+'</div><div class="act-unit">Videos</div></div></div>';
+  h+='<div class="act-card"><div class="act-icon content">✅</div><div class="act-info"><div class="act-title">CONTENT COMPLETED</div><div class="act-detail">Assigned lessons & drills finished</div></div><div class="act-val"><div class="act-num">'+a.content+'</div><div class="act-unit">Lessons</div></div></div>';
+  h+='<div class="act-card"><div class="act-icon extra">🏋️</div><div class="act-info"><div class="act-title">EXTRA PRACTICES</div><div class="act-detail">Open mats, weekend sessions</div></div><div class="act-val"><div class="act-num">'+a.extra+'</div><div class="act-unit">Sessions</div></div></div>';
+  h+='<div class="act-card"><div class="act-icon private">👤</div><div class="act-info"><div class="act-title">PRIVATE LESSONS</div><div class="act-detail">1-on-1 coaching sessions logged</div></div><div class="act-val"><div class="act-num">'+a.private+'</div><div class="act-unit">Lessons</div></div></div>';
+
+  body.innerHTML=h;
+  document.getElementById('profile-screen').classList.add('open');
+  body.scrollTop=0;
+}
+
+function assessCard(idx,type,icon,title,doneText,detailFn,pendingText){
+  var isDone=!!doneText;
+  var iconCls={athletic:'athletic',exercise:'exercise',skill:'skill',battle:'battle'}[type];
+  var detId=type+'-det-'+idx;
+  var h='<div class="assess-card '+(isDone?'completed':'pending')+'" onclick="toggleDetail(\''+detId+'\')">';
+  h+='<div class="ac-top"><div class="ac-icon '+iconCls+'">'+icon+'</div><div class="ac-info"><div class="ac-title">'+title+'</div>';
+  if(isDone) h+='<div class="ac-status done">'+doneText+'</div>';
+  else h+='<div class="ac-status not-done">'+(pendingText||'Not yet completed')+'</div>';
+  h+='</div><div class="ac-arrow">›</div></div>';
+  var detail=detailFn();
+  if(detail) h+='<div class="ac-detail" id="'+detId+'">'+detail+'</div>';
+  h+='</div>';
+  return h;
+}
+
+function closeProfile(){document.getElementById('profile-screen').classList.remove('open');}
+
+function toggleDetail(id){var el=document.getElementById(id);if(!el)return;el.classList.toggle('open');}
+
+// ── INIT ──
+document.getElementById('rt-boys-ct').textContent=roster.length;
+document.getElementById('rt-girls-ct').textContent=girlsRoster.length;
+updateTeamBar();
+buildRoster();
+</script>
+</body>
+</html>
