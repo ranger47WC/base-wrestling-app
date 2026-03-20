@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--rd:#c8102e;--blu:#3b82f6;--wh:#f0f0f0;--r:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column}
+.header{padding:24px 20px 20px;text-align:center;border-bottom:1px solid var(--bd)}
+.h-badge{display:inline-block;background:var(--rd);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;padding:5px 16px;border-radius:4px;margin-bottom:8px}
+.h-sub{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:3px;font-weight:600}
+.main{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch}
+.rs{margin-bottom:24px}
+.rs-t{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gd);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.rs-t::after{content:'';flex:1;height:1px;background:var(--bd)}
+.sl{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;cursor:pointer;transition:all .2s}
+.sl:hover{border-color:var(--gdd);background:var(--gdg)}
+.si{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.si.c{background:rgba(200,168,78,.15);border:1px solid var(--gdd)}
+.si.a{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4)}
+.si.g{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4)}
+.si.p{background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.4)}
+.sn{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh)}
+.sd{font-size:11px;color:#aaa;margin-top:2px}
+.sa{color:#aaa;font-size:16px;margin-left:auto;flex-shrink:0}
+.footer{padding:16px 20px;border-top:1px solid var(--bd);text-align:center}
+.ft{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:2px}
+
+/* Screen viewer */
+.viewer{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;background:var(--bk)}
+.viewer.open{display:block}
+.v-bar{position:fixed;top:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:var(--dk);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:10px 16px;z-index:1001}
+.v-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;font-size:18px}
+.v-back:hover{border-color:var(--gd);color:var(--gd)}
+.v-title{flex:1;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd);text-align:center;margin-right:36px}
+.v-frame{width:100%;height:100%;border:none;padding-top:56px}
+</style>
+</head>
+<body>
+<div class="app" id="hub">
+<div class="header"><div class="h-badge">BASE WRESTLING</div><div class="h-sub">App Demo</div></div>
+<div class="main">
+
+<div class="rs"><div class="rs-t">Coach</div>
+<div class="sl" onclick="openScreen('coach-onboarding','COACH ONBOARDING')"><div class="si c">📋</div><div><div class="sn">COACH ONBOARDING</div><div class="sd">Profile, team setup, community, codes</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('coach-dashboard','COACH DASHBOARD')"><div class="si c">🏠</div><div><div class="sn">COACH DASHBOARD</div><div class="sd">Calendar, attendance, focus cards, start practice</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('coach-roster','ROSTER')"><div class="si c">👥</div><div><div class="sn">ROSTER</div><div class="sd">Athletes, profiles, assessment cards</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('team-stats','TEAM STATS')"><div class="si c">📊</div><div><div class="sn">TEAM STATS</div><div class="sd">Team-wide data and progress</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('team-report','TEAM REPORT')"><div class="si c">📈</div><div><div class="sn">TEAM REPORT</div><div class="sd">Battle positions breakdown</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('coach-assessment','MY ASSESSMENT')"><div class="si c">🎯</div><div><div class="sn">MY ASSESSMENT</div><div class="sd">Coach vs team comparison</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('weekly-schedule','WEEKLY SCHEDULE')"><div class="si c">📅</div><div><div class="sn">WEEKLY SCHEDULE</div><div class="sd">Multi-team schedule setup</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('season-generator','SEASON GENERATOR')"><div class="si c">🗓️</div><div><div class="sn">SEASON GENERATOR</div><div class="sd">Full season practice plan</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('content-library-coach','CONTENT LIBRARY')"><div class="si c">📚</div><div><div class="sn">CONTENT LIBRARY</div><div class="sd">Video library by battle position</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('coach-settings','SETTINGS')"><div class="si c">⚙️</div><div><div class="sn">SETTINGS</div><div class="sd">Preferences and account</div></div><div class="sa">→</div></div>
+</div>
+
+<div class="rs"><div class="rs-t">Practice Planning</div>
+<div class="sl" onclick="openScreen('practice-plan-battle','BATTLE PLAN')"><div class="si p">⚔️</div><div><div class="sn">BATTLE PLAN</div><div class="sd">Attacks, situations, match</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('practice-plan-technique','TECHNIQUE PLAN')"><div class="si p">🎯</div><div><div class="sn">TECHNIQUE PLAN</div><div class="sd">Skill teaching blocks</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('practice-plan-drill','DRILL PLAN')"><div class="si p">🔄</div><div><div class="sn">DRILL PLAN</div><div class="sd">Repetition drilling blocks</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('practice-plan-circuit','CIRCUIT PLAN')"><div class="si p">💪</div><div><div class="sn">CIRCUIT PLAN</div><div class="sd">Exercise circuit builder</div></div><div class="sa">→</div></div>
+</div>
+
+<div class="rs"><div class="rs-t">Coach Assessment Intake</div>
+<div class="sl" onclick="openScreen('battle-assessment-intake','BATTLE ASSESSMENT')"><div class="si g">⚔️</div><div><div class="sn">BATTLE ASSESSMENT</div><div class="sd">Coach rates team positions</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athletic-assessment-intake','ATHLETIC ASSESSMENT')"><div class="si g">🤸</div><div><div class="sn">ATHLETIC ASSESSMENT</div><div class="sd">Coach rates team movements</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('exercise-assessment-intake','EXERCISE ASSESSMENT')"><div class="si g">💪</div><div><div class="sn">EXERCISE ASSESSMENT</div><div class="sd">Coach rates team fitness</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('skill-assessment-intake','SKILL ASSESSMENT')"><div class="si g">📋</div><div><div class="sn">SKILL ASSESSMENT</div><div class="sd">Coach rates technique knowledge</div></div><div class="sa">→</div></div>
+</div>
+
+<div class="rs"><div class="rs-t">Athlete</div>
+<div class="sl" onclick="openScreen('athlete-onboarding','ATHLETE ONBOARDING')"><div class="si a">📋</div><div><div class="sn">ATHLETE ONBOARDING</div><div class="sd">Profile, team code, self-rating, attacks</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athlete-dashboard','ATHLETE DASHBOARD')"><div class="si a">🏠</div><div><div class="sn">ATHLETE DASHBOARD</div><div class="sd">Character card, XP, training, goals</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athlete-profile','ATHLETE PROFILE')"><div class="si a">👤</div><div><div class="sn">ATHLETE PROFILE</div><div class="sd">Stats, record, assessments, activity</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('content-library-athlete','CONTENT LIBRARY')"><div class="si a">📚</div><div><div class="sn">CONTENT LIBRARY</div><div class="sd">Battle-centric technique videos</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athlete-journal','JOURNAL')"><div class="si a">📓</div><div><div class="sn">JOURNAL</div><div class="sd">Pledges, mood, reflection, off-day content</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athlete-stats','MY STATS')"><div class="si a">📊</div><div><div class="sn">MY STATS</div><div class="sd">XP, badges, matches, training log</div></div><div class="sa">→</div></div>
+</div>
+
+<div class="rs"><div class="rs-t">Athlete Assessments</div>
+<div class="sl" onclick="openScreen('athlete-battle-assessment','BATTLE ASSESSMENT')"><div class="si g">⚔️</div><div><div class="sn">BATTLE ASSESSMENT</div><div class="sd">Self-rate every position</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athlete-athletic-assessment','ATHLETIC ASSESSMENT')"><div class="si g">🤸</div><div><div class="sn">ATHLETIC ASSESSMENT</div><div class="sd">14 movements, Physical Literacy Diploma</div></div><div class="sa">→</div></div>
+<div class="sl" onclick="openScreen('athlete-exercise-assessment','GOLD STANDARD CIRCUIT')"><div class="si g">💪</div><div><div class="sn">GOLD STANDARD CIRCUIT</div><div class="sd">Timed exercise circuit</div></div><div class="sa">→</div></div>
+</div>
+
+</div>
+<div class="footer"><div class="ft">BASE Wrestling · Demo · March 2026</div></div>
+</div>
+
+<!-- SCREEN VIEWER -->
+<div class="viewer" id="viewer">
+<div class="v-bar"><div class="v-back" onclick="closeScreen()">←</div><div class="v-title" id="vTitle"></div></div>
+<iframe class="v-frame" id="vFrame"></iframe>
+</div>
+
+<script>
+function openScreen(id,title){
+  document.getElementById('vTitle').textContent=title;
+  document.getElementById('vFrame').src=''+id+'.html';
+  document.getElementById('viewer').classList.add('open');
+}
+function closeScreen(){
+  document.getElementById('viewer').classList.remove('open');
+  document.getElementById('vFrame').src='';
+}
+</script>
+</body>
+</html>

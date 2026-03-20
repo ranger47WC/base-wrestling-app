@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Exercise Assessment (Athlete)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#ff4d4d;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk);z-index:10}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.main{flex:1;overflow-y:auto;padding:0 20px 120px}
+
+/* ── INTRO ── */
+.intro{padding:24px 0 16px;text-align:center}
+.intro-icon{font-size:44px;margin-bottom:12px}
+.intro-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--gd);margin-bottom:8px}
+.intro-desc{font-size:13px;color:var(--gr);line-height:1.5;max-width:340px;margin:0 auto}
+.video-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:16px 0;overflow:hidden}
+.video-thumb{height:160px;background:var(--bk);display:flex;align-items:center;justify-content:center}
+.video-play{width:50px;height:50px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--bk)}
+.video-label{padding:10px 14px;font-size:12px;color:var(--gr);font-weight:600}
+
+/* ── TIMER ── */
+.timer-card{background:var(--cd);border:2px solid var(--bd);border-radius:var(--rl);padding:24px;text-align:center;margin-bottom:20px}
+.timer-card.running{border-color:var(--gd)}
+.timer-card.stopped{border-color:var(--gn)}
+.timer-display{font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;color:var(--wh);margin-bottom:8px}
+.timer-card.running .timer-display{color:var(--gd)}
+.timer-card.stopped .timer-display{color:var(--gn)}
+.timer-label{font-size:12px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px}
+.timer-btns{display:flex;gap:10px;justify-content:center}
+.timer-btn{padding:12px 28px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;transition:all .2s}
+.timer-btn.start{background:var(--gd);color:var(--bk)}
+.timer-btn.stop{background:var(--rd);color:#fff}
+.timer-btn.reset{background:var(--cd);color:var(--gr);border:1px solid var(--bd)}
+
+/* ── CIRCUIT LIST ── */
+.sub-header{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:700;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sub-header::after{content:'';flex:1;height:1px;background:var(--bd)}
+.ex-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.ex-card:hover{border-color:var(--gdd)}
+.ex-card.done{border-color:var(--gn);background:rgba(39,174,96,.06)}
+.ex-num{width:28px;height:28px;border-radius:7px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gd);flex-shrink:0}
+.ex-card.done .ex-num{background:var(--gng);border-color:var(--gn);color:var(--gn)}
+.ex-info{flex:1}
+.ex-name{font-size:14px;color:var(--wh);font-weight:500}
+.ex-card.done .ex-name{color:var(--gn)}
+.ex-reps{font-size:11px;color:var(--grd);margin-top:1px}
+.ex-check{font-size:14px;color:transparent}
+.ex-card.done .ex-check{color:var(--gn)}
+.set-label{font-size:10px;color:var(--grd);text-align:center;padding:6px;text-transform:uppercase;letter-spacing:2px}
+
+/* ── RESULT QUESTION ── */
+.result-card{background:var(--cd);border:2px solid var(--gdd);border-radius:var(--rl);padding:20px;margin:20px 0;text-align:center}
+.rc-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gd);margin-bottom:8px}
+.rc-text{font-size:13px;color:var(--gr);margin-bottom:16px;line-height:1.4}
+.rc-btns{display:flex;gap:10px;justify-content:center}
+.rc-btn{padding:14px 32px;border-radius:var(--r);border:2px solid var(--bd);background:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--grd);cursor:pointer;transition:all .2s}
+.rc-btn.yes-sel{border-color:var(--gn);background:var(--gng);color:var(--gn)}
+.rc-btn.no-sel{border-color:var(--rd);background:var(--rdg);color:var(--rd)}
+
+/* ── BOTTOM ── */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px;background:linear-gradient(transparent,var(--dk) 20%);z-index:20}
+.btn-submit{width:100%;padding:14px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;text-align:center;transition:all .2s;background:var(--gd);color:var(--bk)}
+
+/* ── COMPLETE ── */
+.complete{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1;min-height:60vh}
+.complete.show{display:flex}
+.comp-icon{font-size:60px;margin-bottom:20px}
+.comp-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gd);margin-bottom:12px}
+.comp-sub{font-size:14px;color:var(--gr);line-height:1.5;max-width:300px;margin-bottom:16px}
+.comp-time{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:3px;color:var(--gn);margin-bottom:6px}
+.comp-time-label{font-size:12px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;margin-bottom:20px}
+.comp-xp{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gd);letter-spacing:2px;margin-bottom:28px}
+.comp-btn{padding:16px 40px;border-radius:var(--r);border:none;background:var(--gd);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+ <div class="hd-left">
+  <div class="hd-back" onclick="history.back()">←</div>
+  <div class="hd-info"><div>EXERCISE ASSESSMENT</div><div>Gold Standard Circuit</div></div>
+ </div>
+</div>
+
+<div class="main" id="mainView">
+ <div class="intro">
+  <div class="intro-icon">💪</div>
+  <div class="intro-title">GOLD STANDARD CIRCUIT</div>
+  <div class="intro-desc">Complete the full circuit with a partner. Start the timer when you begin, stop when you're done. Target time: under 15 minutes.</div>
+ </div>
+ <div class="video-card">
+  <div class="video-thumb"><div class="video-play">▶</div></div>
+  <div class="video-label">📹 Gold Standard Circuit — Full Walkthrough</div>
+ </div>
+
+ <!-- TIMER -->
+ <div class="timer-card" id="timerCard">
+  <div class="timer-display" id="timerDisplay">00:00</div>
+  <div class="timer-label">Circuit Timer</div>
+  <div class="timer-btns">
+   <div class="timer-btn start" id="startBtn" onclick="startTimer()">START</div>
+   <div class="timer-btn stop" id="stopBtn" onclick="stopTimer()" style="display:none">STOP</div>
+   <div class="timer-btn reset" onclick="resetTimer()">RESET</div>
+  </div>
+ </div>
+
+ <!-- BRIDGE WORK -->
+ <div class="sub-header">Bridge Work (1 Set)</div>
+ <div class="ex-card" onclick="toggleEx(this)">
+  <div class="ex-num">1</div>
+  <div class="ex-info"><div class="ex-name">Bridge Kicks</div><div class="ex-reps">10 reps</div></div>
+  <div class="ex-check">✓</div>
+ </div>
+ <div class="ex-card" onclick="toggleEx(this)">
+  <div class="ex-num">2</div>
+  <div class="ex-info"><div class="ex-name">Bridge Circles Right</div><div class="ex-reps">10 reps</div></div>
+  <div class="ex-check">✓</div>
+ </div>
+ <div class="ex-card" onclick="toggleEx(this)">
+  <div class="ex-num">3</div>
+  <div class="ex-info"><div class="ex-name">Bridge Circles Left</div><div class="ex-reps">10 reps</div></div>
+  <div class="ex-check">✓</div>
+ </div>
+
+ <!-- STRENGTH CIRCUIT -->
+ <div class="sub-header">Strength Circuit (3 Sets)</div>
+ <div class="set-label">— SET 1 —</div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">4</div><div class="ex-info"><div class="ex-name">Push-ups</div><div class="ex-reps">25 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">5</div><div class="ex-info"><div class="ex-name">Pull-ups</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">6</div><div class="ex-info"><div class="ex-name">Partner Good Mornings</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">7</div><div class="ex-info"><div class="ex-name">Hanging V-ups</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">8</div><div class="ex-info"><div class="ex-name">Partner Squats</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+
+ <div class="set-label">— SET 2 —</div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">9</div><div class="ex-info"><div class="ex-name">Push-ups</div><div class="ex-reps">25 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">10</div><div class="ex-info"><div class="ex-name">Pull-ups</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">11</div><div class="ex-info"><div class="ex-name">Partner Good Mornings</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">12</div><div class="ex-info"><div class="ex-name">Hanging V-ups</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">13</div><div class="ex-info"><div class="ex-name">Partner Squats</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+
+ <div class="set-label">— SET 3 —</div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">14</div><div class="ex-info"><div class="ex-name">Push-ups</div><div class="ex-reps">25 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">15</div><div class="ex-info"><div class="ex-name">Pull-ups</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">16</div><div class="ex-info"><div class="ex-name">Partner Good Mornings</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">17</div><div class="ex-info"><div class="ex-name">Hanging V-ups</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+ <div class="ex-card" onclick="toggleEx(this)"><div class="ex-num">18</div><div class="ex-info"><div class="ex-name">Partner Squats</div><div class="ex-reps">10 reps</div></div><div class="ex-check">✓</div></div>
+
+ <!-- COMPLETION QUESTION -->
+ <div class="result-card">
+  <div class="rc-title">DID YOU COMPLETE THE FULL CIRCUIT?</div>
+  <div class="rc-text">All 3 sets of the bridge work + strength circuit with a partner</div>
+  <div class="rc-btns">
+   <div class="rc-btn" id="rcYes" onclick="selectResult(true)">YES</div>
+   <div class="rc-btn" id="rcNo" onclick="selectResult(false)">NO</div>
+  </div>
+ </div>
+</div>
+
+<div class="complete" id="completeView">
+ <div class="comp-icon">💪</div>
+ <div class="comp-title">CIRCUIT COMPLETE</div>
+ <div class="comp-sub">Your time has been recorded. Beat it next time!</div>
+ <div class="comp-time" id="finalTime">14:30</div>
+ <div class="comp-time-label">Your Circuit Time</div>
+ <div class="comp-xp" id="finalXp">+150 XP EARNED</div>
+ <div class="comp-btn" onclick="alert('→ Back to Dashboard')">GO TO DASHBOARD</div>
+</div>
+
+<div class="bottom-nav" id="bottomNav">
+ <div class="btn-submit" onclick="submitCircuit()">SUBMIT RESULTS</div>
+</div>
+</div>
+
+<script>
+var timerInterval=null;
+var seconds=0;
+var running=false;
+var completed=null;
+
+function startTimer(){
+ if(running)return;
+ running=true;
+ document.getElementById('timerCard').classList.add('running');
+ document.getElementById('timerCard').classList.remove('stopped');
+ document.getElementById('startBtn').style.display='none';
+ document.getElementById('stopBtn').style.display='inline-block';
+ timerInterval=setInterval(function(){
+  seconds++;
+  updateTimerDisplay();
+ },1000);
+}
+
+function stopTimer(){
+ if(!running)return;
+ running=false;
+ clearInterval(timerInterval);
+ document.getElementById('timerCard').classList.remove('running');
+ document.getElementById('timerCard').classList.add('stopped');
+ document.getElementById('startBtn').style.display='inline-block';
+ document.getElementById('stopBtn').style.display='none';
+ document.getElementById('startBtn').textContent='RESUME';
+}
+
+function resetTimer(){
+ running=false;
+ clearInterval(timerInterval);
+ seconds=0;
+ updateTimerDisplay();
+ document.getElementById('timerCard').classList.remove('running','stopped');
+ document.getElementById('startBtn').style.display='inline-block';
+ document.getElementById('stopBtn').style.display='none';
+ document.getElementById('startBtn').textContent='START';
+}
+
+function updateTimerDisplay(){
+ var m=Math.floor(seconds/60);
+ var s=seconds%60;
+ document.getElementById('timerDisplay').textContent=
+  (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+}
+
+function toggleEx(el){el.classList.toggle('done');}
+
+function selectResult(val){
+ completed=val;
+ document.getElementById('rcYes').className='rc-btn'+(val?' yes-sel':'');
+ document.getElementById('rcNo').className='rc-btn'+(!val?' no-sel':'');
+}
+
+function submitCircuit(){
+ if(completed===null){alert('Please answer whether you completed the full circuit.');return;}
+ var m=Math.floor(seconds/60);
+ var s=seconds%60;
+ var timeStr=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+ document.getElementById('finalTime').textContent=seconds>0?timeStr:'—';
+ 
+ var xp=completed?150:75;
+ if(seconds>0&&seconds<600)xp+=200; // bonus for under 10 min
+ else if(seconds>0&&seconds<720)xp+=100; // bonus for under 12 min
+ document.getElementById('finalXp').textContent='+'+xp+' XP EARNED';
+ 
+ document.getElementById('mainView').style.display='none';
+ document.getElementById('completeView').classList.add('show');
+ document.getElementById('bottomNav').style.display='none';
+}
+</script>
+</body>
+</html>

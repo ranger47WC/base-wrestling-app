@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Weekly Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px;--low:rgba(59,130,246,.15);--lowC:#3b82f6;--med:rgba(200,168,78,.15);--medC:#c8a84e;--hi:rgba(200,16,46,.15);--hiC:#c8102e;--deload:rgba(39,174,96,.15);--deloadC:#27ae60}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}.hd-left{display:flex;align-items:center;gap:12px}.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;color:var(--gr);font-size:18px}.hd-back:hover{border-color:var(--gd);color:var(--gd)}.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.team-bar{display:flex;gap:0;padding:0 20px;border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto;scrollbar-width:none}.team-bar::-webkit-scrollbar{display:none}.team-tab{padding:10px 14px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--gr);cursor:pointer;transition:all .2s;white-space:nowrap;border-bottom:2px solid transparent;flex-shrink:0}.team-tab:hover{color:var(--lt)}.team-tab.active{color:var(--gd);border-bottom-color:var(--gd)}.team-tab .t-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px}.t-dot.done{background:var(--gn)}.t-dot.todo{background:var(--rd)}
+.setup-mode{flex:1;display:flex;flex-direction:column;overflow:hidden}.setup-mode.off{display:none}.landing-mode{flex:1;flex-direction:column;overflow-y:auto}.setup-hero{padding:24px 20px 16px;text-align:center}.setup-icon{font-size:36px;margin-bottom:8px}.setup-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--gd);margin-bottom:4px}.setup-desc{font-size:12px;color:var(--gr);line-height:1.5;max-width:320px;margin:0 auto}
+.setup-dates{padding:0 20px 12px}.setup-dates-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:14px}.sd-row{display:flex;gap:10px;margin-bottom:10px}.sd-row:last-child{margin-bottom:0}.sd-field{flex:1}.sd-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:var(--gr);margin-bottom:4px}.sd-input{width:100%;padding:10px 12px;background:var(--bk);border:1px solid var(--bd);border-radius:8px;color:var(--wh);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s}.sd-input:focus{border-color:var(--gd)}
+.setup-add{padding:0 20px 10px}.btn-add-hero{width:100%;padding:14px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}.btn-add-hero:hover{box-shadow:0 6px 24px rgba(200,168,78,.3);transform:translateY(-1px)}
+.setup-list-label{padding:6px 20px 4px;display:flex;align-items:center;justify-content:space-between}.sll-left{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;display:flex;align-items:center;gap:8px}.sll-left::after{content:'';width:30px;height:1px;background:var(--bd)}.sll-right{font-size:10px;color:var(--gr);font-weight:600}.setup-list{flex:1;overflow-y:auto;padding:4px 20px 90px}
+.setup-footer{padding:12px 20px 28px;border-top:1px solid var(--bd);flex-shrink:0;background:var(--dk)}.btn-build{width:100%;padding:14px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}.btn-build:hover{box-shadow:0 6px 24px rgba(200,168,78,.3)}.btn-build:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}.build-hint{text-align:center;font-size:10px;color:var(--gr);margin-top:5px}
+.setup-empty{text-align:center;padding:30px 20px;color:var(--gr)}.setup-empty-icon{font-size:28px;margin-bottom:6px;opacity:.5}.setup-empty-text{font-size:12px;line-height:1.5}
+.active-mode{flex:1;display:none;flex-direction:column;overflow:hidden}.active-mode.on{display:flex}
+.phase-bar{padding:8px 20px 4px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}.phase-left{display:flex;align-items:center;gap:8px}.phase-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:16px;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1.5px}.phase-dot{width:7px;height:7px;border-radius:50%}.phase-countdown{font-size:10px;color:var(--gr);font-weight:500}
+.legend{padding:3px 20px 2px;display:flex;gap:10px;flex-shrink:0}.legend-item{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--gr);font-weight:500}.legend-dot{width:6px;height:6px;border-radius:50%}
+.week-nav{display:flex;align-items:center;justify-content:space-between;padding:6px 20px 4px;flex-shrink:0}.week-nav-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh)}.week-nav-btns{display:flex;gap:5px}.wn-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--gr);font-size:13px}.wn-btn:hover{border-color:var(--gd);color:var(--gd)}.wn-btn.today-btn{font-size:9px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;width:auto;padding:0 8px;color:var(--gd);border-color:var(--gdd)}
+.week-card{margin:4px 20px 0;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}.week-card.phase-low{border-color:rgba(59,130,246,.15)}.week-card.phase-med{border-color:rgba(200,168,78,.15)}.week-card.phase-hi{border-color:rgba(200,16,46,.15)}.week-card.phase-deload{border-color:rgba(39,174,96,.15)}
+.week-days{display:flex}.wd{flex:1;text-align:center;padding:9px 2px;cursor:pointer;transition:all .15s;position:relative;border-right:1px solid var(--bd)}.wd:last-child{border-right:none}.wd:hover{background:rgba(255,255,255,.03)}.wd .wd-name{font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:1px;color:var(--gr);margin-bottom:1px}.wd .wd-num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--lt);margin-bottom:2px}.wd .wd-type{font-family:'Bebas Neue',sans-serif;font-size:8px;letter-spacing:1px;padding:2px 4px;border-radius:3px;display:inline-block}.wd .wd-type.train{background:rgba(200,168,78,.15);color:var(--gd)}.wd .wd-type.cross{background:rgba(59,130,246,.15);color:var(--blu)}.wd .wd-type.comp{background:rgba(200,16,46,.15);color:var(--rd)}.wd .wd-type.off{background:rgba(85,85,85,.1);color:var(--gr)}.wd.today{background:rgba(200,168,78,.06)}.wd.today .wd-num{color:var(--gd)}.wd.today::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--gd);border-radius:1px}.wd.selected{background:rgba(200,168,78,.1)}
+.day-detail{padding:10px 14px;border-top:1px solid var(--bd)}.dd-title{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--wh);margin-bottom:5px}.dd-items{display:flex;flex-direction:column;gap:5px}.dd-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bk);border:1px solid var(--bd);border-radius:8px}.dd-icon{font-size:13px;flex-shrink:0}.dd-text{flex:1}.dd-text .dd-main{font-weight:600;color:var(--wh);font-size:11px}.dd-text .dd-sub{color:var(--gr);font-size:10px;margin-top:1px}.dd-edit{color:var(--gdd);font-size:9px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;padding:3px 7px;border:1px solid var(--bd);border-radius:6px;cursor:pointer;transition:all .2s;flex-shrink:0}.dd-edit:hover{border-color:var(--gd);color:var(--gd)}.dd-comp{border-color:rgba(200,16,46,.15);background:rgba(200,16,46,.03)}
+.sec-label{padding:12px 20px 5px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}.sl-left{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;display:flex;align-items:center;gap:8px}.sl-left::after{content:'';width:30px;height:1px;background:var(--bd)}.sl-right{font-size:10px;color:var(--gr);font-weight:600}
+.events-scroll{flex:1;overflow-y:auto;padding:0 20px 10px}
+.ev-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}.ev-row:last-child{border-bottom:none}.ev-date-box{min-width:40px;text-align:center;flex-shrink:0}.ev-month{font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:1.5px;color:var(--gr)}.ev-day{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--wh);line-height:1}.ev-info{flex:1;min-width:0}.ev-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--wh);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ev-detail{font-size:10px;color:var(--gr);margin-top:1px}.ev-right{display:flex;align-items:center;gap:5px;flex-shrink:0}.ev-peak{font-family:'Bebas Neue',sans-serif;font-size:8px;letter-spacing:1px;padding:2px 5px;border-radius:3px;background:rgba(200,168,78,.2);color:var(--gd)}.ev-team-badge{font-family:'Bebas Neue',sans-serif;font-size:8px;letter-spacing:1px;padding:2px 5px;border-radius:3px;background:rgba(59,130,246,.12);color:var(--blu)}.ev-phase-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}.ev-del{width:28px;height:28px;border-radius:7px;background:rgba(200,16,46,.1);border:1px solid rgba(200,16,46,.25);color:var(--rd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .2s;flex-shrink:0;font-weight:700}.ev-del:hover{background:rgba(200,16,46,.25);border-color:var(--rd)}.ev-weeks{font-size:10px;color:var(--gr);font-weight:500;white-space:nowrap}.ev-arrow{color:var(--gr);font-size:14px;flex-shrink:0}.ev-row.tappable{cursor:pointer;transition:padding .15s}.ev-row.tappable:hover{padding-left:4px}.ev-row.tappable:hover .ev-arrow{color:var(--gd)}.ev-row.past{opacity:.35}
+.add-bottom{padding:8px 20px 28px;flex-shrink:0}.btn-add-sm{width:100%;padding:12px 16px;background:var(--cd);border:1px solid var(--gdd);border-radius:var(--r);color:var(--gd);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}.btn-add-sm:hover{background:var(--gdg);border-color:var(--gd)}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:90;opacity:0;pointer-events:none;transition:opacity .3s}.modal-overlay.open{opacity:1;pointer-events:all}.modal{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:var(--dk);border-top:1px solid var(--bd);border-radius:20px 20px 0 0;z-index:100;transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:80vh;display:flex;flex-direction:column}.modal.open{transform:translateX(-50%) translateY(0)}.modal-handle{width:40px;height:4px;background:var(--bd);border-radius:2px;margin:10px auto 0}.modal-hd{padding:12px 20px 8px;display:flex;align-items:center;justify-content:space-between}.modal-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gd)}.modal-close{width:28px;height:28px;border-radius:7px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gr);font-size:13px;transition:all .2s}.modal-close:hover{border-color:var(--gd);color:var(--gd)}.modal-body{flex:1;overflow-y:auto;padding:0 20px 24px}
+.field{margin-bottom:10px}.field-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:var(--gr);margin-bottom:3px}.field-input{width:100%;padding:10px 12px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s}.field-input:focus{border-color:var(--gd)}.field-input::placeholder{color:var(--ph)}select.field-input{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}select.field-input option{background:var(--cd);color:var(--wh)}.field-row{display:flex;gap:8px}.field-row .field{flex:1}.date-toggle{display:flex;gap:6px;margin-bottom:8px}.dt-btn{flex:1;padding:8px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;cursor:pointer;text-align:center;background:var(--cd);border:1px solid var(--bd);color:var(--gr);transition:all .2s}.dt-btn.active{background:var(--gdg);border-color:var(--gdd);color:var(--gd)}.btn-submit{width:100%;padding:13px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;margin-top:4px}.btn-submit:hover{box-shadow:0 6px 24px rgba(200,168,78,.3)}
+.confirm-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:110;display:none;align-items:center;justify-content:center}.confirm-overlay.open{display:flex}.confirm-box{background:var(--dk);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;max-width:300px;width:90%;text-align:center}.confirm-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh);margin-bottom:5px}.confirm-desc{font-size:11px;color:var(--gr);margin-bottom:14px;line-height:1.4}.confirm-btns{display:flex;gap:8px}.confirm-btn{flex:1;padding:11px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;border:none;transition:all .2s}.confirm-cancel{background:var(--cd);border:1px solid var(--bd);color:var(--gr)}.confirm-cancel:hover{border-color:var(--gdd);color:var(--wh)}.confirm-delete{background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.3);color:var(--rd)}.confirm-delete:hover{background:rgba(200,16,46,.25)}
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.landing-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px}.landing-card:hover{border-color:var(--gdd);transform:translateY(-1px)}.landing-card.done{border-color:rgba(39,174,96,.2)}.lc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.lc-icon.todo{background:rgba(200,168,78,.12);border:1px solid var(--gdd)}.lc-icon.done{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3)}.lc-info{flex:1}.lc-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)}.lc-status{font-size:11px;margin-top:2px}.lc-status.todo{color:var(--gd)}.lc-status.done{color:var(--gn)}.lc-arrow{color:var(--gr);font-size:18px}.landing-card:hover .lc-arrow{color:var(--gd)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="hd"><div class="hd-left"><div class="hd-back" onclick="toast('← Back to Dashboard')">‹</div><div class="hd-info"><div>WEEKLY SCHEDULE</div><div id="hd-sub">Season Planner</div></div></div></div>
+  <div class="team-bar" id="team-bar"></div>
+  <!-- LANDING (shows when not all teams finalized) -->
+  <div class="landing-mode" id="landing-mode" style="display:none">
+    <div class="setup-hero"><div class="setup-icon">📅</div><div class="setup-title">SET UP YOUR SEASON</div><div class="setup-desc">Before you see your weekly schedule, set up each team's season. Tap a team to add their dates and competitions.</div></div>
+    <div id="landing-cards" style="padding:0 20px"></div>
+  </div>
+  <!-- SETUP -->
+  <div class="setup-mode" id="setup-mode">
+    <div class="setup-hero"><div class="setup-icon">📅</div><div class="setup-title" id="setup-title">ADD YOUR SEASON SCHEDULE</div><div class="setup-desc">Enter your three key dates and all competitions. We'll auto-build your training phases.</div></div>
+    <div class="setup-dates"><div class="setup-dates-card">
+      <div class="sd-row"><div class="sd-field"><div class="sd-label">FIRST DAY OF PRACTICE</div><input type="date" class="sd-input" id="setup-start"></div></div>
+      <div class="sd-row"><div class="sd-field"><div class="sd-label">FIRST DAY OF COMPETITION</div><input type="date" class="sd-input" id="setup-comp-start"></div></div>
+      <div class="sd-row" style="margin-bottom:0"><div class="sd-field"><div class="sd-label">LAST DAY OF STATE TOURNAMENT</div><input type="date" class="sd-input" id="setup-state"></div></div>
+    </div></div>
+    <div class="setup-add"><button class="btn-add-hero" onclick="openAddComp()">+ ADD COMPETITION</button></div>
+    <div class="setup-list-label"><div class="sll-left">Season Events</div><div class="sll-right" id="setup-count">0 events</div></div>
+    <div class="setup-list" id="setup-list"></div>
+    <div class="setup-footer"><button class="btn-build" id="btn-build" onclick="finalizeSeason()" disabled>FINALIZE SEASON</button><div class="build-hint" id="build-hint">Fill in all three dates to continue</div></div>
+  </div>
+  <!-- ACTIVE -->
+  <div class="active-mode" id="active-mode">
+    <div class="phase-bar" id="phase-bar"></div>
+    <div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--lowC)"></div>Low</div><div class="legend-item"><div class="legend-dot" style="background:var(--medC)"></div>Med</div><div class="legend-item"><div class="legend-dot" style="background:var(--hiC)"></div>High</div><div class="legend-item"><div class="legend-dot" style="background:var(--deloadC)"></div>Deload</div></div>
+    <div class="week-nav"><div class="week-nav-title" id="week-title">THIS WEEK</div><div class="week-nav-btns"><div class="wn-btn today-btn" onclick="goThisWeek()">TODAY</div><div class="wn-btn" onclick="prevWeek()">‹</div><div class="wn-btn" onclick="nextWeek()">›</div></div></div>
+    <div id="week-container"></div>
+    <div class="sec-label"><div class="sl-left" id="events-label">Season Schedule</div><div class="sl-right" id="active-count"></div></div>
+    <div class="events-scroll" id="events-list"></div>
+    <div class="add-bottom"><div class="btn-add-sm" onclick="openAddComp()">+ ADD COMPETITION</div></div>
+  </div>
+</div>
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeAddComp()"></div>
+<div class="modal" id="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-hd"><div class="modal-title">ADD COMPETITION</div><div class="modal-close" onclick="closeAddComp()">✕</div></div>
+  <div class="modal-body">
+    <div class="field"><div class="field-label">EVENT NAME</div><input class="field-input" id="comp-name" placeholder="e.g. District Duals, Regional Tournament"></div>
+    <div class="date-toggle"><div class="dt-btn active" id="dt-single" onclick="setDateMode('single')">SINGLE DAY</div><div class="dt-btn" id="dt-multi" onclick="setDateMode('multi')">MULTI-DAY</div></div>
+    <div class="field-row"><div class="field"><div class="field-label">DATE</div><input type="date" class="field-input" id="comp-date"></div><div class="field" id="end-date-field" style="display:none"><div class="field-label">END DATE</div><input type="date" class="field-input" id="comp-end-date"></div></div>
+    <div class="field-row"><div class="field"><div class="field-label">LEVEL</div><select class="field-input" id="comp-level"><option value="all">All Teams</option><option value="varsity">Varsity</option><option value="jv">JV</option><option value="freshman">Freshman</option></select></div><div class="field"><div class="field-label">TYPE</div><select class="field-input" id="comp-type"><option value="dual">Dual Meet</option><option value="tournament">Tournament</option><option value="conference">Conference</option><option value="regional">Regional</option><option value="state">State Tournament</option></select></div></div>
+    <div class="field"><div class="field-label">LOCATION (OPTIONAL)</div><input class="field-input" id="comp-location" placeholder="e.g. Allen High School"></div>
+    <button class="btn-submit" onclick="submitComp()">ADD TO SCHEDULE</button>
+  </div>
+</div>
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirm-overlay"><div class="confirm-box"><div class="confirm-title">REMOVE EVENT?</div><div class="confirm-desc" id="confirm-desc"></div><div class="confirm-btns"><button class="confirm-btn confirm-cancel" onclick="cancelDelete()">KEEP</button><button class="confirm-btn confirm-delete" onclick="confirmDelete()">REMOVE</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+var M=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'],MF=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'],DN=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+var today=new Date(2026,1,25),dateMode='single',selDay=-1,delTarget=-1,delTeam='',viewWk=monOf(today);
+var teams=[{key:'boys',name:'HS Boys',short:'BOYS'},{key:'girls',name:'HS Girls',short:'GIRLS'}];
+var TS={boys:{fin:false,start:null,compStart:null,state:null,comps:[]},girls:{fin:false,start:null,compStart:null,state:null,comps:[]}};
+var aTeam='boys',allMode=false,editingTeam=false;
+function monOf(d){var dy=d.getDay(),df=d.getDate()-dy+(dy===0?-6:1);return new Date(d.getFullYear(),d.getMonth(),df);}
+function same(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function sameWk(a,b){return same(monOf(a),monOf(b));}
+function df(d){return M[d.getMonth()]+' '+d.getDate();}
+function dfl(d){return MF[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
+function fd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function S(){return TS[aTeam];}
+function tl(t){return t==='dual'?'Dual':t==='tournament'?'Tournament':t==='conference'?'Conference':t==='regional'?'Regional':'State';}
+var pC={low:'var(--lowC)',med:'var(--medC)',hi:'var(--hiC)',deload:'var(--deloadC)',comp:'var(--hiC)'};
+var pB={low:'var(--low)',med:'var(--med)',hi:'var(--hi)',deload:'var(--deload)',comp:'var(--hi)'};
+var tpL={train:'T',cross:'C',comp:'M',off:'OFF'},tpN={train:'TRAINING DAY',cross:'CROSS-TRAINING',comp:'COMPETITION DAY',off:'OFF DAY'};
+function phase(ws,sd){
+  if(!sd)return{p:'low',l:'LOW INTENSITY — TRAINING',c:'low'};
+  var sw=monOf(sd),w=Math.round((sw-ws)/(7*864e5));
+  if(w<0){var x=Math.abs(w)%11;if(x>=1&&x<=3)return{p:'low',l:'LOW INTENSITY — TRAINING',c:'low'};if(x===4)return{p:'deload',l:'LOW INTENSITY — DELOAD',c:'deload'};if(x>=5&&x<=7)return{p:'med',l:'MED INTENSITY — TRAINING',c:'med'};if(x===8)return{p:'deload',l:'MED INTENSITY — DELOAD',c:'deload'};return{p:'hi',l:'HIGH INTENSITY',c:'hi'};}
+  if(w===0)return{p:'comp',l:'STATE TOURNAMENT',c:'hi'};if(w<=2)return{p:'hi',l:'HIGH INTENSITY',c:'hi'};if(w===3)return{p:'deload',l:'MED INTENSITY — DELOAD',c:'deload'};if(w<=6)return{p:'med',l:'MED INTENSITY — TRAINING',c:'med'};if(w===7)return{p:'deload',l:'LOW INTENSITY — DELOAD',c:'deload'};return{p:'low',l:'LOW INTENSITY — TRAINING',c:'low'};
+}
+function dayType(d,comps){for(var i=0;i<comps.length;i++){var c=comps[i],e=c.end||c.date;var x=new Date(c.date);while(x<=e){if(same(x,d))return'comp';x.setDate(x.getDate()+1);}}if(d.getDay()===0)return'off';if(d.getDay()===6)return'cross';return'train';}
+function compOn(d,comps){for(var i=0;i<comps.length;i++){var c=comps[i],e=c.end||c.date;var x=new Date(c.date);while(x<=e){if(same(x,d))return c;x.setDate(x.getDate()+1);}}return null;}
+function prac(d,dt,sd){if(dt==='off'||dt==='comp')return null;var ph=phase(monOf(d),sd),int=ph.p==='hi'?'High':ph.p==='med'?'Medium':'Low';if(dt==='cross')return{t:'Cross-Training',d:int+' intensity conditioning',dur:'60 min',i:'🏃'};var f=['Upper Body Battles','Head Inside Single','Head Outside Single','Failed Attacks / Front Headlock','Top & Bottom'];return{t:'Wrestling Practice',d:f[(d.getDay()-1+5)%5],dur:'90 min',int:int,i:'🤼'};}
+function allComps(){var a=[];teams.forEach(function(t){var s=TS[t.key];if(!s.fin)return;s.comps.forEach(function(c){var cp={};for(var k in c)cp[k]=c[k];cp._tk=t.key;cp._tn=t.name;a.push(cp);});});a.sort(function(a,b){return a.date-b.date;});return a;}
+// TEAM BAR
+function renderTB(){var h='';teams.forEach(function(t){var s=TS[t.key];h+='<div class="team-tab'+(aTeam===t.key&&!allMode?' active':'')+'" onclick="switchTeam(\''+t.key+'\')"><span class="t-dot '+(s.fin?'done':'todo')+'"></span>'+t.short+'</div>';});if(teams.some(function(t){return TS[t.key].fin;}))h+='<div class="team-tab'+(allMode?' active':'')+'" onclick="switchAll()">ALL TEAMS</div>';document.getElementById('team-bar').innerHTML=h;}
+function switchTeam(k){allMode=false;editingTeam=true;aTeam=k;selDay=-1;viewWk=monOf(today);renderTB();renderView();}
+function switchAll(){allMode=true;var f=teams.find(function(t){return TS[t.key].fin;});if(f)aTeam=f.key;selDay=-1;renderTB();renderView();}
+function renderLanding(){
+  var h='';
+  teams.forEach(function(t){
+    var s=TS[t.key],isDone=s.fin;
+    h+='<div class="landing-card'+(isDone?' done':'')+'" onclick="switchTeam(\''+t.key+'\')">';
+    h+='<div class="lc-icon '+(isDone?'done':'todo')+'">'+(isDone?'✓':'📅')+'</div>';
+    h+='<div class="lc-info"><div class="lc-name">'+t.name.toUpperCase()+'</div>';
+    h+='<div class="lc-status '+(isDone?'done':'todo')+'">'+(isDone?'✓ Season finalized — '+s.comps.length+' events':'Tap to set up season schedule')+'</div></div>';
+    h+='<div class="lc-arrow">›</div></div>';
+  });
+  $('landing-cards').innerHTML=h;
+}
+function renderView(){
+  var allFin=teams.every(function(t){return TS[t.key].fin;});
+  var s=S();
+
+  // Landing: show when not all teams done AND coach hasn't tapped a specific team to edit
+  if(!allFin&&!editingTeam&&!allMode){
+    $('landing-mode').style.display='flex';
+    $('setup-mode').classList.add('off');
+    $('active-mode').classList.remove('on');
+    $('team-bar').style.display='none';
+    $('hd-sub').textContent='Season Setup';
+    renderLanding();
+    return;
+  }
+
+  $('team-bar').style.display='flex';
+  $('landing-mode').style.display='none';
+
+  if(s.fin||allMode){
+    $('setup-mode').classList.add('off');
+    $('active-mode').classList.add('on');
+    $('hd-sub').textContent=allMode?'All Teams':'Season Planner';
+    renderActive();
+  }else{
+    $('setup-mode').classList.remove('off');
+    $('active-mode').classList.remove('on');
+    var t=teams.find(function(x){return x.key===aTeam;});
+    $('setup-title').textContent=t.name.toUpperCase()+' — SEASON SCHEDULE';
+    $('hd-sub').textContent=t.name+' Setup';
+    $('setup-start').value=s.start?fd(s.start):'';
+    $('setup-comp-start').value=s.compStart?fd(s.compStart):'';
+    $('setup-state').value=s.state?fd(s.state):'';
+    renderSetup();
+  }
+}
+function $(id){return document.getElementById(id);}
+// SETUP
+function renderSetup(){var s=S(),comps=s.comps.slice().sort(function(a,b){return a.date-b.date;});$('setup-count').textContent=comps.length+' event'+(comps.length!==1?'s':'');
+  if(!comps.length){$('setup-list').innerHTML='<div class="setup-empty"><div class="setup-empty-icon">📋</div><div class="setup-empty-text">No competitions yet.<br>Add your dual meets, tournaments,<br>and state tournament.</div></div>';}
+  else{var h='';comps.forEach(function(c,i){var pk=c.type==='state';h+='<div class="ev-row"><div class="ev-date-box"><div class="ev-month">'+M[c.date.getMonth()]+'</div><div class="ev-day">'+c.date.getDate()+'</div></div><div class="ev-info"><div class="ev-name">'+c.name.toUpperCase()+'</div><div class="ev-detail">'+df(c.date)+(c.end?' — '+df(c.end):'')+' · '+tl(c.type)+' · '+c.level.charAt(0).toUpperCase()+c.level.slice(1)+(c.loc?' · '+c.loc:'')+'</div></div><div class="ev-right">'+(pk?'<div class="ev-peak">⭐ PEAK</div>':'')+'<div class="ev-del" onclick="askDel('+i+',\''+aTeam+'\')">✕</div></div></div>';});$('setup-list').innerHTML=h;}
+  var ok=!!$('setup-start').value&&!!$('setup-comp-start').value&&!!$('setup-state').value;$('btn-build').disabled=!ok;$('build-hint').textContent=ok?comps.length+' events — ready to finalize':'Fill in all three dates to continue';}
+// ACTIVE
+function renderActive(){renderWeek();renderEvents();}
+function renderWeek(){var s=S();if(!s||!s.state)return;var ws=viewWk,we=new Date(ws);we.setDate(we.getDate()+6);var ph=phase(ws,s.state),isTh=sameWk(ws,today);
+  $('week-title').textContent=(isTh?'THIS WEEK · ':'')+df(ws)+' — '+df(we);
+  var dw=Math.round((s.state-ws)/(7*864e5)),cd=dw>0?dw+' wk to State':dw===0?'State week':Math.abs(dw)+' wk post-State';
+  $('phase-bar').innerHTML='<div class="phase-left"><div class="phase-pill" style="background:'+pB[ph.c]+';color:'+pC[ph.c]+'"><div class="phase-dot" style="background:'+pC[ph.c]+'"></div>'+ph.l+'</div></div><div class="phase-countdown">'+cd+'</div>';
+  var comps=allMode?allComps():s.comps,h='<div class="week-card phase-'+ph.c+'"><div class="week-days">';
+  var d=new Date(ws);for(var i=0;i<7;i++){var dt=dayType(d,comps),cl='wd';if(same(d,today))cl+=' today';if(selDay===i)cl+=' selected';h+='<div class="'+cl+'" onclick="selD('+i+')"><div class="wd-name">'+DN[d.getDay()]+'</div><div class="wd-num">'+d.getDate()+'</div><div class="wd-type '+dt+'">'+tpL[dt]+'</div></div>';d.setDate(d.getDate()+1);}h+='</div>';
+  if(selDay>=0){var sd=new Date(ws);sd.setDate(sd.getDate()+selDay);var st=dayType(sd,comps),cp=compOn(sd,comps),pr=prac(sd,st,s.state);h+='<div class="day-detail"><div class="dd-title">'+DN[sd.getDay()]+', '+dfl(sd).toUpperCase()+' — '+tpN[st]+'</div><div class="dd-items">';
+    if(cp)h+='<div class="dd-item dd-comp"><div class="dd-icon">'+(cp.type==='state'?'🏆':'🤼')+'</div><div class="dd-text"><div class="dd-main">'+cp.name.toUpperCase()+'</div><div class="dd-sub">'+cp.level.charAt(0).toUpperCase()+cp.level.slice(1)+(cp.loc?' · '+cp.loc:'')+(cp._tn?' · '+cp._tn:'')+'</div></div></div>';
+    if(pr)h+='<div class="dd-item"><div class="dd-icon">'+pr.i+'</div><div class="dd-text"><div class="dd-main">'+pr.t.toUpperCase()+'</div><div class="dd-sub">'+pr.d+(pr.int?' · '+pr.int+' intensity':'')+(pr.dur?' · '+pr.dur:'')+'</div></div><div class="dd-edit" onclick="toast(\'Opening practice editor...\')">EDIT</div></div>';
+    if(!cp&&!pr)h+='<div class="dd-item"><div class="dd-icon">😴</div><div class="dd-text"><div class="dd-main">REST DAY</div><div class="dd-sub">Recovery and preparation</div></div></div>';
+    h+='</div></div>';}h+='</div>';$('week-container').innerHTML=h;}
+function renderEvents(){var isA=allMode,s=S(),rawComps=isA?allComps():s.comps,sorted=rawComps.slice().sort(function(a,b){return a.date-b.date;}),up=[],past=[];
+  sorted.forEach(function(c,i){if((c.end||c.date)<today)past.push({c:c,i:i});else up.push({c:c,i:i});});
+  var t=teams.find(function(x){return x.key===aTeam;});$('events-label').textContent=isA?'All Teams Schedule':t.short+' Season Schedule';$('active-count').textContent=up.length+' upcoming';
+  var h='';up.forEach(function(item){var c=item.c,pk=c.type==='state',ph=phase(monOf(c.date),s.state),wk=Math.round((c.date-today)/(7*864e5)),wl=wk===0?'This wk':wk===1?'Next wk':wk>1?'In '+wk+' wk':'';
+    // Find real index in the team's comps array by name+date match
+    var delIdx=-1,delKey=aTeam;
+    if(!isA){for(var x=0;x<s.comps.length;x++){if(s.comps[x].name===c.name&&same(s.comps[x].date,c.date)){delIdx=x;break;}}}
+    h+='<div class="ev-row tappable"><div class="ev-date-box" onclick="jumpWk('+c.date.getFullYear()+','+c.date.getMonth()+','+c.date.getDate()+')"><div class="ev-month">'+M[c.date.getMonth()]+'</div><div class="ev-day">'+c.date.getDate()+'</div></div><div class="ev-info" onclick="jumpWk('+c.date.getFullYear()+','+c.date.getMonth()+','+c.date.getDate()+')"><div class="ev-name">'+c.name.toUpperCase()+'</div><div class="ev-detail">'+tl(c.type)+' · '+c.level.charAt(0).toUpperCase()+c.level.slice(1)+(c.loc?' · '+c.loc:'')+'</div></div><div class="ev-right">';
+    if(isA&&c._tn)h+='<div class="ev-team-badge">'+c._tn.replace('HS ','').toUpperCase()+'</div>';
+    if(pk)h+='<div class="ev-peak">⭐ PEAK</div>';else if(wl)h+='<div class="ev-weeks">'+wl+'</div>';
+    h+='<div class="ev-phase-dot" style="background:'+pC[ph.c]+'"></div>';
+    if(!isA&&delIdx>=0)h+='<div class="ev-del" onclick="event.stopPropagation();askDel('+delIdx+',\''+delKey+'\')">✕</div>';
+    h+='<div class="ev-arrow">›</div></div></div>';});
+  past.forEach(function(item){var c=item.c;h+='<div class="ev-row past"><div class="ev-date-box"><div class="ev-month">'+M[c.date.getMonth()]+'</div><div class="ev-day">'+c.date.getDate()+'</div></div><div class="ev-info"><div class="ev-name">'+c.name.toUpperCase()+'</div><div class="ev-detail">'+tl(c.type)+'</div></div><div class="ev-right">';if(isA&&c._tn)h+='<div class="ev-team-badge">'+c._tn.replace('HS ','').toUpperCase()+'</div>';h+='<div class="ev-weeks" style="color:var(--gr)">Done</div></div></div>';});
+  $('events-list').innerHTML=h;}
+// NAV
+function selD(i){selDay=(selDay===i)?-1:i;renderWeek();}
+function jumpWk(y,m,d){var t=new Date(y,m,d);viewWk=monOf(t);selDay=-1;var df=Math.round((t-viewWk)/864e5);if(df>=0&&df<7)selDay=df;renderWeek();window.scrollTo({top:0,behavior:'smooth'});toast('Jumped to '+M[m]+' '+d);}
+function prevWeek(){viewWk=new Date(viewWk);viewWk.setDate(viewWk.getDate()-7);selDay=-1;renderWeek();}
+function nextWeek(){viewWk=new Date(viewWk);viewWk.setDate(viewWk.getDate()+7);selDay=-1;renderWeek();}
+function goThisWeek(){viewWk=monOf(today);selDay=-1;renderWeek();toast('Back to this week');}
+// ADD COMP
+function openAddComp(){var s=S(),comps=s.comps.slice().sort(function(a,b){return a.date-b.date;}),def=null;
+  if(comps.length){var l=comps[comps.length-1],le=l.end||l.date;def=new Date(le);def.setDate(def.getDate()+7);}
+  else{var cv=$('setup-comp-start').value;if(cv)def=new Date(cv+'T12:00:00');else if(s.compStart)def=new Date(s.compStart);}
+  if(def)$('comp-date').value=fd(def);
+  $('modal-overlay').classList.add('open');$('modal').classList.add('open');}
+function closeAddComp(){$('modal-overlay').classList.remove('open');$('modal').classList.remove('open');clrForm();}
+function setDateMode(m){dateMode=m;$('dt-single').classList.toggle('active',m==='single');$('dt-multi').classList.toggle('active',m==='multi');$('end-date-field').style.display=m==='multi'?'block':'none';}
+function clrForm(){$('comp-name').value='';$('comp-date').value='';$('comp-end-date').value='';$('comp-location').value='';$('comp-level').value='all';$('comp-type').value='dual';setDateMode('single');}
+function submitComp(){var nm=$('comp-name').value.trim(),dv=$('comp-date').value,lv=$('comp-level').value,tp=$('comp-type').value,lc=$('comp-location').value.trim();
+  if(!nm){toast('Enter event name');return;}if(!dv){toast('Select a date');return;}
+  var dt=new Date(dv+'T12:00:00'),ed=null;if(dateMode==='multi'){var ev=$('comp-end-date').value;if(ev)ed=new Date(ev+'T12:00:00');}
+  var s=S();if(tp==='state'){s.state=dt;$('setup-state').value=dv;}
+  s.comps.push({name:nm,date:dt,end:ed,level:lv,type:tp,loc:lc});s.comps.sort(function(a,b){return a.date-b.date;});closeAddComp();
+  if(s.fin){toast('✓ '+nm+' added');renderActive();}else{toast('✓ '+nm+' added');renderSetup();}}
+// DELETE
+function askDel(i,tk){delTarget=i;delTeam=tk;$('confirm-desc').textContent='Remove "'+TS[tk].comps[i].name+'"? Phases will recalculate.';$('confirm-overlay').classList.add('open');}
+function cancelDelete(){delTarget=-1;$('confirm-overlay').classList.remove('open');}
+function confirmDelete(){if(delTarget<0)return;var s=TS[delTeam],nm=s.comps[delTarget].name;s.comps.splice(delTarget,1);delTarget=-1;$('confirm-overlay').classList.remove('open');toast('Removed '+nm);if(s.fin)renderActive();else renderSetup();}
+// FINALIZE
+function finalizeSeason(){var sv=$('setup-start').value,cv=$('setup-comp-start').value,stv=$('setup-state').value;
+  if(!sv){toast('Set your first practice date');return;}if(!cv){toast('Set your first competition date');return;}if(!stv){toast('Set your state tournament date');return;}
+  var s=S();s.start=new Date(sv+'T12:00:00');s.compStart=new Date(cv+'T12:00:00');s.state=new Date(stv+'T12:00:00');s.fin=true;
+  if(!s.comps.some(function(c){return c.type==='state';}))s.comps.push({name:'State Tournament',date:s.state,end:new Date(s.state.getTime()+864e5),level:'varsity',type:'state',loc:''});
+  s.comps.sort(function(a,b){return a.date-b.date;});
+  var t=teams.find(function(x){return x.key===aTeam;}),wks=Math.round((s.state-s.start)/(7*864e5));
+  var allFin=teams.every(function(x){return TS[x.key].fin;});
+  if(allFin){
+    toast('🏆 All teams set — '+t.name+' '+wks+' weeks mapped');
+    allMode=false;
+  }else{
+    // Go back to landing to set up remaining teams
+    toast('✓ '+t.name+' finalized — set up your next team');
+    editingTeam=false;
+    aTeam=teams.find(function(x){return !TS[x.key].fin;}).key;
+  }
+  renderTB();renderView();}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
+['setup-start','setup-comp-start','setup-state'].forEach(function(id){$(id).addEventListener('change',function(){renderSetup();});});
+renderTB();renderView();
+</script>
+</body>
+</html>

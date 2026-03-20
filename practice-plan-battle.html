@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASE Wrestling - Practice Plan: Battle</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--lt:#ccc;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,0.15);--gn:#27ae60;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);position:relative;overflow:hidden}
+.header{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.header-brand{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--gd)}
+.header-sub{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.prog{padding:16px 20px 0}.prog-labels{display:flex;justify-content:space-between;margin-bottom:8px}
+.prog-s{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;color:var(--gr)}
+.prog-s.a{color:var(--gd)}.prog-s.c{color:var(--gn)}
+.prog-bar{height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gd),var(--gdd));border-radius:2px;transition:width .6s}
+.sub-prog{display:flex;gap:4px;margin-top:12px;padding:0 20px}
+.sd{flex:1;height:3px;border-radius:2px;background:var(--bd);transition:background .4s}
+.sd.a{background:var(--gd)}.sd.d{background:var(--gn)}
+.phase-label{padding:8px 20px;margin-top:8px}
+.phase-tag{display:inline-block;padding:3px 10px;border-radius:4px;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.phase-tag.attack{background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3)}
+.phase-tag.situations{background:rgba(52,152,219,.15);color:#3498db;border:1px solid rgba(52,152,219,.3)}
+.phase-tag.match{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3)}
+.screen{display:none;flex-direction:column;min-height:calc(100vh - 58px)}
+.screen.active{display:flex;animation:fsi .4s ease}
+@keyframes fsi{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+.announce{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center}
+.sec-num{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;color:var(--gdd);margin-bottom:8px;text-transform:uppercase}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:5px;color:var(--wh);margin-bottom:12px;line-height:1}
+.sec-desc{font-size:14px;color:var(--gr);margin-bottom:24px;line-height:1.5;max-width:300px}
+.pick-battles{width:100%;max-width:300px;margin-bottom:28px}
+.pick-battles-label{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gd);margin-bottom:12px}
+.pbo{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);margin-bottom:8px;cursor:pointer;transition:all .25s}
+.pbo:hover{border-color:var(--gdd)}.pbo.a{border-color:var(--gd);background:var(--gdg)}
+.pbc{width:24px;height:24px;border-radius:6px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:14px;color:var(--bk)}
+.pbo.a .pbc{background:var(--gd);border-color:var(--gd)}
+.pbn{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh)}
+.pbd{font-size:11px;color:var(--gr);margin-top:1px}.pbo.a .pbn{color:var(--gd)}
+.btn-p{width:100%;max-width:300px;padding:16px 32px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.3)}.btn-p.off{opacity:.4;pointer-events:none}
+.btn-c{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-c:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.3)}.btn-c.off{opacity:.4;pointer-events:none}
+.area{flex:1;padding:24px 20px;overflow-y:auto;padding-bottom:20px}
+.c-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:6px}
+.c-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;color:var(--wh);margin-bottom:6px}
+.std-badge{display:inline-block;padding:4px 12px;background:var(--gdg);border:1px solid var(--gdd);border-radius:20px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;color:var(--gd);margin-bottom:16px}
+.note-box{background:rgba(200,168,78,.06);border:1px solid var(--gdd);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--gd);line-height:1.5}
+.rules-box{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:20px}
+.rules-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gdd);margin-bottom:8px}
+.rule{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}.rule:last-child{margin-bottom:0}
+.rule-dot{width:5px;height:5px;border-radius:50%;background:var(--gd);margin-top:6px;flex-shrink:0}
+.rule-txt{font-size:12px;color:var(--lt);line-height:1.4}
+.ctrl{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:12px}
+.ctrl-row{display:flex;align-items:center;justify-content:space-between}
+.ctrl-row+.ctrl-row{margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+.ctrl-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;color:var(--wh)}
+.pk{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pk-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);color:var(--wh);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Barlow',sans-serif;font-weight:600}
+.pk-btn:hover{border-color:var(--gd);background:var(--gdg)}
+.pk-v{text-align:center;min-width:40px}
+.pk-n{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--wh)}
+.pk-u{font-size:9px;color:var(--gr);letter-spacing:1px}
+.tot{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--gdg);border:1px solid var(--gdd);border-radius:var(--r);margin-top:12px}
+.tot-l{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.tot-v{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--wh)}
+.chip-l{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-bottom:10px}
+.chips{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.chip{padding:13px 16px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--lt);font-size:14px;font-weight:600;cursor:pointer;transition:all .25s;text-align:center}
+.chip:hover{border-color:var(--gdd)}.chip.a{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.chips-h{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip-sm{padding:10px 14px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--lt);font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;text-align:center;flex:1;min-width:calc(50% - 4px)}
+.chip-sm:hover{border-color:var(--gdd)}.chip-sm.a{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.nested{margin-top:12px;padding:14px;background:rgba(0,0,0,.25);border-radius:var(--r);animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.fmt-tog{display:flex;gap:8px;margin-bottom:16px}
+.fmt-btn{flex:1;padding:11px 8px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--gr);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;cursor:pointer;text-align:center;transition:all .25s}
+.fmt-btn:hover{border-color:var(--gdd)}.fmt-btn.a{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.per-row{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.per-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh)}
+.per-desc{font-size:10px;color:var(--gr);margin-top:2px}
+.bar{padding:12px 20px 28px;border-top:1px solid var(--bd);background:var(--dk)}
+.sum{flex:1;padding:24px 20px;overflow-y:auto}
+.chk{width:70px;height:70px;border-radius:50%;background:rgba(39,174,96,.15);border:2px solid var(--gn);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:si .4s ease}
+@keyframes si{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.chk svg{width:32px;height:32px;fill:var(--gn)}
+.s-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;margin-bottom:8px}
+.s-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.s-t{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.s-tm{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--wh)}
+.s-det{font-size:12px;color:var(--lt);line-height:1.4}
+.s-tot{background:var(--gdg);border:1px solid var(--gdd);border-radius:var(--r);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;margin:14px 0}
+.s-tot-l{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.s-tot-v{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--wh)}
+.nxt{text-align:center;padding:16px;opacity:.6}
+.nxt .l{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gr);margin-bottom:4px}
+.nxt .n{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gdd)}
+.s-phase-divider{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--gr);text-transform:uppercase;margin:14px 0 8px;padding-left:2px}
+.time-split{font-size:11px;color:var(--gdd);font-style:italic;margin-top:8px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-brand">BASE</div>
+    <div class="header-sub">Practice Plan</div>
+  </div>
+  <div id="sc"></div>
+</div>
+<script>
+var SC=document.getElementById('sc'),CHK='<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>';
+var selPh={attack:false,situations:false,match:false};
+var STEPS=[
+{id:'uba',ph:'attack',t:'UPPER BODY ATTACK',pl:'Attack',badge:1,note:1,rules:[{b:'Front Headlock',t:'Pull opponent down to their hands'},{b:'Double Unders',t:'Lock hands with double underhooks'},{b:'Get to the Back',t:'Ducks, drags, shucks, throw bys, slide bys'}],mode:'r',dR:2,dT:1},
+{id:'la',ph:'attack',t:'LEG ATTACK',pl:'Attack',badge:1,rules:[{b:'Head Inside Single',t:'Get to position naturally'},{b:'Head Outside Single',t:'Get to position naturally'},{b:'Double Leg',t:'Hands locked around the legs'}],laM:1,dR:3,dT:1,dP1:1,dP2:1,dP3:1},
+{id:'tba',ph:'attack',t:'TOP & BOTTOM ATTACK',pl:'Attack',badge:1,pick:1,pL:'Pick Position',opts:['Belly','Base','Standing'],rules:[{b:'Top Position',t:'Control and turn from top'},{b:'Bottom Position',t:'Escape or reverse from bottom'}],mode:'r',dR:2,dT:1},
+{id:'sub',ph:'situations',t:'UPPER BODY SITUATION',pl:'Situations',pick:1,pL:'Pick Position',opts:['Underhook vs Overhook','Over-Under / Chest to Chest','2 on 1'],mode:'r',dR:1,dT:3},
+{id:'shis',ph:'situations',t:'HEAD INSIDE SINGLE SITUATION',pl:'Situations',pick:1,pL:'Pick Level',opts:['High','Medium','Side','Extended'],mode:'r',dR:1,dT:3},
+{id:'shos',ph:'situations',t:'HEAD OUTSIDE SINGLE SITUATION',pl:'Situations',pick:1,pL:'Pick Level',opts:['High','Medium','Crackdown','Extended'],mode:'r',dR:1,dT:3},
+{id:'sfa',ph:'situations',t:'FAILED ATTACK SITUATION',pl:'Situations',pick:1,pL:'Pick Position',opts:['Front Headlock','Seat Belt / Whizzer','50/50 Position'],nMul:{trig:'50/50 Position',label:'Pick Variations (select all that apply)',opts:['Far Ankle','Near Ankle','High-C']},mode:'r',dR:1,dT:3},
+{id:'stb',ph:'situations',t:'TOP & BOTTOM SITUATION',pl:'Situations',pick:1,pL:'Pick Level',opts:['Base','Flat'],n2:{label:'Pick Control',opts:['Upper Body Control','Lower Body Control']},sN:{trig:'Upper Body Control',label:'Specify Control',opts:['Wrist Ride','Chicken Wing','Half Nelson','Armbar']},mode:'r',dR:1,dT:3},
+{id:'match',ph:'match',t:'MATCH',pl:'Match',badge:1,mM:1,dR:1,dP1:2,dP2:2,dP3:2,dBC:1,dBT:5}
+];
+
+var D={};STEPS.forEach(function(s){D[s.id]={r:s.dR||1,t:s.dT||1,pk:null,nm:[],n2:null,sn:null,fmt:null,lf:null,p1:s.dP1||2,p2:s.dP2||2,p3:s.dP3||2,bc:s.dBC||1,bt:s.dBT||5,skip:0}});
+var AS=[],ci=0;
+
+function fm(m){if(m%1===0)return m.toString();var w=Math.floor(m),s=(m-w)*60;if(w===0)return s+'s';return w+':'+(s<10?'0':'')+s}
+function bAS(){AS=STEPS.filter(function(s){return selPh[s.ph]});AS.forEach(function(s){D[s.id].skip=0});STEPS.forEach(function(s){if(!selPh[s.ph])D[s.id].skip=1})}
+function prg(done){return '<div class="prog"><div class="prog-labels"><span class="prog-s c">Warm-Up &#10003;</span><span class="prog-s c">Drill &#10003;</span><span class="prog-s '+(done?'c':'a')+'">Battle</span><span class="prog-s">Technique</span><span class="prog-s">Circuit</span></div><div class="prog-bar"><div class="prog-fill" style="width:'+(done?60:50)+'%"></div></div></div>'}
+function subP(){var h='<div class="sub-prog">';for(var i=0;i<AS.length;i++)h+='<div class="sd '+(i<ci?'d':i===ci?'a':'')+'"></div>';return h+'</div>'}
+function ptag(s){return '<div class="phase-label"><span class="phase-tag '+s.ph+'">'+s.pl+'</span></div>'}
+function ren(h){SC.innerHTML=h;SC.querySelector('.screen').classList.add('active')}
+
+function showIntro(){
+ci=0;selPh={attack:false,situations:false,match:false};
+var ph=[{k:'attack',n:'ATTACKS',d:'Upper Body &middot; Leg &middot; Top & Bottom'},{k:'situations',n:'SITUATIONS',d:'Positional wrestling scenarios'},{k:'match',n:'MATCH',d:'Full matches or blocks of live wrestling'}];
+var pk='<div class="pick-battles"><div class="pick-battles-label">Pick Your Battles</div>';
+ph.forEach(function(p){pk+='<div class="pbo" id="pb-'+p.k+'" onclick="togPh(\''+p.k+'\')"><div class="pbc" id="pbc-'+p.k+'"></div><div><div class="pbn">'+p.n+'</div><div class="pbd">'+p.d+'</div></div></div>'});
+pk+='</div>';
+ren('<div class="screen">'+prg(false)+'<div class="announce"><div class="sec-num">Section 3 of 5</div><div class="sec-title">BATTLE</div>'+pk+'<button class="btn-p off" id="intro-go" onclick="startB()">SET UP BATTLES</button></div></div>')
+}
+
+function togPh(k){selPh[k]=!selPh[k];var el=document.getElementById('pb-'+k),chk=document.getElementById('pbc-'+k);if(selPh[k]){el.classList.add('a');chk.textContent='\u2713'}else{el.classList.remove('a');chk.textContent=''}document.getElementById('intro-go').classList.toggle('off',!(selPh.attack||selPh.situations||selPh.match))}
+function startB(){bAS();if(!AS.length)return;ci=0;goStep(0)}
+
+function goStep(i){
+ci=i;if(i>=AS.length){showSum();return}
+var s=AS[i],d=D[s.id];d.skip=0;
+var lbl='Battle '+(i+1)+' of '+AS.length,b='';
+if(s.badge)b+='<div class="std-badge">Standard &mdash; Every Practice</div>';
+if(s.note)b+='<div class="note-box">BASE standards are preset. Adjust rounds and time to fit your session.</div>';
+if(s.rules){b+='<div class="rules-box"><div class="rules-t">Ways to Score</div>';s.rules.forEach(function(r){b+='<div class="rule"><div class="rule-dot"></div><div class="rule-txt"><strong>'+r.b+'</strong> &mdash; '+r.t+'</div></div>'});b+='</div>'}
+if(s.pick){b+='<div class="chip-l">'+s.pL+'</div><div class="chips" id="picks">';s.opts.forEach(function(o){b+='<div class="chip '+(d.pk===o?'a':'')+'" onclick="doPk(\''+s.id+"',this,'"+o.replace(/'/g,"\\'")+"')\">"+ o+'</div>'});b+='</div><div id="nest-area">';if(s.nMul&&d.pk===s.nMul.trig)b+=bNM(s,d);else if(s.n2&&d.pk)b+=bN2(s,d);b+='</div>'}
+if(s.laM)b+=bLA(d);
+if(s.mM)b+=bMatch(d);
+if(s.mode==='r'&&!s.mM&&!s.laM)b+=bRC(s.id,d);
+var off=chkOff(s,d);
+ren('<div class="screen">'+prg(false)+subP()+ptag(s)+'<div class="area"><div class="c-label">'+lbl+'</div><div class="c-title">'+s.t+'</div>'+b+'</div><div class="bar"><button class="btn-c '+(off?'off':'')+'" id="step-next" onclick="goStep('+(i+1)+')">NEXT</button></div></div>')
+}
+
+function bRC(sid,d){return '<div class="ctrl"><div class="ctrl-row"><div><div class="ctrl-name">ROUNDS</div></div><div class="pk"><button class="pk-btn" onclick="adj(\''+sid+"','r',-1)\">&#8722;</button><div class=\"pk-v\"><div class=\"pk-n\" id=\""+sid+'-r">'+d.r+'</div><div class="pk-u">ROUNDS</div></div><button class="pk-btn" onclick="adj(\''+sid+"','r',1)\">+</button></div></div><div class=\"ctrl-row\"><div><div class=\"ctrl-name\">TIME PER ROUND</div></div><div class=\"pk\"><button class=\"pk-btn\" onclick=\"adj('"+sid+"','t',-0.5)\">&#8722;</button><div class=\"pk-v\"><div class=\"pk-n\" id=\""+sid+'-t">'+fm(d.t)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adj(\''+sid+"','t',0.5)\">+</button></div></div></div><div class=\"tot\"><div class=\"tot-l\">TOTAL TIME</div><div class=\"tot-v\" id=\""+sid+'-tot">'+fm(d.r*d.t)+' MIN</div></div>'}
+
+function bLA(d){
+var h='<div class="chip-l">Format</div><div class="fmt-tog"><div class="fmt-btn '+(d.lf==='off'?'a':'')+'" onclick="pickLF(\'off\')">OFFENSE ONLY</div><div class="fmt-btn '+(d.lf==='full'?'a':'')+'" onclick="pickLF(\'full\')">FULL MATCH</div></div><div id="la-ctrl">';
+if(d.lf==='off'){h+='<div class="ctrl"><div class="ctrl-row"><div><div class="ctrl-name">ROUNDS</div></div><div class="pk"><button class="pk-btn" onclick="adj(\'la\',\'r\',-1)">&#8722;</button><div class="pk-v"><div class="pk-n" id="la-r">'+d.r+'</div><div class="pk-u">ROUNDS</div></div><button class="pk-btn" onclick="adj(\'la\',\'r\',1)">+</button></div></div><div class="ctrl-row"><div><div class="ctrl-name">TIME PER ROUND</div></div><div class="pk"><button class="pk-btn" onclick="adj(\'la\',\'t\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="la-t">'+fm(d.t)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adj(\'la\',\'t\',0.5)">+</button></div></div></div><div class="tot"><div class="tot-l">TOTAL TIME</div><div class="tot-v" id="la-tot">'+fm(d.r*d.t)+' MIN</div></div>'}
+else if(d.lf==='full'){var pm=d.p1+d.p2+d.p3;h+='<div class="ctrl"><div class="ctrl-row"><div><div class="ctrl-name">MATCHES</div></div><div class="pk"><button class="pk-btn" onclick="adjLA(\'r\',-1)">&#8722;</button><div class="pk-v"><div class="pk-n" id="la-fm-r">'+d.r+'</div><div class="pk-u">MATCHES</div></div><button class="pk-btn" onclick="adjLA(\'r\',1)">+</button></div></div></div><div class="per-row"><div><div class="per-name">P1 &#8212; OFFENSE / DEFENSE</div><div class="per-desc">One attacks, one defends</div></div><div class="pk"><button class="pk-btn" onclick="adjLA(\'p1\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="la-p1">'+fm(d.p1)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjLA(\'p1\',0.5)">+</button></div></div><div class="per-row"><div><div class="per-name">P2 &#8212; DEFENSE / OFFENSE</div><div class="per-desc">Switch roles</div></div><div class="pk"><button class="pk-btn" onclick="adjLA(\'p2\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="la-p2">'+fm(d.p2)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjLA(\'p2\',0.5)">+</button></div></div><div class="per-row"><div><div class="per-name">P3 &#8212; OFFENSE vs OFFENSE</div><div class="per-desc">Both going live</div></div><div class="pk"><button class="pk-btn" onclick="adjLA(\'p3\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="la-p3">'+fm(d.p3)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjLA(\'p3\',0.5)">+</button></div></div><div class="tot"><div class="tot-l">PER MATCH</div><div class="tot-v" id="la-pm">'+fm(pm)+' MIN</div></div><div class="tot" style="margin-top:6px;background:rgba(200,168,78,.08)"><div class="tot-l">TOTAL ALL</div><div class="tot-v" id="la-ta">'+fm(pm*d.r)+' MIN</div></div>'}
+return h+'</div>'}
+
+function pickLF(f){var d=D['la'];d.lf=f;if(f==='off'){d.r=3;d.t=1}else{d.r=1;d.p1=1;d.p2=1;d.p3=1}goStep(ci)}
+function adjLA(k,delta){var d=D['la'];if(k==='r')d.r=Math.max(1,Math.min(10,d.r+delta));else d[k]=Math.max(0.5,Math.min(5,d[k]+delta));var re=document.getElementById('la-fm-r');if(re)re.textContent=d.r;['p1','p2','p3'].forEach(function(x){var e=document.getElementById('la-'+x);if(e)e.textContent=fm(d[x])});var pm=d.p1+d.p2+d.p3;var pe=document.getElementById('la-pm');if(pe)pe.textContent=fm(pm)+' MIN';var te=document.getElementById('la-ta');if(te)te.textContent=fm(pm*d.r)+' MIN'}
+
+function bMatch(d){
+var h='<div class="chip-l">Format</div><div class="fmt-tog"><div class="fmt-btn '+(d.fmt==='full'?'a':'')+'" onclick="pickMF(\'full\')">FULL MATCH</div><div class="fmt-btn '+(d.fmt==='blocks'?'a':'')+'" onclick="pickMF(\'blocks\')">BLOCK OF LIVES</div></div><div id="m-ctrl">';
+if(d.fmt==='full'){var pm=d.p1+d.p2+d.p3;h+='<div class="ctrl"><div class="ctrl-row"><div><div class="ctrl-name">MATCHES</div></div><div class="pk"><button class="pk-btn" onclick="adjM(\'r\',-1)">&#8722;</button><div class="pk-v"><div class="pk-n" id="m-r">'+d.r+'</div><div class="pk-u">MATCHES</div></div><button class="pk-btn" onclick="adjM(\'r\',1)">+</button></div></div></div><div class="per-row"><div><div class="per-name">1ST PERIOD</div></div><div class="pk"><button class="pk-btn" onclick="adjM(\'p1\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="m-p1">'+fm(d.p1)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjM(\'p1\',0.5)">+</button></div></div><div class="per-row"><div><div class="per-name">2ND PERIOD</div></div><div class="pk"><button class="pk-btn" onclick="adjM(\'p2\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="m-p2">'+fm(d.p2)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjM(\'p2\',0.5)">+</button></div></div><div class="per-row"><div><div class="per-name">3RD PERIOD</div></div><div class="pk"><button class="pk-btn" onclick="adjM(\'p3\',-0.5)">&#8722;</button><div class="pk-v"><div class="pk-n" id="m-p3">'+fm(d.p3)+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjM(\'p3\',0.5)">+</button></div></div><div class="tot"><div class="tot-l">PER MATCH</div><div class="tot-v" id="m-pm">'+fm(pm)+' MIN</div></div><div class="tot" style="margin-top:6px;background:rgba(200,168,78,.08)"><div class="tot-l">TOTAL ALL</div><div class="tot-v" id="m-ta">'+fm(pm*d.r)+' MIN</div></div>'}
+else if(d.fmt==='blocks'){h+='<div class="ctrl"><div class="ctrl-row"><div><div class="ctrl-name">BLOCKS</div></div><div class="pk"><button class="pk-btn" onclick="adjBl(\'bc\',-1)">&#8722;</button><div class="pk-v"><div class="pk-n" id="bl-c">'+d.bc+'</div><div class="pk-u">BLOCKS</div></div><button class="pk-btn" onclick="adjBl(\'bc\',1)">+</button></div></div><div class="ctrl-row"><div><div class="ctrl-name">TIME PER BLOCK</div></div><div class="pk"><button class="pk-btn" onclick="adjBl(\'bt\',-1)">&#8722;</button><div class="pk-v"><div class="pk-n" id="bl-t">'+d.bt+'</div><div class="pk-u">MIN</div></div><button class="pk-btn" onclick="adjBl(\'bt\',1)">+</button></div></div></div><div class="tot"><div class="tot-l">TOTAL TIME</div><div class="tot-v" id="bl-tot">'+fm(d.bc*d.bt)+' MIN</div></div>'}
+return h+'</div>'}
+
+function pickMF(f){var d=D['match'];d.fmt=f;if(f==='full'){d.r=1;d.p1=2;d.p2=2;d.p3=2}else{d.bc=1;d.bt=5}goStep(ci)}
+function adjM(k,delta){var d=D['match'];if(k==='r')d.r=Math.max(1,Math.min(10,d.r+delta));else d[k]=Math.max(0.5,Math.min(5,d[k]+delta));var re=document.getElementById('m-r');if(re)re.textContent=d.r;['p1','p2','p3'].forEach(function(x){var e=document.getElementById('m-'+x);if(e)e.textContent=fm(d[x])});var pm=d.p1+d.p2+d.p3;var pe=document.getElementById('m-pm');if(pe)pe.textContent=fm(pm)+' MIN';var te=document.getElementById('m-ta');if(te)te.textContent=fm(pm*d.r)+' MIN'}
+function adjBl(k,delta){var d=D['match'];if(k==='bc')d.bc=Math.max(1,Math.min(10,d.bc+delta));else d.bt=Math.max(1,Math.min(30,d.bt+delta));var ce=document.getElementById('bl-c');if(ce)ce.textContent=d.bc;var te=document.getElementById('bl-t');if(te)te.textContent=d.bt;var tot=document.getElementById('bl-tot');if(tot)tot.textContent=fm(d.bc*d.bt)+' MIN'}
+
+function doPk(sid,el,val){var s=STEPS.find(function(x){return x.id===sid}),d=D[sid];el.parentElement.querySelectorAll('.chip').forEach(function(c){c.classList.remove('a')});el.classList.add('a');d.pk=val;d.nm=[];d.n2=null;d.sn=null;var na=document.getElementById('nest-area');if(!na){vld(s);return}if(s.nMul&&val===s.nMul.trig)na.innerHTML=bNM(s,d);else if(s.n2)na.innerHTML=bN2(s,d);else na.innerHTML='';vld(s)}
+
+function bNM(s,d){var nm=s.nMul,h='<div class="nested"><div class="chip-l">'+nm.label+'</div><div class="chips-h">';nm.opts.forEach(function(o){h+='<div class="chip-sm '+(d.nm.indexOf(o)>=0?'a':'')+'" onclick="togNM(\''+s.id+"','"+o+"')\">"+o+'</div>'});h+='</div>';if(d.nm.length>1)h+='<div class="time-split">Time will be split evenly: '+fm(d.t/d.nm.length)+' min per variation</div>';return h+'</div>'}
+function togNM(sid,val){var s=STEPS.find(function(x){return x.id===sid}),d=D[sid],idx=d.nm.indexOf(val);if(idx>=0)d.nm.splice(idx,1);else d.nm.push(val);var na=document.getElementById('nest-area');if(na)na.innerHTML=bNM(s,d);vld(s)}
+
+function bN2(s,d){if(!s.n2||!d.pk)return'';var h='<div class="nested"><div class="chip-l">'+s.n2.label+'</div><div class="chips-h">';s.n2.opts.forEach(function(o){h+='<div class="chip-sm '+(d.n2===o?'a':'')+'" onclick="doN2(\''+s.id+"','"+o.replace(/'/g,"\\'")+"')\">"+o+'</div>'});h+='</div><div id="sn-area">';if(s.sN&&d.n2===s.sN.trig)h+=bSN(s,d);return h+'</div></div>'}
+function doN2(sid,val){var s=STEPS.find(function(x){return x.id===sid}),d=D[sid];d.n2=val;d.sn=null;var na=document.getElementById('nest-area');if(na)na.innerHTML=bN2(s,d);vld(s)}
+function bSN(s,d){if(!s.sN)return'';var h='<div class="nested" style="margin-top:10px"><div class="chip-l">'+s.sN.label+'</div><div class="chips-h">';s.sN.opts.forEach(function(o){h+='<div class="chip-sm '+(d.sn===o?'a':'')+'" onclick="doSN(\''+s.id+"','"+o+"')\">"+o+'</div>'});return h+'</div></div>'}
+function doSN(sid,val){D[sid].sn=val;var s=STEPS.find(function(x){return x.id===sid});var na=document.getElementById('nest-area');if(na)na.innerHTML=bN2(s,D[sid]);vld(s)}
+
+function adj(sid,k,delta){var d=D[sid];if(k==='r')d.r=Math.max(1,Math.min(10,d.r+delta));else d.t=Math.max(0.5,Math.min(10,d.t+delta));var re=document.getElementById(sid+'-r');if(re)re.textContent=d.r;var te=document.getElementById(sid+'-t');if(te)te.textContent=fm(d.t);var tot=document.getElementById(sid+'-tot');if(tot)tot.textContent=fm(d.r*d.t)+' MIN'}
+
+function chkOff(s,d){var ok=true;if(s.pick&&!d.pk)ok=false;if(s.nMul&&d.pk===s.nMul.trig&&d.nm.length===0)ok=false;if(s.n2&&d.pk&&!d.n2)ok=false;if(s.sN&&d.n2===s.sN.trig&&!d.sn)ok=false;if(s.laM&&!d.lf)ok=false;if(s.mM&&!d.fmt)ok=false;return !ok}
+function vld(s){var btn=document.getElementById('step-next');if(btn)btn.classList.toggle('off',chkOff(s,D[s.id]))}
+
+function showSum(){
+var cards='',total=0,lp='',pn={attack:'Attacks',situations:'Situations',match:'Match'};
+STEPS.forEach(function(s){var d=D[s.id];if(d.skip)return;
+if(s.ph!==lp){cards+='<div class="s-phase-divider">'+pn[s.ph]+'</div>';lp=s.ph}
+var time=0,det='';
+if(s.mM){if(d.fmt==='full'){var pm=d.p1+d.p2+d.p3;time=pm*d.r;det='Full Match &middot; '+d.r+' match'+(d.r>1?'es':'')+' &times; '+fm(pm)+' min'}else{time=d.bc*d.bt;det='Block of Lives &middot; '+d.bc+' block'+(d.bc>1?'s':'')+' &times; '+d.bt+' min'}}
+else if(s.laM){if(d.lf==='off'){time=d.r*d.t;det='Offense Only &middot; '+d.r+' rounds &times; '+fm(d.t)+' min'}else{var pm2=d.p1+d.p2+d.p3;time=pm2*d.r;det='Full Match &middot; '+d.r+' match'+(d.r>1?'es':'')+' &times; '+fm(pm2)+' min'}}
+else{time=d.r*d.t;var parts=[d.r+' round'+(d.r>1?'s':'')+' &times; '+fm(d.t)+' min'];if(d.pk)parts.push(d.pk);if(d.nm.length>0)parts.push(d.nm.join(', '));if(d.n2)parts.push(d.n2);if(d.sn)parts.push(d.sn);det=parts.join(' &middot; ')}
+total+=time;
+cards+='<div class="s-card"><div class="s-hdr"><div class="s-t">'+s.t+'</div><div class="s-tm">'+fm(time)+' MIN</div></div><div class="s-det">'+det+'</div></div>'});
+ren('<div class="screen">'+prg(true)+'<div class="sum"><div style="text-align:center;margin-top:14px;margin-bottom:6px"><div class="chk">'+CHK+'</div><div class="sec-num">BATTLES SET</div></div>'+cards+'<div class="s-tot"><div class="s-tot-l">TOTAL BATTLE TIME</div><div class="s-tot-v">'+fm(total)+' MIN</div></div><div class="nxt"><div class="l">Up Next</div><div class="n">TECHNIQUE</div></div></div><div class="bar"><button class="btn-c" onclick="alert(\'Next section: Technique - coming soon!\')">CONTINUE TO TECHNIQUE &#8594;</button></div></div>')
+}
+
+showIntro();
+</script></body></html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Content Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--org:#e67e22;--orgg:rgba(230,126,34,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;font-size:16px;color:var(--gr)}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600;transition:all .2s}
+.hd-search{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:14px;color:var(--gr)}
+.hd-search:hover{border-color:var(--gd);color:var(--gd)}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{padding:10px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.bc-item{font-size:11px;color:var(--gr);cursor:pointer;transition:color .2s}
+.bc-item:hover{color:var(--gd)}
+.bc-item.active{color:var(--gd);font-weight:600;cursor:default}
+.bc-sep{font-size:10px;color:var(--bd)}
+
+/* ── CONTENT AREA ── */
+.content{flex:1;overflow-y:auto;padding:16px 20px 100px}
+
+/* ── BATTLE GROUP CARDS (Level 1) ── */
+.bg-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px}
+.bg-card:hover{border-color:var(--gdd);transform:translateX(4px)}
+.bg-card:active{transform:translateX(2px)}
+.bg-icon{width:48px;height:48px;border-radius:12px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.bg-info{flex:1}
+.bg-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh)}
+.bg-meta{font-size:11px;color:var(--gr);margin-top:2px}
+.bg-arrow{color:var(--gr);font-size:16px}
+
+/* ── POSITION CARDS (Level 2) ── */
+.pos-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:8px;overflow:hidden;transition:all .2s}
+.pos-card:hover{border-color:var(--gdd)}
+.pos-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer}
+.pos-left{display:flex;align-items:center;gap:10px}
+.pos-rank{width:28px;height:28px;border-radius:7px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gd);flex-shrink:0}
+.pos-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh)}
+.pos-count{font-size:10px;color:var(--gr);margin-top:1px}
+.pos-actions{display:flex;align-items:center;gap:8px}
+.pos-assign{width:30px;height:30px;border-radius:8px;background:var(--gdg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all .2s}
+.pos-assign:hover{border-color:var(--gd);background:var(--gdg)}
+.pos-arrow{color:var(--gr);font-size:14px}
+
+/* ── OFFENSE / DEFENSE TABS ── */
+.od-tabs{display:flex;gap:0;padding:0 16px;margin-bottom:10px}
+.od-tab{flex:1;padding:8px;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--gr);cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:all .2s}
+.od-tab:hover{color:var(--lt)}
+.od-tab.active{color:var(--gd);border-bottom-color:var(--gd)}
+
+/* ── TECHNIQUE CARDS (Level 3) ── */
+.tech-card{background:var(--bk);border:1px solid var(--bd);border-radius:var(--r);margin:0 16px 6px;overflow:hidden;transition:all .2s}
+.tech-card:hover{border-color:var(--gdd)}
+.tech-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer}
+.tech-left{display:flex;align-items:center;gap:10px}
+.tech-num{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--gdd);width:20px;flex-shrink:0}
+.tech-name{font-size:13px;font-weight:600;color:var(--wh)}
+.tech-badge{font-size:8px;text-transform:uppercase;letter-spacing:1px;padding:2px 6px;border-radius:3px;font-weight:700}
+.tech-badge.drill{background:rgba(39,174,96,.15);color:var(--gn)}
+.tech-badge.technique{background:rgba(200,16,46,.15);color:var(--rd)}
+.tech-badge.both{background:rgba(200,168,78,.15);color:var(--gd)}
+.tech-actions{display:flex;align-items:center;gap:6px}
+.tech-assign{width:26px;height:26px;border-radius:6px;background:var(--gdg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;transition:all .2s}
+.tech-assign:hover{border-color:var(--gd);background:var(--gdg)}
+.tech-expand{color:var(--gr);font-size:12px;transition:transform .2s}
+.tech-card.open .tech-expand{transform:rotate(90deg);color:var(--gd)}
+
+/* ── TECHNIQUE DETAIL (expandable) ── */
+.tech-detail{display:none;padding:0 14px 14px;border-top:1px solid var(--bd)}
+.tech-card.open .tech-detail{display:block}
+.tech-video{width:100%;aspect-ratio:16/9;background:var(--cd);border-radius:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--bd);position:relative;overflow:hidden}
+.tech-video-play{width:48px;height:48px;border-radius:50%;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center}
+.tech-video-play svg{width:16px;height:16px;fill:var(--gd);margin-left:2px}
+.tech-video-label{position:absolute;bottom:8px;left:8px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gdd);font-weight:600;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:3px}
+.tech-content-card{background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:6px;cursor:pointer;transition:all .2s}
+.tech-content-card:hover{border-color:var(--gdd)}
+.tech-cc-header{display:flex;align-items:center;justify-content:space-between}
+.tech-cc-title{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--wh)}
+.tech-cc-arrow{font-size:10px;color:var(--gr);transition:transform .2s}
+.tech-cc-body{display:none;margin-top:8px;font-size:12px;color:var(--lt);line-height:1.6}
+.tech-content-card.open .tech-cc-body{display:block}
+.tech-content-card.open .tech-cc-arrow{transform:rotate(90deg);color:var(--gd)}
+
+/* ── ASSIGN MODAL ── */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:90;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{position:fixed;bottom:-100%;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--dk);border-top:1px solid var(--bd);border-radius:16px 16px 0 0;z-index:100;transition:bottom .3s cubic-bezier(.4,0,.2,1);max-height:70vh;display:flex;flex-direction:column}
+.modal.open{bottom:0}
+.modal-handle{width:40px;height:4px;border-radius:2px;background:var(--bd);margin:10px auto}
+.modal-hd{padding:8px 20px 14px;border-bottom:1px solid var(--bd)}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gd)}
+.modal-sub{font-size:11px;color:var(--gr);margin-top:2px}
+.modal-body{flex:1;overflow-y:auto;padding:14px 20px}
+.modal-actions{padding:14px 20px 28px;border-top:1px solid var(--bd);display:flex;gap:10px}
+
+/* ── ATHLETE SELECT ROWS ── */
+.ath-select{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:all .15s}
+.ath-select:last-child{border-bottom:none}
+.ath-check{width:24px;height:24px;border-radius:6px;border:2px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.ath-check.on{border-color:var(--gn);background:rgba(39,174,96,.15)}
+.ath-check svg{width:12px;height:12px;opacity:0;transition:opacity .2s}
+.ath-check.on svg{opacity:1}
+.ath-sel-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh);flex:1}
+.ath-sel-star{font-size:11px;color:var(--gdd)}
+
+.select-all-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gdd);cursor:pointer;margin-bottom:4px}
+.select-all-row .ath-sel-name{color:var(--gd)}
+
+/* ── BUTTONS ── */
+.btn-assign{flex:2;padding:14px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .2s}
+.btn-assign:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,168,78,.25)}
+.btn-cancel{flex:1;padding:14px;background:transparent;color:var(--gr);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .2s}
+.btn-cancel:hover{border-color:var(--gdd);color:var(--wh)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── SECTION LABEL ── */
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+.tech-spacer{height:10px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" id="hd-back" onclick="goBack()">←</div>
+      <div class="hd-info">
+        <div id="hd-title">CONTENT LIBRARY</div>
+        <div id="hd-sub">186 Techniques · 5 Battle Groups</div>
+      </div>
+    </div>
+    <div class="hd-search" onclick="toast('Search coming soon')">🔍</div>
+  </div>
+
+  <!-- ═══ BREADCRUMB ═══ -->
+  <div class="breadcrumb" id="breadcrumb">
+    <div class="bc-item active">All Battles</div>
+  </div>
+
+  <!-- ═══ CONTENT ═══ -->
+  <div class="content" id="content"></div>
+
+  <!-- ═══ ASSIGN MODAL ═══ -->
+  <div class="modal-overlay" id="modal-bg" onclick="closeModal()"></div>
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-title">ASSIGN CONTENT</div>
+      <div class="modal-sub" id="modal-sub">Select athletes to receive this content</div>
+    </div>
+    <div class="modal-body">
+      <div class="select-all-row" onclick="toggleAll()">
+        <div class="ath-check" id="all-check"><svg viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+        <div class="ath-sel-name">ENTIRE TEAM</div>
+      </div>
+      <div id="ath-list"></div>
+    </div>
+    <div class="modal-actions">
+      <div class="btn-cancel" onclick="closeModal()">CANCEL</div>
+      <div class="btn-assign" onclick="confirmAssign()">ASSIGN</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+var BATTLES = [
+  {id:'ub', name:'UPPER BODY', icon:'🤼', techs:62, entries:11, finishes:51,
+    positions:[
+      {name:'UNDERHOOK', finishes:['Headlock (pinch)','Judo Throw','Hip Toss','Cutback Trip','Arm Throw','Knee Tap','Metzger','Ankle Pick','Whip Over'], defFinishes:[]},
+      {name:'OVERHOOK', finishes:['Arm Spin','Whizzer Kick','Whizzer Kick → Ankle Pick','Inside Trip','Beloglazov','Kendall Cross','Batirov','Fireman\'s Carry'], defFinishes:[]},
+      {name:'OVER-UNDER 50/50', finishes:['Lat Pull Thigh Pry','Overhook Knee Tap','Underhook Knee Tap (Metzger)','Mongolian Knee Tap','Inside Knee Tap','Ankle Pick','Inside Trip','Back Arch','Foot Sweep'], defFinishes:[]},
+      {name:'2-ON-1', finishes:['Pull Down','Drag','Far Ankle Pick','Barrel Roll','Post Double','Belly to Back Arch','Post Headlock'], defFinishes:['Metzger','Double Leg']},
+      {name:'FRONT HEADLOCK', finishes:['Nearside Cradle','Farside Cradle','Cow Catcher / Snake','Cement Mixer','Dresser Dump','Can Opener','Go Behind','Head Duck Fireman\'s'], defFinishes:['Knee Tap','Far Ankle Pick','Barrel Roll','Sit Ankle Trip']},
+      {name:'DOUBLE UNDERS', finishes:['Step Around Sag','Suplex','Split Leg','Foot Sweep'], defFinishes:[]}
+    ]
+  },
+  {id:'his', name:'HEAD INSIDE SINGLE', icon:'🦵', techs:33, entries:3, finishes:30,
+    positions:[
+      {name:'HIGH', finishes:['Run the Pipe','Dump','Back Trip','Knee Slide'], defFinishes:['Ankle Pick','Cutback','Forward Roll']},
+      {name:'MEDIUM', finishes:['Dump','Inside Trip','Crackdown'], defFinishes:['Throw Head Inside Turn Corner','Switch','Sit Back Single']},
+      {name:'SIDE', finishes:['Dump','Inside Trip','Limp Arm'], defFinishes:['Whizzer Kick','Hip Heist']},
+      {name:'EXTENDED', finishes:['Elbow Down Shelf','Backdoor','Cutback'], defFinishes:['Roll Through','Go Behind','Cradle']}
+    ]
+  },
+  {id:'hos', name:'HEAD OUTSIDE SINGLE', icon:'🦿', techs:37, entries:3, finishes:34,
+    positions:[
+      {name:'HIGH', finishes:['Run the Pipe','Back Kick','Knee Slide','Dump'], defFinishes:['Ankle Pick','Cutback','Forward Roll']},
+      {name:'MEDIUM', finishes:['Dump','Inside Trip','Crackdown'], defFinishes:['Throw Head Inside Turn Corner','Switch','Sit Back Single']},
+      {name:'CRACKDOWN', finishes:['Crackdown Trip','Crackdown Turn','Crackdown Cradle','Go Behind'], defFinishes:['Go Behind','Cradle','Roll Through']},
+      {name:'EXTENDED', finishes:['Elbow Down Shelf','Backdoor','Cutback'], defFinishes:['Roll Through','Go Behind','Cradle']}
+    ]
+  },
+  {id:'fa', name:'FAILED ATTACKS', icon:'🔄', techs:17, entries:0, finishes:17,
+    positions:[
+      {name:'FRONT HEADLOCK (KNEES)', finishes:['Nearside Cradle','Farside Cradle','Cow Catcher / Snake','Cement Mixer','Knee Tap','Go Behind'], defFinishes:['Peek Out to Single','Sit Out','Granby','Head Pop Duck Under']},
+      {name:'SEATBELT / WHIZZER', finishes:['Limp Arm Finish','Go to Back'], defFinishes:['Whizzer Kick (ground)','Hip Heist']},
+      {name:'50/50 POSITIONS', finishes:['Far Ankle Finish','Near Ankle Finish','Go Behind'], defFinishes:[]}
+    ]
+  },
+  {id:'tb', name:'TOP / BOTTOM', icon:'⬆️', techs:35, entries:7, finishes:28,
+    positions:[
+      {name:'UPPER BODY CONTROL — FLAT', finishes:['Wrist Ride Tilt','Roll Through Tilt','Half Nelson Turn','Half Nelson Run it Over','Chicken Wing Run it Over','Chicken Wing Stack','Arm Turk to Half Nelson'], defFinishes:['Belly to Base']},
+      {name:'UPPER BODY CONTROL — BASE', finishes:['Chop (near wrist)','Chop (cross wrist)','Spiral Ride','Near Side Cradle','Far Side Cradle','Turk Cradle','Spladle'], defFinishes:['Stand Up','Sit Out','Granby','Switch','Side Roll']},
+      {name:'LEGS IN — FLAT', finishes:['Power Half','Ball and Chain','Twister'], defFinishes:['Belly to Base']},
+      {name:'LEGS IN — BASE', finishes:['Scoop the Leg','Ankle Overhook Drag','Double Thigh Pry','Crab Ride Tilt','Cross Wrist Tilt','Jesse Jansen Tilt'], defFinishes:['Stand Up','Wing Down Hop Over','Peterson','Leg Hook Switch']}
+    ]
+  }
+];
+
+var ATHLETES = [
+  {name:'JAKE MORRISON', star:'⭐⭐⭐⭐', yr:'SR'},
+  {name:'TYLER CHEN', star:'⭐⭐⭐', yr:'JR'},
+  {name:'MARCUS WILLIAMS', star:'⭐⭐⭐', yr:'JR'},
+  {name:'JOEY SANTOS', star:'⭐⭐', yr:'SO'},
+  {name:'RYAN KOWALSKI', star:'⭐⭐', yr:'SO'},
+  {name:'DEREK PATEL', star:'⭐⭐', yr:'SO'},
+  {name:'LUKE ANDERSON', star:'⭐', yr:'FR'},
+  {name:'NOAH GARCIA', star:'⭐', yr:'FR'},
+  {name:'AVERY JACKSON', star:'⭐', yr:'FR'},
+  {name:'CODY MITCHELL', star:'⭐', yr:'FR'}
+];
+
+var navStack = []; // tracks navigation: [{level,battleIdx,posIdx}]
+var assignTarget = '';
+var selectedAthletes = [];
+
+// ══════════════════════════════════════
+// RENDER FUNCTIONS
+// ══════════════════════════════════════
+
+function renderBattleGroups() {
+  var h = '<div class="sl">Battle Groups</div>';
+  BATTLES.forEach(function(b, i) {
+    h += '<div class="bg-card" onclick="openBattle('+i+')">'+
+      '<div class="bg-icon">'+b.icon+'</div>'+
+      '<div class="bg-info"><div class="bg-name">'+b.name+'</div>'+
+      '<div class="bg-meta">'+b.positions.length+' positions · '+b.techs+' techniques</div></div>'+
+      '<div class="bg-arrow">›</div></div>';
+  });
+  document.getElementById('content').innerHTML = h;
+  document.getElementById('hd-title').textContent = 'CONTENT LIBRARY';
+  document.getElementById('hd-sub').textContent = '186 Techniques · 5 Battle Groups';
+  updateBreadcrumb(['All Battles']);
+}
+
+function renderPositions(bIdx) {
+  var b = BATTLES[bIdx];
+  var h = '<div class="sl">'+b.name+' — Positions</div>';
+  b.positions.forEach(function(p, i) {
+    var total = p.finishes.length + p.defFinishes.length;
+    h += '<div class="pos-card">'+
+      '<div class="pos-header" onclick="openPosition('+bIdx+','+i+')">'+
+        '<div class="pos-left">'+
+          '<div class="pos-rank">'+(i+1)+'</div>'+
+          '<div><div class="pos-name">'+p.name+'</div>'+
+          '<div class="pos-count">'+total+' techniques</div></div>'+
+        '</div>'+
+        '<div class="pos-actions">'+
+          '<div class="pos-assign" onclick="event.stopPropagation();openAssign(\''+b.name+' — '+p.name+'\')">📤</div>'+
+          '<div class="pos-arrow">›</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  });
+  document.getElementById('content').innerHTML = h;
+  document.getElementById('hd-title').textContent = b.name;
+  document.getElementById('hd-sub').textContent = b.positions.length + ' Positions';
+  updateBreadcrumb(['All Battles', b.name]);
+}
+
+function renderTechniques(bIdx, pIdx) {
+  var b = BATTLES[bIdx];
+  var p = b.positions[pIdx];
+  var hasOff = p.finishes.length > 0;
+  var hasDef = p.defFinishes.length > 0;
+  var h = '';
+
+  if (hasOff && hasDef) {
+    h += '<div class="od-tabs">'+
+      '<div class="od-tab active" onclick="showOD(\'off\',this)">OFFENSE ('+p.finishes.length+')</div>'+
+      '<div class="od-tab" onclick="showOD(\'def\',this)">DEFENSE ('+p.defFinishes.length+')</div>'+
+    '</div>';
+  }
+
+  // Offense
+  h += '<div id="od-off">';
+  if (hasOff) {
+    h += '<div style="padding:0 16px 6px"><div class="sl">Offense Finishes</div></div>';
+    p.finishes.forEach(function(f, i) {
+      h += buildTechCard(f, i+1, bIdx, pIdx, 'off');
+    });
+  }
+  h += '</div>';
+
+  // Defense
+  h += '<div id="od-def" style="display:'+(hasOff && hasDef ? 'none' : 'block')+'">';
+  if (hasDef) {
+    h += '<div style="padding:0 16px 6px"><div class="sl">Defense Finishes</div></div>';
+    p.defFinishes.forEach(function(f, i) {
+      h += buildTechCard(f, i+1, bIdx, pIdx, 'def');
+    });
+  }
+  h += '</div>';
+
+  h += '<div class="tech-spacer"></div>';
+
+  document.getElementById('content').innerHTML = h;
+  document.getElementById('hd-title').textContent = p.name;
+  document.getElementById('hd-sub').textContent = (p.finishes.length + p.defFinishes.length) + ' Techniques';
+  updateBreadcrumb(['All Battles', b.name, p.name]);
+}
+
+function buildTechCard(name, num, bIdx, pIdx, side) {
+  var id = 'tc-'+bIdx+'-'+pIdx+'-'+side+'-'+num;
+  var badges = ['drill','technique','both'];
+  var badge = badges[num % 3]; // placeholder classification
+  return '<div class="tech-card" id="'+id+'">'+
+    '<div class="tech-header" onclick="toggleTech(\''+id+'\')">'+
+      '<div class="tech-left">'+
+        '<div class="tech-num">'+num+'</div>'+
+        '<div class="tech-name">'+name+'</div>'+
+      '</div>'+
+      '<div class="tech-actions">'+
+        '<div class="tech-assign" onclick="event.stopPropagation();openAssign(\''+name.replace(/'/g,"\\'")+'\')">📤</div>'+
+        '<div class="tech-expand">›</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="tech-detail">'+
+      '<div class="tech-video">'+
+        '<div class="tech-video-play"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>'+
+        '<div class="tech-video-label">Demo Video</div>'+
+      '</div>'+
+      '<div class="tech-content-card" onclick="toggleCC(this)">'+
+        '<div class="tech-cc-header"><div class="tech-cc-title">OFFENSE BREAKDOWN</div><div class="tech-cc-arrow">›</div></div>'+
+        '<div class="tech-cc-body">Control the wrist, drive through the position, finish with hips. Key detail: your head position determines whether you maintain control or get countered.</div>'+
+      '</div>'+
+      '<div class="tech-content-card" onclick="toggleCC(this)">'+
+        '<div class="tech-cc-header"><div class="tech-cc-title">DEFENSE BREAKDOWN</div><div class="tech-cc-arrow">›</div></div>'+
+        '<div class="tech-cc-body">Recognize the setup early. Post on the hip, fight the hands, circle away from pressure. Don\'t let them lock their grip.</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+
+function openBattle(idx) {
+  navStack.push({level:'battles'});
+  renderPositions(idx);
+  window._currentBattle = idx;
+}
+
+function openPosition(bIdx, pIdx) {
+  navStack.push({level:'positions', bIdx:bIdx});
+  renderTechniques(bIdx, pIdx);
+  window._currentBattle = bIdx;
+  window._currentPos = pIdx;
+}
+
+function goBack() {
+  if (navStack.length === 0) {
+    toast('← Back to Dashboard');
+    return;
+  }
+  var prev = navStack.pop();
+  if (prev.level === 'battles') {
+    renderBattleGroups();
+  } else if (prev.level === 'positions') {
+    renderPositions(prev.bIdx);
+  }
+}
+
+function updateBreadcrumb(items) {
+  var h = '';
+  items.forEach(function(item, i) {
+    if (i > 0) h += '<div class="bc-sep">›</div>';
+    var isLast = i === items.length - 1;
+    if (isLast) {
+      h += '<div class="bc-item active">'+item+'</div>';
+    } else {
+      h += '<div class="bc-item" onclick="bcNav('+i+')">'+item+'</div>';
+    }
+  });
+  document.getElementById('breadcrumb').innerHTML = h;
+}
+
+function bcNav(level) {
+  if (level === 0) {
+    navStack = [];
+    renderBattleGroups();
+  } else if (level === 1) {
+    navStack = [{level:'battles'}];
+    renderPositions(window._currentBattle);
+  }
+}
+
+// ══════════════════════════════════════
+// TECHNIQUE EXPAND/COLLAPSE
+// ══════════════════════════════════════
+
+function toggleTech(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function toggleCC(el) {
+  el.classList.toggle('open');
+}
+
+function showOD(side, el) {
+  el.parentElement.querySelectorAll('.od-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  document.getElementById('od-off').style.display = side === 'off' ? 'block' : 'none';
+  document.getElementById('od-def').style.display = side === 'def' ? 'block' : 'none';
+}
+
+// ══════════════════════════════════════
+// ASSIGN MODAL
+// ══════════════════════════════════════
+
+function openAssign(target) {
+  assignTarget = target;
+  selectedAthletes = [];
+  document.getElementById('modal-sub').textContent = 'Assigning: ' + target;
+  document.getElementById('all-check').classList.remove('on');
+
+  var h = '';
+  ATHLETES.forEach(function(a, i) {
+    h += '<div class="ath-select" onclick="toggleAth('+i+')">'+
+      '<div class="ath-check" id="ath-chk-'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>'+
+      '<div class="ath-sel-name">'+a.name+'</div>'+
+      '<div class="ath-sel-star">'+a.yr+'</div>'+
+    '</div>';
+  });
+  document.getElementById('ath-list').innerHTML = h;
+
+  document.getElementById('modal-bg').classList.add('open');
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+  document.getElementById('modal').classList.remove('open');
+}
+
+function toggleAth(i) {
+  var idx = selectedAthletes.indexOf(i);
+  if (idx > -1) selectedAthletes.splice(idx, 1);
+  else selectedAthletes.push(i);
+  document.getElementById('ath-chk-'+i).classList.toggle('on');
+
+  // Update all-check
+  document.getElementById('all-check').classList.toggle('on', selectedAthletes.length === ATHLETES.length);
+}
+
+function toggleAll() {
+  var allOn = selectedAthletes.length === ATHLETES.length;
+  if (allOn) {
+    selectedAthletes = [];
+    ATHLETES.forEach(function(a, i) { document.getElementById('ath-chk-'+i).classList.remove('on'); });
+    document.getElementById('all-check').classList.remove('on');
+  } else {
+    selectedAthletes = ATHLETES.map(function(a, i) { return i; });
+    ATHLETES.forEach(function(a, i) { document.getElementById('ath-chk-'+i).classList.add('on'); });
+    document.getElementById('all-check').classList.add('on');
+  }
+}
+
+function confirmAssign() {
+  if (selectedAthletes.length === 0) { toast('Select at least one athlete'); return; }
+  var names = selectedAthletes.length === ATHLETES.length ? 'entire team' : selectedAthletes.length + ' athlete' + (selectedAthletes.length > 1 ? 's' : '');
+  closeModal();
+  toast('Assigned to ' + names + ' ✓');
+}
+
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+function toast(msg) {
+  var t = document.getElementById('toastEl');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')}, 2000);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+renderBattleGroups();
+</script>
+</body>
+</html>

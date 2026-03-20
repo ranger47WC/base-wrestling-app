@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — My Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.roster-toggle{display:flex;gap:4px;padding:10px 20px 6px;flex-shrink:0}
+.rt-btn{flex:1;padding:10px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;text-align:center;border:2px solid var(--bd);background:var(--cd);color:var(--grd)}
+.rt-btn.active{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.rt-btn .rt-count{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;letter-spacing:0;margin-left:4px;opacity:.6}
+
+/* ── TEAM STAR SUMMARY ── */
+.star-summary{margin:12px 20px 0;padding:14px 16px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);display:flex;align-items:center;gap:14px}
+.star-avg{text-align:center;flex-shrink:0}
+.star-avg-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gd);letter-spacing:1px}
+.star-avg-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600}
+.star-dist{flex:1;display:flex;flex-direction:column;gap:3px}
+.star-dist-row{display:flex;align-items:center;gap:6px;font-size:10px}
+.star-dist-label{color:var(--gd);width:14px;text-align:right}
+.star-dist-bar{flex:1;height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.star-dist-fill{height:100%;background:var(--gd);border-radius:2px}
+.star-dist-ct{color:var(--gr);width:16px}
+
+.assess-body{flex:1;overflow-y:auto;padding:0 0 40px}
+.sl{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;padding:0 20px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.section{padding:16px 0 0}
+
+/* ── COLLAPSIBLE ASSESSMENT BARS ── */
+.assess-bar{margin:0 20px 8px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;transition:border-color .2s}
+.assess-bar.open{border-color:var(--gdd)}
+.ab-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+.ab-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ab-icon.battle{background:var(--rdg);border:1px solid rgba(200,16,46,.3)}
+.ab-icon.athletic{background:var(--blug);border:1px solid rgba(59,130,246,.3)}
+.ab-icon.exercise{background:var(--gng);border:1px solid rgba(39,174,96,.3)}
+.ab-icon.skill{background:rgba(230,126,34,.12);border:1px solid rgba(230,126,34,.3)}
+.ab-info{flex:1}
+.ab-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh)}
+.ab-status{font-size:11px;color:var(--gn);margin-top:2px}
+.ab-status.pending{color:var(--grd)}
+.ab-arrow{color:var(--grd);font-size:14px;transition:transform .2s;flex-shrink:0}
+.assess-bar.open .ab-arrow{transform:rotate(90deg);color:var(--gd)}
+.ab-body{display:none;padding:0 16px 16px;border-top:1px solid var(--bd)}
+.assess-bar.open .ab-body{display:block}
+
+/* ── SHARED COMPARISON STYLES (from team-report-v3) ── */
+.cvt-header{display:flex;align-items:center;gap:6px;padding:8px 0;margin-bottom:4px;border-bottom:1px solid var(--bd)}
+.cvt-label-left{flex:1;font-size:11px;color:var(--gr);font-weight:600}
+.cvt-col{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;text-align:center;min-width:50px}
+.cvt-col.coach{color:var(--blu)}.cvt-col.team{color:var(--gd)}.cvt-col.gap{color:var(--gr)}
+.comp-row{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.comp-label{font-size:12px;color:var(--lt);flex:1;font-weight:500}
+.comp-badge{font-size:9px;text-transform:uppercase;letter-spacing:1px;padding:3px 7px;border-radius:4px;font-weight:700;text-align:center;min-width:50px}
+.comp-badge.above{background:var(--gng);color:var(--gn)}
+.comp-badge.at{background:var(--gdg);color:var(--gd)}
+.comp-badge.below{background:var(--rdg);color:var(--rd)}
+.comp-status{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;min-width:40px;text-align:center;color:var(--wh)}
+.pa-sub{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gd);font-weight:700;padding:10px 0 4px;border-bottom:1px solid var(--bd)}
+.skill-badge{font-size:8px;text-transform:uppercase;letter-spacing:1px;padding:3px 6px;border-radius:3px;font-weight:700}
+.skill-badge.learning{background:var(--rdg);color:var(--rd)}
+.skill-badge.practicing{background:var(--gdg);color:var(--gd)}
+.skill-badge.ready{background:rgba(39,174,96,.25);color:var(--gn)}
+.retake-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--bd);border-radius:var(--r);font-size:11px;letter-spacing:1px;color:var(--grd);cursor:pointer;margin-top:10px;text-transform:uppercase;font-weight:600}
+.last-taken{font-size:10px;color:var(--grd);margin-top:8px}
+.take-btn{width:100%;padding:14px;background:var(--gdg);border:1px solid rgba(200,168,78,.3);border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gd);cursor:pointer;margin-top:12px}
+.pad-bottom{height:40px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd"><div class="hd-left"><div class="hd-back" onclick="history.back()">←</div><div class="hd-info"><div>MY ASSESSMENT</div><div>Ranger-47 Wrestling</div></div></div></div>
+<div class="roster-toggle">
+  <div class="rt-btn active" id="rt-boys" onclick="switchTeam('boys')">BOYS<span class="rt-count">13</span></div>
+  <div class="rt-btn" id="rt-girls" onclick="switchTeam('girls')">GIRLS<span class="rt-count">6</span></div>
+</div>
+<div id="star-area"></div>
+<div class="assess-body" id="assess-body"></div>
+</div>
+<script>
+var ATH=['Forward Roll','Backward Extension','Cartwheel Both Hands','Round-Off to a Jump','Round-Off to Backward Ext','Front Handspring','Back Walkover','Walking on Hands (10 ft)','Bridge Kick Over','Bridge Circle Both Ways','Round-Off to Backflip','Round-Off to Back Handspring','Back Handspring (Standing)','Standing Backflip'];
+
+var DATA={
+boys:{
+  coachDone:{battle:true,athletic:true,skill:true,exercise:true},lastTaken:'Feb 12, 2026',assessed:5,size:13,
+  returning:13,
+  starDist:{5:2,4:3,3:3,2:3,1:2},starAvg:2.8,
+  battle:{
+    secs:[
+      {t:'Controlling the Mat',items:[
+        {n:'Neutral Offense',c:'At',b:1,a:3,ab:1},
+        {n:'Neutral Defense',c:'Above',b:2,a:2,ab:1},
+        {n:'Top Position',c:'At',b:1,a:2,ab:2},
+        {n:'Bottom Position',c:'At',b:2,a:3,ab:0}
+      ]},
+      {t:'Controlling the Attacks',items:[
+        {n:'Upper Body Off',c:'Above',b:0,a:3,ab:2},
+        {n:'Leg Attack Off',c:'At',b:1,a:2,ab:2},
+        {n:'Upper Body Def',c:'At',b:2,a:2,ab:1},
+        {n:'Leg Attack Def',c:'At',b:1,a:3,ab:1},
+        {n:'Top Attacks',c:'Above',b:0,a:3,ab:2},
+        {n:'Bottom Attacks',c:'At',b:3,a:1,ab:1}
+      ]},
+      {t:'Controlling the Situation',items:[
+        {n:'Upper Body',c:'Above',b:1,a:2,ab:2,ex:true,subs:[
+          {n:'Underhook',cO:'At',tO:'At',noD:true},{n:'Overhook',cO:'At',tO:'Below',noD:true},
+          {n:'Over/Under',cO:'Above',tO:'At',noD:true},{n:'2-on-1',cO:'At',cD:'At',tO:'At',tD:'At'}]},
+        {n:'Head Inside',c:'At',b:1,a:3,ab:1,ex:true,subs:[
+          {n:'High',cO:'At',cD:'At',tO:'At',tD:'Below'},{n:'Medium',cO:'At',cD:'At',tO:'At',tD:'At'},
+          {n:'Side',cO:'Below',cD:'At',tO:'Below',tD:'At'},{n:'Extended',cO:'At',cD:'At',tO:'At',tD:'At'}]},
+        {n:'Head Outside',c:'At',b:2,a:2,ab:1,ex:true,subs:[
+          {n:'High',cO:'At',cD:'Below',tO:'At',tD:'Below'},{n:'Medium',cO:'At',cD:'At',tO:'Below',tD:'At'},
+          {n:'Crackdown',cO:'Below',cD:'At',tO:'Below',tD:'At'},{n:'Extended',cO:'At',cD:'At',tO:'At',tD:'At'}]},
+        {n:'Failed Attacks',c:'Above',b:1,a:3,ab:1,ex:true,subs:[
+          {n:'Front Headlock',cO:'Above',cD:'At',tO:'At',tD:'At'},{n:'Seatbelt (Off)',cO:'At',tO:'At',noD:true},
+          {n:'Whizzer (Def)',cD:'At',tD:'Below',noO:true},{n:'50/50',cO:'At',tO:'Below',noD:true}]},
+        {n:'Top / Bottom',c:'At',b:1,a:3,ab:1,ex:true,subs:[
+          {n:'UB Control — Flat',cO:'At',cD:'At',tO:'At',tD:'At'},{n:'UB Control — Base',cO:'At',cD:'Above',tO:'At',tD:'At'},
+          {n:'Legs In — Flat',cO:'Below',cD:'At',tO:'Below',tD:'At'},{n:'Legs In — Base',cO:'At',cD:'At',tO:'At',tD:'Below'}]}
+      ]}
+    ]
+  },
+  athletic:{coach:[95,90,85,80,70,45,30,55,40,35,10,8,5,3],team:[100,92,83,83,75,42,25,50,33,33,8,8,0,0],coachPct:47,teamPct:45},
+  exercise:{coach:{elite:2,strong:4,standard:5,below:2,avg:'12:20'},team:{elite:1,strong:2,standard:3,below:7,avg:'12:45',notDone:7}},
+  skill:{
+    secs:[
+      {t:'Controlling the Mat',items:[
+        {n:'Stance',c:'R',L:1,P:2,R:4},{n:'Motion',c:'P',L:2,P:3,R:2},{n:'Body Fakes',c:'P',L:3,P:2,R:2},
+        {n:'Level Change',c:'R',L:1,P:2,R:4},{n:'Hand Fighting',c:'P',L:2,P:3,R:2}]},
+      {t:'Controlling the Attacks',items:[
+        {n:'UB Offense',c:'R',L:0,P:3,R:4},{n:'Leg Offense',c:'R',L:1,P:2,R:4},{n:'UB Defense',c:'P',L:2,P:3,R:2},
+        {n:'Leg Defense',c:'P',L:2,P:3,R:2},{n:'Top Attacks',c:'R',L:1,P:2,R:4},{n:'Bottom Attacks',c:'P',L:3,P:2,R:2}]},
+      {t:'Controlling the Situation',items:[
+        {n:'Upper Body',c:'R',L:1,P:2,R:4,ex:true,subs:[
+          {n:'Underhook',cO:'R',tO:'R',noD:true},{n:'Overhook',cO:'R',tO:'P',noD:true},
+          {n:'Over/Under',cO:'P',tO:'P',noD:true},{n:'2-on-1',cO:'R',cD:'P',tO:'P',tD:'L'}]},
+        {n:'Head Inside',c:'R',L:1,P:2,R:4,ex:true,subs:[
+          {n:'High',cO:'R',cD:'R',tO:'R',tD:'P'},{n:'Medium',cO:'R',cD:'R',tO:'R',tD:'R'},
+          {n:'Side',cO:'P',cD:'P',tO:'L',tD:'P'},{n:'Extended',cO:'R',cD:'P',tO:'P',tD:'P'}]},
+        {n:'Head Outside',c:'P',L:2,P:3,R:2,ex:true,subs:[
+          {n:'High',cO:'P',cD:'P',tO:'P',tD:'L'},{n:'Medium',cO:'R',cD:'P',tO:'P',tD:'P'},
+          {n:'Crackdown',cO:'P',cD:'P',tO:'L',tD:'L'},{n:'Extended',cO:'P',cD:'P',tO:'P',tD:'P'}]},
+        {n:'Failed Attacks',c:'R',L:1,P:2,R:4,ex:true,subs:[
+          {n:'Front Headlock',cO:'R',cD:'R',tO:'R',tD:'P'},{n:'Seatbelt (Off)',cO:'R',tO:'P',noD:true},
+          {n:'Whizzer (Def)',cD:'P',tD:'L',noO:true},{n:'50/50',cO:'P',tO:'L',noD:true}]},
+        {n:'Top / Bottom',c:'P',L:2,P:2,R:3,ex:true,subs:[
+          {n:'UB Control — Flat',cO:'R',cD:'P',tO:'R',tD:'P'},{n:'UB Control — Base',cO:'R',cD:'R',tO:'P',tD:'P'},
+          {n:'Legs In — Flat',cO:'P',cD:'P',tO:'L',tD:'P'},{n:'Legs In — Base',cO:'P',cD:'P',tO:'P',tD:'L'}]}
+      ]}
+    ]
+  }
+},
+girls:{coachDone:{battle:false,athletic:false,skill:false,exercise:false},size:6,returning:0}
+};
+
+var currentTeam='boys';
+function switchTeam(w){currentTeam=w;document.getElementById('rt-boys').classList.toggle('active',w==='boys');document.getElementById('rt-girls').classList.toggle('active',w==='girls');build();}
+function toggleBar(id){var el=document.getElementById(id);if(!el)return;el.classList.toggle('open');}
+function toggleRow(id){var e=document.getElementById(id);if(!e)return;var v=e.style.display!=='none';document.querySelectorAll('.sub-dd').forEach(function(d){d.style.display='none'});if(!v)e.style.display='block';}
+function sBadge(v){return v==='R'?'<span class="skill-badge ready">Ready</span>':v==='P'?'<span class="skill-badge practicing">Practicing</span>':'<span class="skill-badge learning">Learning</span>';}
+
+function build(){
+  var d=DATA[currentTeam];
+  var sa=document.getElementById('star-area');
+  var h='';
+
+  if(!d.coachDone.battle||!d.coachDone.athletic||!d.coachDone.skill||!d.coachDone.exercise){
+    sa.innerHTML='';
+    var doneCount=(d.coachDone.battle?1:0)+(d.coachDone.athletic?1:0)+(d.coachDone.skill?1:0)+(d.coachDone.exercise?1:0);
+    h+='<div class="section"><div style="padding:20px">';
+    h+='<div style="text-align:center;margin-bottom:16px"><div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:3px;color:var(--gd);margin-bottom:6px">COMPLETE YOUR ASSESSMENTS</div>';
+    h+='<div style="font-size:12px;color:var(--gr)">'+doneCount+'/4 complete — finish the rest to unlock team comparisons</div></div>';
+    var tiles=[{id:'battle',icon:'⚔️',label:'BATTLE'},{id:'athletic',icon:'🤸',label:'ATHLETIC'},{id:'skill',icon:'🎯',label:'SKILL'},{id:'exercise',icon:'💪',label:'EXERCISE'}];
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    tiles.forEach(function(t){
+      var isDone=d.coachDone[t.id];
+      h+='<div style="padding:14px 12px;border-radius:12px;border:1px solid '+(isDone?'var(--gn)':'var(--bd)')+';background:'+(isDone?'rgba(39,174,96,.08)':'var(--bk)')+';cursor:'+(isDone?'default':'pointer')+';display:flex;align-items:center;gap:10px" onclick="'+(isDone?'':'alert(\'Launching '+t.label+' Assessment...\')')+'">';
+      h+='<div style="font-size:18px">'+t.icon+'</div>';
+      h+='<div style="flex:1"><div style="font-family:Bebas Neue,sans-serif;font-size:12px;letter-spacing:2px;color:'+(isDone?'var(--gn)':'#aaa')+'">'+t.label+'</div>';
+      h+='<div style="font-size:10px;color:'+(isDone?'var(--gn)':'var(--grd)')+';font-weight:600">'+(isDone?'Complete':'Tap to start')+'</div></div>';
+      h+='<div style="font-size:12px;color:'+(isDone?'var(--gn)':'var(--grd)')+'">'+(isDone?'✓':'›')+'</div></div>';
+    });
+    h+='</div></div></div>';
+    document.getElementById('assess-body').innerHTML=h;return;
+  }
+
+  // Star summary
+  var sd=d.starDist,maxD=0;for(var k in sd)if(sd[k]>maxD)maxD=sd[k];
+  var ss='<div class="star-summary"><div class="star-avg"><div class="star-avg-num">'+d.starAvg+'</div><div class="star-avg-label">Team Avg</div></div><div class="star-dist">';
+  for(var s=5;s>=1;s--){var w=maxD>0?Math.round((sd[s]||0)/maxD*100):0;ss+='<div class="star-dist-row"><div class="star-dist-label">'+s+'★</div><div class="star-dist-bar"><div class="star-dist-fill" style="width:'+w+'%"></div></div><div class="star-dist-ct">'+(sd[s]||0)+'</div></div>';}
+  ss+='</div></div>';
+  sa.innerHTML=ss;
+
+  // ═══ BATTLE ═══
+  h+='<div class="section"><div class="sl">Battle</div>';
+  h+='<div class="assess-bar open" id="bar-battle"><div class="ab-header" onclick="toggleBar(\'bar-battle\')"><div class="ab-icon battle">⚔️</div><div class="ab-info"><div class="ab-title">BATTLE ASSESSMENT</div><div class="ab-status">Completed · '+d.assessed+' athletes assessed</div></div><div class="ab-arrow">›</div></div>';
+  h+='<div class="ab-body">';
+  h+='<div class="cvt-header"><div class="cvt-label-left">Position</div><div class="cvt-col coach">COACH</div><div class="cvt-col team">TEAM</div><div class="cvt-col gap">STATUS</div></div>';
+  var rid=0,first=true;
+  d.battle.secs.forEach(function(sec){
+    h+='<div class="pa-sub">'+sec.t+'</div>';
+    sec.items.forEach(function(it){
+      var tm=it.ab>=it.a&&it.ab>=it.b?'Above':it.a>=it.b?'At':'Below';
+      var even=it.c===tm;var id='br-'+(rid++);var so=first;if(first)first=false;
+      h+='<div style="cursor:pointer" onclick="toggleRow(\''+id+'\')">';
+      h+='<div class="comp-row" style="border-bottom:none"><div class="comp-label">'+it.n+(it.ex?' <span style="color:var(--grd);font-size:10px">▸</span>':'')+'</div><div class="comp-badge '+it.c.toLowerCase()+'">'+it.c+'</div><div class="comp-badge '+tm.toLowerCase()+'">'+tm+'</div><div class="comp-status">'+(even?'EVEN':'GAP')+'</div></div>';
+      h+='<div class="sub-dd" id="'+id+'" style="display:'+(so?'block':'none')+';padding:4px 0 8px 16px;border-bottom:1px solid var(--bd)">';
+      h+='<div style="display:flex;gap:6px;margin-bottom:6px"><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:var(--rdg);color:var(--rd);font-weight:700">'+it.b+' Below</span><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:var(--gdg);color:var(--gd);font-weight:700">'+it.a+' At</span><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:var(--gng);color:var(--gn);font-weight:700">'+it.ab+' Above</span></div>';
+      if(it.ex){h+='<div style="padding-left:4px;border-left:2px solid var(--gdd)">';it.subs.forEach(function(s){
+        h+='<div style="padding:5px 0;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:11px;color:var(--lt);font-weight:600;margin-bottom:3px">'+s.n+'</div>';
+        if(!s.noO){var og=s.cO===s.tO?'EVEN':'GAP';h+='<div style="display:flex;gap:6px;align-items:center;font-size:10px"><span style="color:var(--grd);width:22px">OFF</span><span class="comp-badge '+s.cO.toLowerCase()+'" style="font-size:8px;padding:2px 5px;min-width:38px">'+s.cO+'</span><span style="color:var(--grd)">vs</span><span class="comp-badge '+s.tO.toLowerCase()+'" style="font-size:8px;padding:2px 5px;min-width:38px">'+s.tO+'</span><span class="comp-status" style="font-size:8px;min-width:32px">'+og+'</span></div>';}
+        if(!s.noD){var dg=s.cD===s.tD?'EVEN':'GAP';h+='<div style="display:flex;gap:6px;align-items:center;font-size:10px;margin-top:2px"><span style="color:var(--grd);width:22px">DEF</span><span class="comp-badge '+s.cD.toLowerCase()+'" style="font-size:8px;padding:2px 5px;min-width:38px">'+s.cD+'</span><span style="color:var(--grd)">vs</span><span class="comp-badge '+s.tD.toLowerCase()+'" style="font-size:8px;padding:2px 5px;min-width:38px">'+s.tD+'</span><span class="comp-status" style="font-size:8px;min-width:32px">'+dg+'</span></div>';}
+        h+='</div>';});h+='</div>';}
+      h+='</div></div>';
+    });
+  });
+  h+='<div class="last-taken">Last taken: '+d.lastTaken+'</div>';
+  h+='<div class="retake-btn" onclick="alert(\'Retake Battle Assessment\')">RETAKE ASSESSMENT</div>';
+  h+='</div></div></div>';
+
+  // ═══ PREPARATION ═══
+  h+='<div class="section"><div class="sl">Preparation</div>';
+
+  // ATHLETIC
+  h+='<div class="assess-bar" id="bar-athletic"><div class="ab-header" onclick="toggleBar(\'bar-athletic\')"><div class="ab-icon athletic">🤸</div><div class="ab-info"><div class="ab-title">ATHLETIC ASSESSMENT</div><div class="ab-status">Coach: '+d.athletic.coachPct+'% · Team: '+d.athletic.teamPct+'%</div></div><div class="ab-arrow">›</div></div>';
+  h+='<div class="ab-body">';
+  h+='<div class="cvt-header"><div class="cvt-label-left">Movement</div><div class="cvt-col coach">COACH</div><div class="cvt-col team">TEAM</div><div class="cvt-col gap">STATUS</div></div>';
+  for(var i=0;i<ATH.length;i++){
+    var cv=d.athletic.coach[i],tv=d.athletic.team[i],diff=Math.abs(cv-tv),st=diff<=5?'EVEN':'GAP';
+    h+='<div class="comp-row"><div class="comp-label">'+ATH[i]+'</div><div style="font-size:11px;font-weight:700;color:var(--blu);min-width:50px;text-align:center">'+cv+'%</div><div style="font-size:11px;font-weight:700;color:var(--gd);min-width:50px;text-align:center">'+tv+'%</div><div class="comp-status">'+st+'</div></div>';
+  }
+  h+='<div class="last-taken">Last taken: '+d.lastTaken+'</div>';
+  h+='<div class="retake-btn" onclick="alert(\'Retake Athletic\')">RETAKE ASSESSMENT</div>';
+  h+='</div></div>';
+
+  // EXERCISE
+  h+='<div class="assess-bar" id="bar-exercise"><div class="ab-header" onclick="toggleBar(\'bar-exercise\')"><div class="ab-icon exercise">💪</div><div class="ab-info"><div class="ab-title">EXERCISE ASSESSMENT</div><div class="ab-status">Coach Avg: '+d.exercise.coach.avg+' · Team Avg: '+d.exercise.team.avg+'</div></div><div class="ab-arrow">›</div></div>';
+  h+='<div class="ab-body">';
+  h+='<div class="cvt-header"><div class="cvt-label-left">Tier</div><div class="cvt-col coach">COACH</div><div class="cvt-col team">TEAM</div></div>';
+  var tiers=[{n:'Elite (Under 10 min)',cV:d.exercise.coach.elite,tV:d.exercise.team.elite},{n:'Strong (10–12 min)',cV:d.exercise.coach.strong,tV:d.exercise.team.strong},{n:'At Standard (12–15 min)',cV:d.exercise.coach.standard,tV:d.exercise.team.standard},{n:'Below / DNF',cV:d.exercise.coach.below,tV:d.exercise.team.below}];
+  tiers.forEach(function(t){h+='<div class="comp-row"><div class="comp-label">'+t.n+'</div><div style="font-size:13px;font-weight:700;color:var(--blu);min-width:50px;text-align:center">'+t.cV+'</div><div style="font-size:13px;font-weight:700;color:var(--gd);min-width:50px;text-align:center">'+t.tV+'</div></div>';});
+  if(d.exercise.team.notDone>0)h+='<div style="font-size:11px;color:var(--rd);margin-top:8px">'+d.exercise.team.notDone+' haven\'t completed the circuit yet</div>';
+  h+='<div class="last-taken">Last taken: '+d.lastTaken+'</div>';
+  h+='<div class="retake-btn" onclick="alert(\'Retake Exercise\')">RETAKE ASSESSMENT</div>';
+  h+='</div></div>';
+
+  // SKILL
+  h+='<div class="assess-bar" id="bar-skill"><div class="ab-header" onclick="toggleBar(\'bar-skill\')"><div class="ab-icon skill">🎯</div><div class="ab-info"><div class="ab-title">SKILL ASSESSMENT</div><div class="ab-status">Completed · Coach vs Team Readiness</div></div><div class="ab-arrow">›</div></div>';
+  h+='<div class="ab-body">';
+  h+='<div class="cvt-header"><div class="cvt-label-left">Skill</div><div class="cvt-col coach">COACH</div><div class="cvt-col team">TEAM</div><div class="cvt-col gap">STATUS</div></div>';
+  var sid=0,sfirst=true;
+  d.skill.secs.forEach(function(sec){
+    h+='<div class="pa-sub">'+sec.t+'</div>';
+    sec.items.forEach(function(it){
+      var tm=it.R>=it.P&&it.R>=it.L?'R':it.P>=it.L?'P':'L';
+      var even=it.c===tm;var id='sr-'+(sid++);var so=sfirst;if(sfirst)sfirst=false;
+      h+='<div style="cursor:pointer" onclick="toggleRow(\''+id+'\')">';
+      h+='<div class="comp-row" style="border-bottom:none"><div class="comp-label">'+it.n+(it.ex?' <span style="color:var(--grd);font-size:10px">▸</span>':'')+'</div><div style="min-width:50px;text-align:center">'+sBadge(it.c)+'</div><div style="min-width:50px;text-align:center">'+sBadge(tm)+'</div><div class="comp-status">'+(even?'EVEN':'GAP')+'</div></div>';
+      h+='<div class="sub-dd" id="'+id+'" style="display:'+(so?'block':'none')+';padding:4px 0 8px 16px;border-bottom:1px solid var(--bd)">';
+      h+='<div style="display:flex;gap:6px;margin-bottom:6px"><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:var(--rdg);color:var(--rd);font-weight:700">'+it.L+' Learning</span><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:var(--gdg);color:var(--gd);font-weight:700">'+it.P+' Practicing</span><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:var(--gng);color:var(--gn);font-weight:700">'+it.R+' Ready</span></div>';
+      if(it.ex){h+='<div style="padding-left:4px;border-left:2px solid var(--gdd)">';it.subs.forEach(function(s){
+        h+='<div style="padding:5px 0;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:11px;color:var(--lt);font-weight:600;margin-bottom:3px">'+s.n+'</div>';
+        if(!s.noO){var og=s.cO===s.tO?'EVEN':'GAP';h+='<div style="display:flex;gap:6px;align-items:center;font-size:10px"><span style="color:var(--grd);width:22px">OFF</span>'+sBadge(s.cO)+'<span style="color:var(--grd)">vs</span>'+sBadge(s.tO)+'<span class="comp-status" style="font-size:8px;min-width:32px">'+og+'</span></div>';}
+        if(!s.noD){var dg=s.cD===s.tD?'EVEN':'GAP';h+='<div style="display:flex;gap:6px;align-items:center;font-size:10px;margin-top:2px"><span style="color:var(--grd);width:22px">DEF</span>'+sBadge(s.cD)+'<span style="color:var(--grd)">vs</span>'+sBadge(s.tD)+'<span class="comp-status" style="font-size:8px;min-width:32px">'+dg+'</span></div>';}
+        h+='</div>';});h+='</div>';}
+      h+='</div></div>';
+    });
+  });
+  h+='<div class="last-taken">Last taken: '+d.lastTaken+'</div>';
+  h+='<div class="retake-btn" onclick="alert(\'Retake Skill\')">RETAKE ASSESSMENT</div>';
+  h+='</div></div>';
+
+  h+='</div><div class="pad-bottom"></div>';
+  document.getElementById('assess-body').innerHTML=h;
+}
+
+build();
+</script>
+</body>
+</html>

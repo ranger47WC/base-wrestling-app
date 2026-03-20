@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Content Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;padding-bottom:72px}
+
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;font-size:18px}
+.hd-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-search{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#aaa}
+
+/* Filter pills */
+.filter-bar{display:flex;gap:6px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bd)}
+.filter-bar::-webkit-scrollbar{display:none}
+.pill{padding:8px 16px;border-radius:20px;background:var(--cd);border:1px solid var(--bd);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;color:#aaa;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.pill:hover{border-color:var(--gdd)}
+.pill.active{background:var(--gdg);border-color:var(--gd);color:var(--gd)}
+
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px}
+
+/* Battle group card */
+.battle-group{margin-bottom:16px}
+.bg-header{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r) var(--r) 0 0;cursor:pointer;transition:all .2s}
+.bg-header:hover{border-color:var(--gdd)}
+.bg-header.open{border-radius:var(--r) var(--r) 0 0;border-bottom:none}
+.bg-icon{width:40px;height:40px;border-radius:10px;background:var(--gdg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.bg-info{flex:1}
+.bg-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)}
+.bg-count{font-size:11px;color:#aaa}
+.bg-arrow{color:#aaa;font-size:16px;transition:transform .2s}
+.bg-header.open .bg-arrow{transform:rotate(90deg);color:var(--gd)}
+
+/* Position list */
+.pos-list{background:var(--bk);border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);display:none}
+.pos-list.open{display:block}
+.pos-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:all .15s}
+.pos-item:last-child{border-bottom:none}
+.pos-item:hover{background:var(--cd)}
+.pos-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pos-dot.offense{background:var(--gd)}
+.pos-dot.defense{background:var(--blu)}
+.pos-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--wh);flex:1}
+.pos-vids{font-size:10px;color:#aaa}
+.pos-arrow{color:#aaa;font-size:14px}
+
+/* Technique detail (level 3) */
+.tech-list{display:none;background:var(--cd);margin:0 14px 8px;border-radius:var(--r);overflow:hidden}
+.tech-list.open{display:block}
+.tech-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bd)}
+.tech-item:last-child{border-bottom:none}
+.ti-play{width:32px;height:32px;border-radius:50%;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s}
+.ti-play:hover{background:var(--gd);border-color:var(--gd)}
+.ti-play svg{width:10px;height:10px;fill:var(--gd);margin-left:2px}
+.ti-play:hover svg{fill:var(--bk)}
+.ti-info{flex:1}
+.ti-name{font-size:12px;color:var(--wh);font-weight:600}
+.ti-meta{font-size:10px;color:#aaa;margin-top:2px}
+.ti-xp{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--gd)}
+.ti-lock{font-size:14px;color:#aaa}
+
+/* Bottom nav */
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:var(--dk);border-top:1px solid var(--bd);display:flex;z-index:50;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer}
+.nav-icon{font-size:20px;color:#aaa}
+.nav-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#aaa;font-weight:700}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);padding:12px 24px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <div class="hd-back" onclick="toast('← Back')">←</div>
+    <div class="hd-title">CONTENT LIBRARY</div>
+    <div class="hd-search">🔍</div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="pill active" onclick="filterPill(this)">ALL</div>
+    <div class="pill" onclick="filterPill(this)">UPPER BODY</div>
+    <div class="pill" onclick="filterPill(this)">LEG ATTACKS</div>
+    <div class="pill" onclick="filterPill(this)">FAILED ATTACKS</div>
+    <div class="pill" onclick="filterPill(this)">TOP / BOTTOM</div>
+    <div class="pill" onclick="filterPill(this)">STRATEGY</div>
+  </div>
+
+  <div class="main">
+    <!-- UPPER BODY -->
+    <div class="battle-group">
+      <div class="bg-header open" onclick="toggleGroup(this)">
+        <div class="bg-icon">🥊</div>
+        <div class="bg-info"><div class="bg-name">UPPER BODY</div><div class="bg-count">5 positions · 24 techniques</div></div>
+        <div class="bg-arrow">›</div>
+      </div>
+      <div class="pos-list open">
+        <div class="pos-item" onclick="toggleTech(this)">
+          <div class="pos-dot offense"></div>
+          <div class="pos-name">UNDERHOOK</div>
+          <div class="pos-vids">6 videos</div>
+          <div class="pos-arrow">›</div>
+        </div>
+        <div class="tech-list">
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Underhook Control</div><div class="ti-meta">Technique · 3:20</div></div><div class="ti-xp">+10 XP</div></div>
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Knee Tap from Underhook</div><div class="ti-meta">Offense · 2:45</div></div><div class="ti-xp">+10 XP</div></div>
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Inside Trip from Underhook</div><div class="ti-meta">Offense · 3:10</div></div><div class="ti-xp">+10 XP</div></div>
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Defending the Underhook</div><div class="ti-meta">Defense · 2:30</div></div><div class="ti-xp">+10 XP</div></div>
+        </div>
+        <div class="pos-item" onclick="toggleTech(this)">
+          <div class="pos-dot offense"></div>
+          <div class="pos-name">FRONT HEADLOCK</div>
+          <div class="pos-vids">8 videos</div>
+          <div class="pos-arrow">›</div>
+        </div>
+        <div class="tech-list">
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Snap Down to Front Headlock</div><div class="ti-meta">Entry · 2:55</div></div><div class="ti-xp">+10 XP</div></div>
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Go Behind Finish</div><div class="ti-meta">Finish · 3:15</div></div><div class="ti-xp">+10 XP</div></div>
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Shuck By Finish</div><div class="ti-meta">Finish · 2:40</div></div><div class="ti-xp">+10 XP</div></div>
+          <div class="tech-item"><div class="ti-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><div class="ti-info"><div class="ti-name">Cement Job</div><div class="ti-meta">Finish · 3:00</div></div><div class="ti-xp">+10 XP</div></div>
+        </div>
+        <div class="pos-item" onclick="toggleTech(this)">
+          <div class="pos-dot offense"></div>
+          <div class="pos-name">OVERHOOK</div>
+          <div class="pos-vids">4 videos</div>
+          <div class="pos-arrow">›</div>
+        </div>
+        <div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)">
+          <div class="pos-dot offense"></div>
+          <div class="pos-name">2-ON-1</div>
+          <div class="pos-vids">4 videos</div>
+          <div class="pos-arrow">›</div>
+        </div>
+        <div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)">
+          <div class="pos-dot offense"></div>
+          <div class="pos-name">OVER/UNDER</div>
+          <div class="pos-vids">4 videos</div>
+          <div class="pos-arrow">›</div>
+        </div>
+        <div class="tech-list"></div>
+      </div>
+    </div>
+
+    <!-- HEAD INSIDE SINGLE -->
+    <div class="battle-group">
+      <div class="bg-header" onclick="toggleGroup(this)">
+        <div class="bg-icon">🦵</div>
+        <div class="bg-info"><div class="bg-name">HEAD INSIDE SINGLE</div><div class="bg-count">5 positions · 18 techniques</div></div>
+        <div class="bg-arrow">›</div>
+      </div>
+      <div class="pos-list">
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">HIGH CROTCH</div><div class="pos-vids">5 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">DOUBLE LEG</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">SWEEP SINGLE</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">KNEE PULL</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">ANKLE PICK</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+      </div>
+    </div>
+
+    <!-- HEAD OUTSIDE SINGLE -->
+    <div class="battle-group">
+      <div class="bg-header" onclick="toggleGroup(this)">
+        <div class="bg-icon">🦿</div>
+        <div class="bg-info"><div class="bg-name">HEAD OUTSIDE SINGLE</div><div class="bg-count">4 positions · 14 techniques</div></div>
+        <div class="bg-arrow">›</div>
+      </div>
+      <div class="pos-list">
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">SNATCH SINGLE</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">LOW SINGLE</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">OUTSIDE TRIP</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">RUN THE PIPE</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+      </div>
+    </div>
+
+    <!-- FAILED ATTACKS -->
+    <div class="battle-group">
+      <div class="bg-header" onclick="toggleGroup(this)">
+        <div class="bg-icon">🛡️</div>
+        <div class="bg-info"><div class="bg-name">FAILED ATTACKS</div><div class="bg-count">4 positions · 16 techniques</div></div>
+        <div class="bg-arrow">›</div>
+      </div>
+      <div class="pos-list">
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot defense"></div><div class="pos-name">FRONT HEADLOCK (DEFENSE)</div><div class="pos-vids">5 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot defense"></div><div class="pos-name">SEATBELT / WHIZZER</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot defense"></div><div class="pos-name">50/50 POSITION</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot defense"></div><div class="pos-name">SPRAWL</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+      </div>
+    </div>
+
+    <!-- TOP / BOTTOM -->
+    <div class="battle-group">
+      <div class="bg-header" onclick="toggleGroup(this)">
+        <div class="bg-icon">🔄</div>
+        <div class="bg-info"><div class="bg-name">TOP / BOTTOM</div><div class="bg-count">5 positions · 20 techniques</div></div>
+        <div class="bg-arrow">›</div>
+      </div>
+      <div class="pos-list">
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">BREAKDOWN (TOP)</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">TURNS / TILTS (TOP)</div><div class="pos-vids">5 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot offense"></div><div class="pos-name">PINS (TOP)</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot defense"></div><div class="pos-name">STAND UP (BOTTOM)</div><div class="pos-vids">3 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+        <div class="pos-item" onclick="toggleTech(this)"><div class="pos-dot defense"></div><div class="pos-name">SWITCH / REVERSAL (BOTTOM)</div><div class="pos-vids">4 videos</div><div class="pos-arrow">›</div></div><div class="tech-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bot-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-lbl">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">🤼</div><div class="nav-lbl">Train</div></div>
+    <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-lbl">Stats</div></div>
+    <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-lbl">Profile</div></div>
+  </div>
+  <div class="toast" id="toastEl"></div>
+</div>
+<script>
+function toggleGroup(header){
+  header.classList.toggle('open');
+  const list=header.nextElementSibling;
+  list.classList.toggle('open');
+}
+function toggleTech(posItem){
+  const techList=posItem.nextElementSibling;
+  if(techList&&techList.classList.contains('tech-list')){
+    techList.classList.toggle('open');
+  }
+}
+function filterPill(el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+function toast(m){const t=document.getElementById('toastEl');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+</script>
+</body>
+</html>

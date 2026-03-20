@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Team Stats</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--org:#e67e22;--orgg:rgba(230,126,34,.12);--pur:#9b59b6;--purg:rgba(155,89,182,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative;overflow:hidden}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;font-size:16px;color:var(--gr)}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ── BOYS/GIRLS TOGGLE ── */
+.roster-toggle{display:flex;margin:12px 20px 0;background:var(--cd);border-radius:var(--r);border:1px solid var(--bd);overflow:hidden}
+.rt-btn{flex:1;padding:10px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gr);cursor:pointer;transition:all .2s;border:none;background:transparent}
+.rt-btn.active{background:var(--gdg);color:var(--gd);box-shadow:inset 0 -2px 0 var(--gd)}
+.rt-btn:hover:not(.active){color:var(--lt)}
+
+/* ── TEAM SUMMARY BAR ── */
+.team-bar{padding:12px 20px;display:flex;gap:8px;flex-shrink:0}
+.tb-stat{flex:1;text-align:center;padding:8px 4px;background:var(--cd);border-radius:var(--r);border:1px solid var(--bd)}
+.tb-num{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--gd)}
+.tb-label{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-top:2px}
+
+/* ── SCROLLABLE BODY ── */
+.stats-body{flex:1;overflow-y:auto;padding:0 20px 20px}
+
+/* ── SECTION LABELS ── */
+.sec-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ── STAT CARDS ── */
+.stat-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:10px;transition:all .2s}
+
+.sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sc-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh)}
+
+/* ── RECORD BY CLASS ── */
+.class-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.class-row:last-child{border-bottom:none}
+.cr-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gdd);width:40px;flex-shrink:0}
+.cr-bar{flex:1;height:20px;border-radius:4px;overflow:hidden;display:flex;background:var(--bd)}
+.cr-bar-w{background:var(--gn);height:100%;transition:width .6s ease;display:flex;align-items:center;justify-content:center}
+.cr-bar-l{background:var(--rd);height:100%;transition:width .6s ease;display:flex;align-items:center;justify-content:center}
+.cr-bar-w span,.cr-bar-l span{font-size:9px;font-weight:700;color:var(--wh);letter-spacing:.5px}
+.cr-record{font-size:12px;font-weight:600;color:var(--lt);width:60px;text-align:right;flex-shrink:0}
+
+/* ── TOP PERFORMERS ── */
+.perf-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.perf-row:last-child{border-bottom:none}
+.perf-rank{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gdd);width:24px;flex-shrink:0;text-align:center}
+.perf-info{flex:1;min-width:0}
+.perf-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.perf-detail{font-size:10px;color:var(--gr);margin-top:1px}
+.perf-stars{display:flex;gap:1px;margin-top:2px}
+.perf-stars .s{font-size:10px}
+.perf-stars .s.on{color:var(--gd)}
+.perf-stars .s.off{color:var(--bd)}
+.perf-record{flex-shrink:0;text-align:right}
+.perf-wl{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px}
+.perf-wl .w{color:var(--gn)}
+.perf-wl .d{color:var(--gr)}
+.perf-wl .l{color:var(--rd)}
+
+/* ── HORIZONTAL BARS (shared) ── */
+.h-bar{margin-bottom:10px}
+.h-bar:last-child{margin-bottom:0}
+.h-bar-label{display:flex;justify-content:space-between;margin-bottom:5px}
+.h-bar-name{font-size:11px;color:var(--lt);font-weight:500}
+.h-bar-val{font-size:11px;font-weight:700}
+.h-bar-val.good{color:var(--gn)}
+.h-bar-val.ok{color:var(--gd)}
+.h-bar-val.weak{color:var(--rd)}
+.h-bar-track{height:6px;background:var(--bd);border-radius:3px;overflow:hidden}
+.h-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.h-bar-fill.good{background:var(--gn)}
+.h-bar-fill.ok{background:var(--gd)}
+.h-bar-fill.weak{background:var(--rd)}
+
+/* ── BATTLE SITUATION BARS ── */
+.sit-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.sit-row:last-child{border-bottom:none}
+.sit-name{font-size:11px;color:var(--lt);width:90px;flex-shrink:0;font-weight:500}
+.sit-bar{flex:1;height:20px;border-radius:4px;overflow:hidden;position:relative;background:var(--bd)}
+.sit-fill{height:100%;border-radius:4px;transition:width .8s ease;display:flex;align-items:center;padding-left:8px}
+.sit-fill.good{background:rgba(39,174,96,.3);border:1px solid rgba(39,174,96,.4)}
+.sit-fill.ok{background:rgba(200,168,78,.2);border:1px solid rgba(200,168,78,.3)}
+.sit-fill.weak{background:rgba(200,16,46,.2);border:1px solid rgba(200,16,46,.3)}
+.sit-pct{font-size:10px;font-weight:700;color:var(--wh)}
+.sit-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;width:70px;text-align:right}
+.sit-tag.good{color:var(--gn)}
+.sit-tag.ok{color:var(--gd)}
+.sit-tag.weak{color:var(--rd)}
+
+/* ── ATHLETIC TIER ROWS ── */
+.tier-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.tier-row:last-child{border-bottom:none}
+.tr-badge{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:4px 6px;border-radius:6px;width:100px;text-align:center;flex-shrink:0;line-height:1.2}
+.tr-badge.elite{background:var(--purg);color:var(--pur)}
+.tr-badge.super{background:var(--gng);color:var(--gn)}
+.tr-badge.solid{background:var(--blug);color:var(--blu)}
+.tr-badge.working{background:var(--orgg);color:var(--org)}
+.tr-desc{font-size:9px;color:var(--gr);margin-top:2px}
+.tr-bar{flex:1;height:6px;background:var(--bd);border-radius:3px;overflow:hidden}
+.tr-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.tr-fill.elite{background:var(--pur)}
+.tr-fill.super{background:var(--gn)}
+.tr-fill.solid{background:var(--blu)}
+.tr-fill.working{background:var(--org)}
+.tr-count{font-size:12px;font-weight:600;color:var(--lt);width:24px;text-align:right;flex-shrink:0}
+
+/* ── ACTIVITY ── */
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act-box{background:var(--dk);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center}
+.act-icon{font-size:18px;margin-bottom:4px}
+.act-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gd);letter-spacing:1px}
+.act-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-top:2px}
+.act-sub{font-size:10px;color:var(--gr);margin-top:4px}
+
+/* ── ASSESSMENT COMPLETION (bottom) ── */
+.assess-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ag-card{background:var(--dk);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center}
+.ag-icon{font-size:20px;margin-bottom:6px}
+.ag-name{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-bottom:4px}
+.ag-pct{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px}
+.ag-count{font-size:10px;color:var(--gr);margin-top:2px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--cd);border:1px solid var(--gdd);color:var(--gd);padding:10px 20px;border-radius:var(--r);font-size:12px;font-weight:600;letter-spacing:1px;opacity:0;transition:all .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" onclick="toast('Back to Dashboard')">←</div>
+      <div class="hd-info">
+        <div>TEAM STATS</div>
+        <div>2025-26 Season</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BOYS / GIRLS TOGGLE ═══ -->
+  <div class="roster-toggle">
+    <div class="rt-btn active" id="rt-boys" onclick="switchRoster('boys')">BOYS</div>
+    <div class="rt-btn" id="rt-girls" onclick="switchRoster('girls')">GIRLS</div>
+  </div>
+
+  <!-- ═══ TEAM SUMMARY BAR ═══ -->
+  <div class="team-bar">
+    <div class="tb-stat"><div class="tb-num" id="tb-size">—</div><div class="tb-label">Wrestlers</div></div>
+    <div class="tb-stat"><div class="tb-num" id="tb-wins">—</div><div class="tb-label">Wins</div></div>
+    <div class="tb-stat"><div class="tb-num" id="tb-losses">—</div><div class="tb-label">Losses</div></div>
+    <div class="tb-stat"><div class="tb-num" id="tb-pct">—</div><div class="tb-label">Win %</div></div>
+  </div>
+
+  <!-- ═══ SCROLLABLE STATS BODY ═══ -->
+  <div class="stats-body" id="stats-body"></div>
+
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+function toast(msg){
+  var t=document.getElementById('toast-el');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
+function makeStars(n,max){
+  var h='';for(var i=1;i<=max;i++)h+='<span class="s '+(i<=n?'on':'off')+'">★</span>';return h;
+}
+
+// ══════════════════════════════════════════
+// ROSTER DATA (same as roster v2)
+// Athletic results array: indices 0-9 = standard skills, 10-13 = bonus skills
+// Standard: Forward Roll, Backward Ext, Cartwheel Both, Round-Off Jump,
+//   RO + Back Ext, Front Handspring, Back Walkover, Walking on Hands,
+//   Bridge Kick Over, Bridge Circle Both Ways
+// Bonus: RO to Backflip, RO to Back Handspring, Standing Back Handspring, Standing Backflip
+// ══════════════════════════════════════════
+var roster=[
+  {name:'Marcus Johnson',wt:145,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'Silver',w:22,l:5,
+    athletic:{done:true,score:12,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'11:30'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'At'},attacks:{uo:'Above',lo:'At',ud:'At',ld:'At',to:'Above',bo:'At'},situations:{ub:82,hi:75,ho:68,fa:70,tb:72}},
+    activity:{vids:42,vidMin:188,extra:8,private:5,content:18}},
+  {name:'Tyler Rodriguez',wt:152,yr:'Sr',yrN:4,star:5,goal:5,goalTier:'Gold',w:30,l:2,
+    athletic:{done:true,score:13,results:[1,1,1,1,1,1,1,1,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'10:45'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'Above'},attacks:{uo:'Above',lo:'Above',ud:'Above',ld:'Above',to:'Above',bo:'At'},situations:{ub:90,hi:88,ho:82,fa:85,tb:80}},
+    activity:{vids:55,vidMin:245,extra:10,private:6,content:24}},
+  {name:'Aiden Park',wt:170,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:20,l:8,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,0,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'12:20'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:70,hi:65,ho:60,fa:62,tb:68}},
+    activity:{vids:28,vidMin:125,extra:4,private:2,content:12}},
+  {name:'Mason Lee',wt:195,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:19,l:7,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,0,0,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'13:00'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'Below',to:'At',bo:'At'},situations:{ub:68,hi:62,ho:58,fa:60,tb:65}},
+    activity:{vids:20,vidMin:89,extra:3,private:1,content:9}},
+  {name:'Daniel Lewis',wt:220,yr:'Sr',yrN:4,star:3,goal:4,goalTier:'',w:15,l:12,
+    athletic:{done:true,score:5,results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0]},
+    exercise:{done:true,completed:false,time:'—'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'Below',d:'At'},attacks:{uo:'At',lo:'Below',ud:'At',ld:'Below',to:'At',bo:'Below'},situations:{ub:60,hi:35,ho:30,fa:50,tb:55}},
+    activity:{vids:8,vidMin:36,extra:0,private:0,content:3}},
+  {name:'Omar King',wt:285,yr:'Sr',yrN:4,star:3,goal:4,goalTier:'',w:14,l:11,
+    athletic:{done:true,score:4,results:[1,1,0,0,0,0,0,0,0,0,1,1,0,0]},
+    exercise:{done:false},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'Below',ud:'At',ld:'Below',to:'At',bo:'At'},situations:{ub:65,hi:30,ho:25,fa:45,tb:60}},
+    activity:{vids:5,vidMin:22,extra:0,private:0,content:2}},
+  {name:'Jake Thompson',wt:160,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:18,l:9,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'13:10'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:68,hi:70,ho:62,fa:58,tb:65}},
+    activity:{vids:31,vidMin:138,extra:5,private:2,content:14}},
+  {name:'Chris Williams',wt:138,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:16,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:50'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'Below'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:62,hi:65,ho:55,fa:50,tb:52}},
+    activity:{vids:22,vidMin:98,extra:2,private:1,content:10}},
+  {name:'Ryan Mitchell',wt:126,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:17,l:8,
+    athletic:{done:true,score:12,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,1]},
+    exercise:{done:true,completed:true,time:'11:45'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'At'},attacks:{uo:'At',lo:'Above',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:72,hi:80,ho:68,fa:70,tb:65}},
+    activity:{vids:45,vidMin:200,extra:8,private:4,content:20}},
+  {name:'Jordan Clark',wt:145,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:13,l:12,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:false,time:'—'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'Below',ud:'At',ld:'Below',to:'Below',bo:'Below'},situations:{ub:55,hi:50,ho:48,fa:45,tb:50}},
+    activity:{vids:12,vidMin:53,extra:1,private:0,content:5}},
+  {name:'Jayden Allen',wt:152,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:15,l:10,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'12:55'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:68,hi:78,ho:65,fa:62,tb:60}},
+    activity:{vids:38,vidMin:170,extra:6,private:3,content:16}},
+  {name:'Sean Adams',wt:170,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:12,l:13,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:40'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'Below',d:'At'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'Below',bo:'Below'},situations:{ub:58,hi:55,ho:50,fa:48,tb:52}},
+    activity:{vids:9,vidMin:40,extra:0,private:0,content:4}},
+  {name:'Devon Brooks',wt:132,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:8,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:58'},skill:{done:false},battle:{done:false},
+    activity:{vids:14,vidMin:62,extra:1,private:0,content:6}},
+  {name:'Elijah Davis',wt:113,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:7,l:11,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'13:40'},skill:{done:false},battle:{done:false},
+    activity:{vids:20,vidMin:89,extra:2,private:1,content:9}},
+  {name:'Caleb White',wt:120,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:6,l:9,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:6,vidMin:27,extra:0,private:0,content:2}},
+  {name:'Ethan Walker',wt:138,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:9,l:8,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:45'},skill:{done:false},battle:{done:false},
+    activity:{vids:16,vidMin:71,extra:1,private:0,content:7}},
+  {name:'Xavier Young',wt:160,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:5,l:12,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:3,vidMin:13,extra:0,private:0,content:1}},
+  {name:'Trevor Scott',wt:145,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:7,l:7,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:20'},skill:{done:false},battle:{done:false},
+    activity:{vids:19,vidMin:85,extra:2,private:0,content:8}},
+  {name:'Noah Garcia',wt:106,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:3,l:8,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:10,vidMin:44,extra:0,private:0,content:4}},
+  {name:'Isaiah Harris',wt:113,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:2,l:9,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,1,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:8,vidMin:35,extra:0,private:0,content:3}},
+  {name:'Brandon Hall',wt:126,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:4,l:7,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:5,vidMin:22,extra:0,private:0,content:2}},
+  {name:'Patrick Wright',wt:120,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:1,l:10,
+    athletic:{done:true,score:5,results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:2,vidMin:9,extra:0,private:0,content:1}},
+  {name:'Will Turner',wt:132,yr:'Fr',yrN:1,star:1,goal:3,goalTier:'',w:5,l:6,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:50'},skill:{done:false},battle:{done:false},
+    activity:{vids:25,vidMin:111,extra:3,private:1,content:11}}
+];
+
+var girlsRoster=[
+  {name:'Sofia Martinez',wt:120,yr:'Sr',yrN:4,star:5,goal:5,goalTier:'Silver',w:28,l:3,
+    athletic:{done:true,score:14,results:[1,1,1,1,1,1,1,1,1,1,1,1,1,1]},
+    exercise:{done:true,completed:true,time:'11:20'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'Above'},attacks:{uo:'Above',lo:'Above',ud:'At',ld:'Above',to:'Above',bo:'At'},situations:{ub:88,hi:82,ho:78,fa:92,tb:85}},
+    activity:{vids:48,vidMin:215,extra:7,private:4,content:22}},
+  {name:'Emma Wilson',wt:138,yr:'Sr',yrN:4,star:4,goal:5,goalTier:'',w:21,l:7,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'13:15'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'Above'},attacks:{uo:'At',lo:'At',ud:'At',ld:'At',to:'Above',bo:'At'},situations:{ub:75,hi:70,ho:65,fa:72,tb:78}},
+    activity:{vids:30,vidMin:134,extra:4,private:2,content:14}},
+  {name:'Mia Thompson',wt:155,yr:'Sr',yrN:4,star:3,goal:4,goalTier:'',w:16,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:30'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:65,hi:60,ho:55,fa:58,tb:62}},
+    activity:{vids:20,vidMin:89,extra:2,private:1,content:10}},
+  {name:'Ava Chen',wt:106,yr:'Jr',yrN:3,star:4,goal:5,goalTier:'',w:23,l:5,
+    athletic:{done:true,score:13,results:[1,1,1,1,1,1,1,1,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'12:05'},
+    skill:{done:true,score:'Advanced'},
+    battle:{done:true,mat:{o:'Above',d:'At'},attacks:{uo:'At',lo:'Above',ud:'At',ld:'At',to:'At',bo:'Above'},situations:{ub:72,hi:85,ho:70,fa:75,tb:68}},
+    activity:{vids:40,vidMin:178,extra:6,private:3,content:18}},
+  {name:'Isabella Brooks',wt:126,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:14,l:9,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:10'},
+    skill:{done:true,score:'Intermediate'},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'Below',to:'At',bo:'At'},situations:{ub:62,hi:65,ho:58,fa:55,tb:60}},
+    activity:{vids:22,vidMin:98,extra:3,private:1,content:10}},
+  {name:'Olivia Davis',wt:132,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:13,l:11,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:45'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'Below'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:60,hi:58,ho:52,fa:48,tb:55}},
+    activity:{vids:16,vidMin:71,extra:2,private:0,content:7}},
+  {name:'Zoe Garcia',wt:145,yr:'Jr',yrN:3,star:3,goal:4,goalTier:'',w:12,l:10,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:55'},
+    skill:{done:false},
+    battle:{done:true,mat:{o:'At',d:'At'},attacks:{uo:'Below',lo:'At',ud:'At',ld:'At',to:'At',bo:'At'},situations:{ub:55,hi:62,ho:60,fa:52,tb:58}},
+    activity:{vids:14,vidMin:62,extra:1,private:0,content:6}},
+  {name:'Lily Anderson',wt:113,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:8,l:8,
+    athletic:{done:true,score:10,results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'13:50'},skill:{done:false},battle:{done:false},
+    activity:{vids:18,vidMin:80,extra:2,private:1,content:8}},
+  {name:'Chloe Kim',wt:120,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:6,l:10,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:30'},skill:{done:false},battle:{done:false},
+    activity:{vids:12,vidMin:53,extra:1,private:0,content:5}},
+  {name:'Harper Lee',wt:138,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:7,l:9,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:8,vidMin:35,extra:0,private:0,content:3}},
+  {name:'Aria Patel',wt:155,yr:'So',yrN:2,star:2,goal:3,goalTier:'',w:5,l:11,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:4,vidMin:18,extra:0,private:0,content:2}},
+  {name:'Luna Rivera',wt:100,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:4,l:6,
+    athletic:{done:true,score:11,results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'13:30'},skill:{done:false},battle:{done:false},
+    activity:{vids:20,vidMin:89,extra:2,private:1,content:9}},
+  {name:'Ella Nguyen',wt:106,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:3,l:7,
+    athletic:{done:true,score:8,results:[1,1,1,1,1,1,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:10,vidMin:44,extra:0,private:0,content:4}},
+  {name:'Scarlett Moore',wt:113,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:2,l:8,
+    athletic:{done:true,score:7,results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:6,vidMin:27,extra:0,private:0,content:2}},
+  {name:'Grace Taylor',wt:120,yr:'Fr',yrN:1,star:1,goal:3,goalTier:'',w:5,l:5,
+    athletic:{done:true,score:9,results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+    exercise:{done:true,completed:true,time:'14:40'},skill:{done:false},battle:{done:false},
+    activity:{vids:15,vidMin:67,extra:1,private:0,content:6}},
+  {name:'Nora James',wt:126,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:1,l:9,
+    athletic:{done:true,score:5,results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:3,vidMin:13,extra:0,private:0,content:1}},
+  {name:'Violet Sanders',wt:132,yr:'Fr',yrN:1,star:1,goal:2,goalTier:'',w:2,l:7,
+    athletic:{done:true,score:6,results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0]},
+    exercise:{done:false},skill:{done:false},battle:{done:false},
+    activity:{vids:4,vidMin:18,extra:0,private:0,content:2}}
+];
+
+var currentRoster='boys';
+var activeRoster=roster;
+
+function switchRoster(which){
+  currentRoster=which;
+  activeRoster=(which==='boys')?roster:girlsRoster;
+  document.getElementById('rt-boys').classList.toggle('active',which==='boys');
+  document.getElementById('rt-girls').classList.toggle('active',which==='girls');
+  buildStats();
+}
+
+// ── ATHLETIC TIER CALCULATION ──
+// 10 standard skills (indices 0-9), 4 bonus (indices 10-13)
+function getAthTier(results){
+  if(!results)return'none';
+  var std=0;for(var i=0;i<10;i++)std+=results[i];
+  var bonus=0;for(var i=10;i<14;i++)bonus+=results[i];
+  if(std===10&&bonus>=1)return'elite';
+  if(std===10)return'super';
+  if(std>=8)return'solid';  // 75% of 10 = 7.5, round up to 8
+  return'working';
+}
+
+// ══════════════════════════════════════════
+// BUILD ALL STATS
+// ══════════════════════════════════════════
+function buildStats(){
+  var r=activeRoster;
+  var totalW=0,totalL=0;
+  r.forEach(function(a){totalW+=a.w;totalL+=a.l;});
+  var total=totalW+totalL;
+  var pct=total>0?Math.round((totalW/total)*100):0;
+
+  document.getElementById('tb-size').textContent=r.length;
+  document.getElementById('tb-wins').textContent=totalW;
+  document.getElementById('tb-losses').textContent=totalL;
+  document.getElementById('tb-pct').textContent=pct+'%';
+
+  var h='';
+  var n=r.length;
+
+  // ══════════════════════════════════════
+  // 1. RECORD BY CLASS
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Record by Class</div>';
+  h+='<div class="stat-card">';
+  var classes=['Sr','Jr','So','Fr'];
+  classes.forEach(function(cls){
+    var cw=0,cl=0,count=0;
+    r.forEach(function(a){if(a.yr===cls){cw+=a.w;cl+=a.l;count++;}});
+    if(count===0)return;
+    var ct=cw+cl;var cwPct=ct>0?Math.round((cw/ct)*100):0;
+    var clPct=100-cwPct;
+    h+='<div class="class-row">';
+    h+='<div class="cr-label">'+cls.toUpperCase()+'</div>';
+    h+='<div class="cr-bar">';
+    if(cwPct>0)h+='<div class="cr-bar-w" style="width:'+cwPct+'%"><span>'+cw+'</span></div>';
+    if(clPct>0)h+='<div class="cr-bar-l" style="width:'+clPct+'%"><span>'+cl+'</span></div>';
+    h+='</div>';
+    h+='<div class="cr-record">'+cw+' - '+cl+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ══════════════════════════════════════
+  // 2. TOP PERFORMERS (record, star rank, weight)
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Top Performers</div>';
+  h+='<div class="stat-card">';
+  var sorted=r.slice().filter(function(a){return(a.w+a.l)>=5;}).sort(function(a,b){
+    var aPct=a.w/(a.w+a.l);var bPct=b.w/(b.w+b.l);
+    if(bPct!==aPct)return bPct-aPct;return b.w-a.w;
+  });
+  var top5=sorted.slice(0,5);
+  top5.forEach(function(a,i){
+    h+='<div class="perf-row">';
+    h+='<div class="perf-rank">'+(i+1)+'</div>';
+    h+='<div class="perf-info">';
+    h+='<div class="perf-name">'+a.name.toUpperCase()+'</div>';
+    h+='<div class="perf-detail">'+a.yr+' · '+a.wt+' lbs</div>';
+    h+='<div class="perf-stars">'+makeStars(a.star,5)+'</div>';
+    h+='</div>';
+    h+='<div class="perf-record"><div class="perf-wl"><span class="w">'+a.w+'</span><span class="d"> - </span><span class="l">'+a.l+'</span></div></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ══════════════════════════════════════
+  // 3. AREAS TO TARGET IN PRACTICE
+  // ══════════════════════════════════════
+  var battleWrestlers=r.filter(function(a){return a.battle&&a.battle.done;});
+  if(battleWrestlers.length>0){
+    h+='<div class="sec-label">Areas to Target in Practice</div>';
+    h+='<div class="stat-card">';
+
+    var sitAvgs=[];
+    var sitKeys={ub:'Upper Body',hi:'Head Inside',ho:'Head Outside',fa:'Failed Attacks',tb:'Top / Bottom'};
+    for(var sk in sitKeys){
+      var s=0;battleWrestlers.forEach(function(a){s+=a.battle.situations[sk];});
+      sitAvgs.push({key:sk,name:sitKeys[sk],avg:Math.round(s/battleWrestlers.length)});
+    }
+    sitAvgs.sort(function(a,b){return a.avg-b.avg;});
+
+    h+='<div style="font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Weakest Situations</div>';
+    var bottom2=sitAvgs.slice(0,2);
+    bottom2.forEach(function(s){
+      var cls=s.avg>=70?'good':s.avg>=50?'ok':'weak';
+      h+='<div class="h-bar"><div class="h-bar-label"><div class="h-bar-name">'+s.name+'</div><div class="h-bar-val '+cls+'">'+s.avg+'% avg</div></div><div class="h-bar-track"><div class="h-bar-fill '+cls+'" style="width:'+s.avg+'%"></div></div></div>';
+    });
+
+    var atkBelow=[];
+    var atkKeys={uo:'Upper Body Offense',lo:'Leg Attack Offense',ud:'Upper Body Defense',ld:'Leg Attack Defense',to:'Top Attacks',bo:'Bottom Attacks'};
+    for(var akey in atkKeys){
+      var bCount=0;
+      battleWrestlers.forEach(function(a){if(a.battle.attacks[akey]==='Below')bCount++;});
+      atkBelow.push({key:akey,name:atkKeys[akey],count:bCount,pct:Math.round(bCount/battleWrestlers.length*100)});
+    }
+    atkBelow.sort(function(a,b){return b.count-a.count;});
+
+    if(atkBelow[0].count>0){
+      h+='<div style="font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px">Most "Below" Self-Ratings</div>';
+      var topBelow=atkBelow.filter(function(a){return a.count>0;}).slice(0,3);
+      topBelow.forEach(function(a){
+        h+='<div class="h-bar"><div class="h-bar-label"><div class="h-bar-name">'+a.name+'</div><div class="h-bar-val weak">'+a.count+' wrestlers ('+a.pct+'%)</div></div><div class="h-bar-track"><div class="h-bar-fill weak" style="width:'+a.pct+'%"></div></div></div>';
+      });
+    }
+    h+='</div>';
+  }
+
+  // ══════════════════════════════════════
+  // 4. BATTLE ASSESSMENT · ATTACK TEAM AVG
+  // ══════════════════════════════════════
+  if(battleWrestlers.length>0){
+    h+='<div class="sec-label">Battle Assessment · Attack Team Avg</div>';
+    h+='<div class="stat-card">';
+    var atkLabels={uo:'Upper Body Off',lo:'Leg Attacks Off',ud:'Upper Body Def',ld:'Leg Attacks Def',to:'Top Attacks',bo:'Bottom Attacks'};
+    for(var ak in atkLabels){
+      var below=0,at=0,above=0;
+      battleWrestlers.forEach(function(a){
+        var v=a.battle.attacks[ak];
+        if(v==='Below')below++;else if(v==='At')at++;else above++;
+      });
+      var bn=battleWrestlers.length;
+      var weighted=Math.round((at*50+above*100)/bn);
+      var cls=weighted>=70?'good':weighted>=50?'ok':'weak';
+      var tag=weighted>=70?'Strong':weighted>=50?'Developing':'Needs Work';
+      h+='<div class="sit-row">';
+      h+='<div class="sit-name">'+atkLabels[ak]+'</div>';
+      h+='<div class="sit-bar"><div class="sit-fill '+cls+'" style="width:'+weighted+'%"><span class="sit-pct">'+weighted+'%</span></div></div>';
+      h+='<div class="sit-tag '+cls+'">'+tag+'</div>';
+      h+='</div>';
+    }
+    h+='<div style="font-size:10px;color:var(--gr);margin-top:8px;text-align:right">Based on '+battleWrestlers.length+' wrestlers</div>';
+    h+='</div>';
+
+    // ══════════════════════════════════════
+    // 5. BATTLE ASSESSMENT · SITUATION TEAM AVG
+    // ══════════════════════════════════════
+    h+='<div class="sec-label">Battle Assessment · Situation Team Avg</div>';
+    h+='<div class="stat-card">';
+    var sits={ub:'Upper Body',hi:'Head Inside',ho:'Head Outside',fa:'Failed Attacks',tb:'Top / Bottom'};
+    for(var k in sits){
+      var sum=0;
+      battleWrestlers.forEach(function(a){sum+=a.battle.situations[k];});
+      var avg=Math.round(sum/battleWrestlers.length);
+      var cls=avg>=70?'good':avg>=50?'ok':'weak';
+      var tag=avg>=70?'Strong':avg>=50?'Developing':'Needs Work';
+      h+='<div class="sit-row">';
+      h+='<div class="sit-name">'+sits[k]+'</div>';
+      h+='<div class="sit-bar"><div class="sit-fill '+cls+'" style="width:'+avg+'%"><span class="sit-pct">'+avg+'%</span></div></div>';
+      h+='<div class="sit-tag '+cls+'">'+tag+'</div>';
+      h+='</div>';
+    }
+    h+='<div style="font-size:10px;color:var(--gr);margin-top:8px;text-align:right">Based on '+battleWrestlers.length+' wrestlers</div>';
+    h+='</div>';
+  }
+
+  // ══════════════════════════════════════
+  // 6. ATHLETIC TIERS (4 tiers)
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Athletic Tiers</div>';
+  h+='<div class="stat-card">';
+  var eliteC=0,superC=0,solidC=0,workC=0;
+  r.forEach(function(a){
+    if(!a.athletic||!a.athletic.done)return;
+    var tier=getAthTier(a.athletic.results);
+    if(tier==='elite')eliteC++;
+    else if(tier==='super')superC++;
+    else if(tier==='solid')solidC++;
+    else workC++;
+  });
+  var athTotal=eliteC+superC+solidC+workC;
+  function tierPct(c){return athTotal>0?Math.round(c/athTotal*100):0;}
+
+  h+='<div class="tier-row"><div class="tr-badge elite">ELITE ATHLETE</div><div class="tr-bar"><div class="tr-fill elite" style="width:'+tierPct(eliteC)+'%"></div></div><div class="tr-count">'+eliteC+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 6px 110px;margin-top:-4px">All 10 standard + bonus skills</div>';
+
+  h+='<div class="tier-row"><div class="tr-badge super">SUPER ATHLETE</div><div class="tr-bar"><div class="tr-fill super" style="width:'+tierPct(superC)+'%"></div></div><div class="tr-count">'+superC+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 6px 110px;margin-top:-4px">All 10 standard skills</div>';
+
+  h+='<div class="tier-row"><div class="tr-badge solid">SOLID FOUND.</div><div class="tr-bar"><div class="tr-fill solid" style="width:'+tierPct(solidC)+'%"></div></div><div class="tr-count">'+solidC+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 6px 110px;margin-top:-4px">8+ of 10 standard skills</div>';
+
+  h+='<div class="tier-row"><div class="tr-badge working">KEEP WORKING</div><div class="tr-bar"><div class="tr-fill working" style="width:'+tierPct(workC)+'%"></div></div><div class="tr-count">'+workC+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 2px 110px;margin-top:-4px">Under 8 standard skills</div>';
+
+  h+='</div>';
+
+  // ══════════════════════════════════════
+  // 7. EXERCISE TIERS (Gold Standard Circuit)
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Exercise Tiers</div>';
+  h+='<div class="stat-card">';
+  var exElite=0,exStrong=0,exStandard=0,exBelow=0;
+  r.forEach(function(a){
+    if(!a.exercise||!a.exercise.done)return;
+    if(!a.exercise.completed){exBelow++;return;}
+    // Parse time string like "11:30" to minutes
+    var parts=a.exercise.time.split(':');
+    var mins=parseInt(parts[0])+(parseInt(parts[1]||0)/60);
+    if(mins<10)exElite++;
+    else if(mins<12)exStrong++;
+    else if(mins<=15)exStandard++;
+    else exBelow++;
+  });
+  var exTotal=exElite+exStrong+exStandard+exBelow;
+  // Count not attempted
+  var exNotDone=0;r.forEach(function(a){if(!a.exercise||!a.exercise.done)exNotDone++;});
+  function exPct(c){return exTotal>0?Math.round(c/exTotal*100):0;}
+
+  h+='<div class="tier-row"><div class="tr-badge elite">ELITE</div><div class="tr-bar"><div class="tr-fill elite" style="width:'+exPct(exElite)+'%"></div></div><div class="tr-count">'+exElite+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 6px 110px;margin-top:-4px">Under 10 minutes</div>';
+
+  h+='<div class="tier-row"><div class="tr-badge super">STRONG</div><div class="tr-bar"><div class="tr-fill super" style="width:'+exPct(exStrong)+'%"></div></div><div class="tr-count">'+exStrong+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 6px 110px;margin-top:-4px">10 – 12 minutes</div>';
+
+  h+='<div class="tier-row"><div class="tr-badge solid">AT STANDARD</div><div class="tr-bar"><div class="tr-fill solid" style="width:'+exPct(exStandard)+'%"></div></div><div class="tr-count">'+exStandard+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 6px 110px;margin-top:-4px">12 – 15 minutes</div>';
+
+  h+='<div class="tier-row"><div class="tr-badge working">BELOW</div><div class="tr-bar"><div class="tr-fill working" style="width:'+exPct(exBelow)+'%"></div></div><div class="tr-count">'+exBelow+'</div></div>';
+  h+='<div style="font-size:9px;color:var(--gr);padding:0 0 2px 110px;margin-top:-4px">Did not finish or over 15 min</div>';
+
+  if(exNotDone>0){
+    h+='<div style="font-size:10px;color:var(--gr);margin-top:8px;text-align:right">'+exNotDone+' wrestler'+(exNotDone>1?'s':'')+' not yet attempted</div>';
+  }
+  h+='</div>';
+
+  // ══════════════════════════════════════
+  // 8. MOST ACTIVE
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Most Active</div>';
+  h+='<div class="stat-card">';
+  var byActivity=r.slice().sort(function(a,b){
+    var aTotal=(a.activity?a.activity.vids:0)+(a.activity?a.activity.extra:0)+(a.activity?a.activity.private:0)+(a.activity?a.activity.content:0);
+    var bTotal=(b.activity?b.activity.vids:0)+(b.activity?b.activity.extra:0)+(b.activity?b.activity.private:0)+(b.activity?b.activity.content:0);
+    return bTotal-aTotal;
+  });
+  var topActive=byActivity.slice(0,5);
+  topActive.forEach(function(a,i){
+    var act=a.activity||{vids:0,vidMin:0,extra:0,private:0,content:0};
+    var totalAct=act.vids+act.extra+act.private+act.content;
+    var hrs=Math.round(act.vidMin/60*10)/10;
+    h+='<div class="perf-row">';
+    h+='<div class="perf-rank">'+(i+1)+'</div>';
+    h+='<div class="perf-info"><div class="perf-name">'+a.name.toUpperCase()+'</div><div class="perf-detail">'+act.vids+' vids · '+hrs+' hrs · '+act.extra+' extra · '+act.private+' private</div></div>';
+    h+='<div class="perf-record"><div class="perf-wl" style="font-size:16px;color:var(--gd)">'+totalAct+'</div></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ══════════════════════════════════════
+  // 9. TEAM ACTIVITY TOTALS
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Team Activity Totals</div>';
+  h+='<div class="stat-card">';
+  var tVids=0,tMin=0,tExtra=0,tPrivate=0,tContent=0;
+  r.forEach(function(a){
+    var act=a.activity||{vids:0,vidMin:0,extra:0,private:0,content:0};
+    tVids+=act.vids;tMin+=act.vidMin;tExtra+=act.extra;tPrivate+=act.private;tContent+=act.content;
+  });
+  h+='<div class="act-grid">';
+  h+='<div class="act-box"><div class="act-icon">📹</div><div class="act-num">'+tVids+'</div><div class="act-label">Videos Watched</div><div class="act-sub">'+Math.round(tMin/60*10)/10+' total hrs</div></div>';
+  h+='<div class="act-box"><div class="act-icon">✅</div><div class="act-num">'+tContent+'</div><div class="act-label">Lessons Done</div><div class="act-sub">'+Math.round(tContent/n*10)/10+' avg per wrestler</div></div>';
+  h+='<div class="act-box"><div class="act-icon">🏋️</div><div class="act-num">'+tExtra+'</div><div class="act-label">Extra Practices</div><div class="act-sub">'+Math.round(tExtra/n*10)/10+' avg per wrestler</div></div>';
+  h+='<div class="act-box"><div class="act-icon">👤</div><div class="act-num">'+tPrivate+'</div><div class="act-label">Private Lessons</div><div class="act-sub">'+Math.round(tPrivate/n*10)/10+' avg per wrestler</div></div>';
+  h+='</div></div>';
+
+  // ══════════════════════════════════════
+  // 10. ASSESSMENT COMPLETION (bottom)
+  // ══════════════════════════════════════
+  h+='<div class="sec-label">Assessment Completion</div>';
+  h+='<div class="stat-card">';
+  var athDone=0,exDone=0,sklDone=0,btlDone=0;
+  r.forEach(function(a){
+    if(a.athletic&&a.athletic.done)athDone++;
+    if(a.exercise&&a.exercise.done)exDone++;
+    if(a.skill&&a.skill.done)sklDone++;
+    if(a.battle&&a.battle.done)btlDone++;
+  });
+  function pctColor(v){return v>=80?'color:var(--gn)':v>=50?'color:var(--gd)':'color:var(--rd)';}
+  h+='<div class="assess-grid">';
+  h+='<div class="ag-card"><div class="ag-icon">🤸</div><div class="ag-name">Athletic</div><div class="ag-pct" style="'+pctColor(Math.round(athDone/n*100))+'">'+Math.round(athDone/n*100)+'%</div><div class="ag-count">'+athDone+' / '+n+'</div></div>';
+  h+='<div class="ag-card"><div class="ag-icon">💪</div><div class="ag-name">Exercise</div><div class="ag-pct" style="'+pctColor(Math.round(exDone/n*100))+'">'+Math.round(exDone/n*100)+'%</div><div class="ag-count">'+exDone+' / '+n+'</div></div>';
+  h+='<div class="ag-card"><div class="ag-icon">🎯</div><div class="ag-name">Skill</div><div class="ag-pct" style="'+pctColor(Math.round(sklDone/n*100))+'">'+Math.round(sklDone/n*100)+'%</div><div class="ag-count">'+sklDone+' / '+n+'</div></div>';
+  h+='<div class="ag-card"><div class="ag-icon">⚔️</div><div class="ag-name">Battle</div><div class="ag-pct" style="'+pctColor(Math.round(btlDone/n*100))+'">'+Math.round(btlDone/n*100)+'%</div><div class="ag-count">'+btlDone+' / '+n+'</div></div>';
+  h+='</div></div>';
+
+  document.getElementById('stats-body').innerHTML=h;
+}
+
+// ── INIT ──
+buildStats();
+</script>
+</body>
+</html>

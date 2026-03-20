@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Battle Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-save{font-size:12px;color:var(--gd);font-weight:600;cursor:pointer;padding:8px 12px;border:1px solid rgba(200,168,78,.3);border-radius:var(--r);background:var(--gdg)}
+.progress-wrap{padding:12px 20px 8px;flex-shrink:0}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.progress-count{font-size:11px;color:var(--gd);font-weight:700}
+.progress-bar{height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gd);border-radius:2px;transition:width .3s ease}
+.section-intro{padding:24px 20px 16px;text-align:center}
+.section-icon{font-size:40px;margin-bottom:12px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--gd);margin-bottom:8px}
+.section-desc{font-size:13px;color:var(--gr);line-height:1.5;max-width:340px;margin:0 auto}
+.q-area{flex:1;overflow-y:auto;padding:0 20px 120px}
+.q-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:12px}
+.q-num{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--grd);font-weight:700;margin-bottom:8px}
+.q-text{font-size:15px;color:var(--wh);font-weight:600;line-height:1.4;margin-bottom:6px}
+.q-hint{font-size:12px;color:var(--gr);line-height:1.4;margin-bottom:16px}
+.q-buttons{display:flex;gap:8px}
+.q-btn{flex:1;padding:14px 8px;border-radius:var(--r);border:2px solid var(--bd);background:var(--bk);cursor:pointer;text-align:center;transition:all .2s}
+.q-btn-label{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--grd);transition:color .2s}
+.q-btn.below.selected{border-color:var(--rd);background:var(--rdg)}
+.q-btn.below.selected .q-btn-label{color:var(--rd)}
+.q-btn.at.selected{border-color:var(--gd);background:var(--gdg)}
+.q-btn.at.selected .q-btn-label{color:var(--gd)}
+.q-btn.above.selected{border-color:var(--gn);background:var(--gng)}
+.q-btn.above.selected .q-btn-label{color:var(--gn)}
+.sub-header{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:700;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sub-header::after{content:'';flex:1;height:1px;background:var(--bd)}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px;background:linear-gradient(transparent,var(--dk) 20%);display:flex;gap:10px;z-index:20}
+.btn-back{flex:0 0 auto;padding:14px 20px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gr);cursor:pointer}
+.btn-next{flex:1;padding:14px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;text-align:center;transition:all .2s}
+.btn-next.ready{background:var(--gd);color:var(--bk)}
+.btn-next.disabled{background:var(--bd);color:var(--grd);pointer-events:none}
+.complete-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1}
+.complete-icon{font-size:60px;margin-bottom:20px}
+.complete-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gd);margin-bottom:12px}
+.complete-sub{font-size:14px;color:var(--gr);line-height:1.5;max-width:300px;margin-bottom:32px}
+.complete-btn{padding:16px 40px;border-radius:var(--r);border:none;background:var(--gd);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer}
+.video-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:0 0 16px;overflow:hidden}
+.video-thumb{height:160px;background:var(--bk);display:flex;align-items:center;justify-content:center}
+.video-play{width:50px;height:50px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--bk)}
+.video-label{padding:10px 14px;font-size:12px;color:var(--gr);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+var MODE='coach';
+function mt(a,c){return MODE==='coach'?c:a;}
+
+var SECTIONS=[
+
+// ── SECTION 3: CONTROLLING THE MAT (Q1-Q4) ──
+{
+  id:'mat',title:'Controlling the Mat',icon:'🤼',
+  videoLabel:'VIDEO: Controlling the Mat Explained',
+  desc:function(){return mt(
+    'Rate your stance, motion, and positioning — offense and defense on the feet, plus top and bottom.',
+    'Rate your team\'s stance, motion, and positioning — offense and defense on the feet, plus top and bottom.'
+  );},
+  questions:[
+    {id:'q1',label:'Neutral on the Feet — Offense',
+     hint:function(){return mt(
+       'Rate your stance, motion, body fakes, level changes, and handfighting. Goal: Get to attacks and keep opponent off balance.',
+       'Rate your team\'s stance, motion, body fakes, level changes, and handfighting. Goal: Get to attacks and keep opponent off balance.'
+     );}},
+    {id:'q2',label:'Neutral on the Feet — Defense',
+     hint:function(){return mt(
+       'Rate your ability to stop or minimize opponent\'s attacks.',
+       'Rate your team\'s ability to stop or minimize opponent\'s attacks.'
+     );}},
+    {id:'q3',label:'Top Position',
+     hint:function(){return mt(
+       'Rate your ability to ride opponent and keep them in bottom position.',
+       'Rate your team\'s ability to ride opponent and keep them in bottom position.'
+     );}},
+    {id:'q4',label:'Bottom Position',
+     hint:function(){return mt(
+       'Rate your ability to keep a strong base for escapes and reversals.',
+       'Rate your team\'s ability to keep a strong base for escapes and reversals.'
+     );}}
+  ]
+},
+
+// ── SECTION 4: CONTROLLING THE ATTACKS (Q5-Q12) ──
+{
+  id:'attacks',title:'Controlling the Attacks',icon:'⚔️',
+  videoLabel:'VIDEO: Attacks Explained',
+  desc:function(){return mt(
+    'Rate your offensive and defensive attack abilities — upper body, legs, top, and bottom.',
+    'Rate your team\'s offensive and defensive attack abilities — upper body, legs, top, and bottom.'
+  );},
+  questions:[
+    {id:'q5',label:'Upper Body Attacks on the Feet — Offense',subGroup:'On the Feet',
+     hint:function(){return mt(
+       'Rate your ability to attack opponent\'s upper body (front headlock, 2-on-1, underhooks, path to back via ducks, drags, shucks).',
+       'Rate your team\'s ability to attack opponent\'s upper body (front headlock, 2-on-1, underhooks, path to back via ducks, drags, shucks).'
+     );}},
+    {id:'q6',label:'Upper Body Attacks on the Feet — Defense',subGroup:'On the Feet',
+     hint:function(){return mt(
+       'Rate your ability to defend against upper body attacks.',
+       'Rate your team\'s ability to defend against upper body attacks.'
+     );}},
+    {id:'q7',label:'Leg Attacks on the Feet — Offense',subGroup:'On the Feet',
+     hint:function(){return mt(
+       'Rate your ability to attack using leg attacks (head inside single, head outside single, double leg).',
+       'Rate your team\'s ability to attack using leg attacks (head inside single, head outside single, double leg).'
+     );}},
+    {id:'q8',label:'Leg Attacks on the Feet — Defense',subGroup:'On the Feet',
+     hint:function(){return mt(
+       'Rate your ability to defend against head inside single, head outside single, and double leg attacks.',
+       'Rate your team\'s ability to defend against head inside single, head outside single, and double leg attacks.'
+     );}},
+    {id:'q9',label:'Top Attacks — Upper Body Control',subGroup:'On the Mat',
+     hint:function(){return mt(
+       'Rate your ability to control from top using upper body rides (wrist control, arm bars, chicken wings, half nelsons).',
+       'Rate your team\'s ability to control from top using upper body rides (wrist control, arm bars, chicken wings, half nelsons).'
+     );}},
+    {id:'q10',label:'Top Attacks — Legs In',subGroup:'On the Mat',
+     hint:function(){return mt(
+       'Rate your ability to control from top with legs in (leg riding).',
+       'Rate your team\'s ability to control from top with legs in (leg riding).'
+     );}},
+    {id:'q11',label:'Bottom Attacks — Escapes',subGroup:'On the Mat',
+     hint:function(){return mt(
+       'Rate your ability to escape from bottom and get back to your feet.',
+       'Rate your team\'s ability to escape from bottom and get back to their feet.'
+     );}},
+    {id:'q12',label:'Bottom Attacks — Reversals',subGroup:'On the Mat',
+     hint:function(){return mt(
+       'Rate your ability to reverse your opponent and gain top control from bottom.',
+       'Rate your team\'s ability to reverse opponent and gain top control from bottom.'
+     );}}
+  ]
+},
+
+// ── SECTION 6: UPPER BODY SITUATIONS (Q13-Q17) ──
+{
+  id:'sit-ub',title:'Upper Body Situations',icon:'💪',
+  videoLabel:'VIDEO: Upper Body Positions Explained',
+  desc:function(){return mt(
+    'Rate your comfort controlling each upper body position.',
+    'Rate your team\'s comfort controlling each upper body position.'
+  );},
+  questions:[
+    {id:'q13',label:'Underhook — Offense Control',
+     hint:function(){return mt(
+       'Rate your ability to control the underhook position on offense.',
+       'Rate your team\'s ability to control the underhook position on offense.'
+     );}},
+    {id:'q14',label:'Overhook — Offense Control',
+     hint:function(){return mt(
+       'Rate your ability to control the overhook position on offense.',
+       'Rate your team\'s ability to control the overhook position on offense.'
+     );}},
+    {id:'q15',label:'Over/Under — Offense Control',
+     hint:function(){return mt(
+       'Rate your ability to control the over/under chest-to-chest position on offense.',
+       'Rate your team\'s ability to control the over/under chest-to-chest position on offense.'
+     );}},
+    {id:'q16',label:'2-on-1 — Offense Control',subGroup:'2-on-1',
+     hint:function(){return mt(
+       'Rate your ability to control the 2-on-1 position on offense and create angles.',
+       'Rate your team\'s ability to control the 2-on-1 position on offense and create angles.'
+     );}},
+    {id:'q17',label:'2-on-1 — Defense Control',subGroup:'2-on-1',
+     hint:function(){return mt(
+       'Rate your ability to defend when opponent has 2-on-1 control on you.',
+       'Rate your team\'s ability to defend when opponent has 2-on-1 control on them.'
+     );}}
+  ]
+},
+
+// ── SECTION 7a: LEG ATTACK SITUATIONS (Q18-Q21) ──
+{
+  id:'sit-leg',title:'Leg Attack Situations',icon:'🦵',
+  videoLabel:'VIDEO: Leg Attack Positions Explained',
+  desc:function(){return mt(
+    'Rate your comfort controlling leg attack positions — offense and defense.',
+    'Rate your team\'s comfort controlling leg attack positions — offense and defense.'
+  );},
+  questions:[
+    {id:'q18',label:'Head Inside Single — Offense Control',subGroup:'Head Inside Single',
+     hint:function(){return mt(
+       'Rate your ability to control the head inside single position on offense.',
+       'Rate your team\'s ability to control the head inside single position on offense.'
+     );}},
+    {id:'q19',label:'Head Inside Single — Defense Control',subGroup:'Head Inside Single',
+     hint:function(){return mt(
+       'Rate your ability to defend and control when opponent has a head inside single on you.',
+       'Rate your team\'s ability to defend and control when opponent has a head inside single.'
+     );}},
+    {id:'q20',label:'Head Outside Single — Offense Control',subGroup:'Head Outside Single',
+     hint:function(){return mt(
+       'Rate your ability to control the head outside single position on offense.',
+       'Rate your team\'s ability to control the head outside single position on offense.'
+     );}},
+    {id:'q21',label:'Head Outside Single — Defense Control',subGroup:'Head Outside Single',
+     hint:function(){return mt(
+       'Rate your ability to defend and control when opponent has a head outside single on you.',
+       'Rate your team\'s ability to defend and control when opponent has a head outside single.'
+     );}}
+  ]
+},
+
+// ── SECTION 7b: FAILED ATTACK SITUATIONS (Q22-Q25) ──
+{
+  id:'sit-fa',title:'Failed Attack Situations',icon:'🔄',
+  videoLabel:'VIDEO: Failed Attack Positions Explained',
+  desc:function(){return mt(
+    'Rate your comfort in positions that result from failed attacks.',
+    'Rate your team\'s comfort in positions that result from failed attacks.'
+  );},
+  questions:[
+    {id:'q22',label:'Front Headlock — Offense Control',subGroup:'Front Headlock',
+     hint:function(){return mt(
+       'Rate your ability to control the front headlock position on offense.',
+       'Rate your team\'s ability to control the front headlock position on offense.'
+     );}},
+    {id:'q23',label:'Front Headlock — Defense Control',subGroup:'Front Headlock',
+     hint:function(){return mt(
+       'Rate your ability to defend and escape when opponent has you in a front headlock.',
+       'Rate your team\'s ability to defend and escape when opponent has them in a front headlock.'
+     );}},
+    {id:'q24',label:'Seatbelt — Offense Control',subGroup:'Seatbelt / Whizzer',
+     hint:function(){return mt(
+       'Rate your ability to control the seatbelt position on offense.',
+       'Rate your team\'s ability to control the seatbelt position on offense.'
+     );}},
+    {id:'q25',label:'Whizzer — Offense Control',subGroup:'Seatbelt / Whizzer',
+     hint:function(){return mt(
+       'Rate your ability to control with the whizzer on offense.',
+       'Rate your team\'s ability to control with the whizzer on offense.'
+     );}}
+  ]
+},
+
+// ── SECTION 8: TOP/BOTTOM SITUATIONS (Q26-Q33) ──
+{
+  id:'sit-tb',title:'Top / Bottom Situations',icon:'🔒',
+  videoLabel:'VIDEO: Top/Bottom Positions Explained',
+  desc:function(){return mt(
+    'Rate your comfort in top and bottom mat positions — offense and defense control.',
+    'Rate your team\'s comfort in top and bottom mat positions — offense and defense control.'
+  );},
+  questions:[
+    {id:'q26',label:'Wrist Rides — Offense Control',subGroup:'Wrist Rides',
+     hint:function(){return mt(
+       'Rate your ability to control with wrist rides from top position.',
+       'Rate your team\'s ability to control with wrist rides from top position.'
+     );}},
+    {id:'q27',label:'Wrist Rides — Defense Control',subGroup:'Wrist Rides',
+     hint:function(){return mt(
+       'Rate your ability to defend and escape when opponent has wrist ride control.',
+       'Rate your team\'s ability to defend and escape when opponent has wrist ride control.'
+     );}},
+    {id:'q28',label:'Arm Bars — Offense Control',subGroup:'Arm Bars',
+     hint:function(){return mt(
+       'Rate your ability to control with arm bars from top position.',
+       'Rate your team\'s ability to control with arm bars from top position.'
+     );}},
+    {id:'q29',label:'Arm Bars — Defense Control',subGroup:'Arm Bars',
+     hint:function(){return mt(
+       'Rate your ability to defend and escape when opponent has arm bar control.',
+       'Rate your team\'s ability to defend and escape when opponent has arm bar control.'
+     );}},
+    {id:'q30',label:'Chicken Wing — Offense Control',subGroup:'Chicken Wing',
+     hint:function(){return mt(
+       'Rate your ability to control with a chicken wing from top position.',
+       'Rate your team\'s ability to control with a chicken wing from top position.'
+     );}},
+    {id:'q31',label:'Chicken Wing — Defense Control',subGroup:'Chicken Wing',
+     hint:function(){return mt(
+       'Rate your ability to defend and escape when opponent has chicken wing control.',
+       'Rate your team\'s ability to defend and escape when opponent has chicken wing control.'
+     );}},
+    {id:'q32',label:'Leg Riding — Offense Control',subGroup:'Leg Riding',
+     hint:function(){return mt(
+       'Rate your ability to control with legs in from top position.',
+       'Rate your team\'s ability to control with legs in from top position.'
+     );}},
+    {id:'q33',label:'Leg Riding — Defense Control',subGroup:'Leg Riding',
+     hint:function(){return mt(
+       'Rate your ability to defend and escape when opponent has legs in.',
+       'Rate your team\'s ability to defend and escape when opponent has legs in.'
+     );}}
+  ]
+}
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+var answers={};
+var currentSection=0;
+var totalQ=33;
+
+function answeredCount(){var c=0;for(var k in answers)if(answers[k])c++;return c;}
+
+function sectionComplete(idx){
+  var s=SECTIONS[idx];
+  for(var i=0;i<s.questions.length;i++){if(!answers[s.questions[i].id])return false;}
+  return true;
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function render(){
+  var app=document.getElementById('app');
+  if(currentSection>=SECTIONS.length){renderComplete(app);return;}
+  var sec=SECTIONS[currentSection];
+  var answered=answeredCount();
+  var pct=Math.round((answered/totalQ)*100);
+  var h='';
+
+  h+='<div class="hd"><div class="hd-left"><div class="hd-back" onclick="goBack()">←</div>';
+  h+='<div class="hd-info"><div>BATTLE ASSESSMENT</div>';
+  h+='<div>'+mt('Self-Evaluation','Team Evaluation')+'</div></div></div>';
+  h+='<div class="hd-save" onclick="saveAndExit()">SAVE & EXIT</div></div>';
+
+  h+='<div class="progress-wrap"><div class="progress-top">';
+  h+='<div class="progress-label">Section '+(currentSection+1)+' of '+SECTIONS.length+' — '+sec.title+'</div>';
+  h+='<div class="progress-count">'+answered+'/'+totalQ+'</div></div>';
+  h+='<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div></div>';
+
+  h+='<div class="section-intro"><div class="section-icon">'+sec.icon+'</div>';
+  h+='<div class="section-title">'+sec.title.toUpperCase()+'</div>';
+  h+='<div class="section-desc">'+sec.desc()+'</div></div>';
+
+  h+='<div class="q-area">';
+  h+='<div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div>';
+  h+='<div class="video-label">'+sec.videoLabel+'</div></div>';
+
+  var lastSub='';
+  for(var i=0;i<sec.questions.length;i++){
+    var q=sec.questions[i];
+    if(q.subGroup&&q.subGroup!==lastSub){lastSub=q.subGroup;h+='<div class="sub-header">'+q.subGroup+'</div>';}
+    var val=answers[q.id]||'';
+    h+='<div class="q-card">';
+    h+='<div class="q-num">'+q.id.toUpperCase()+'</div>';
+    h+='<div class="q-text">'+q.label+'</div>';
+    h+='<div class="q-hint">'+q.hint()+'</div>';
+    h+='<div class="q-buttons">';
+    h+='<div class="q-btn below'+(val==='Below'?' selected':'')+'" onclick="answer(\''+q.id+'\',\'Below\')"><div class="q-btn-label">BELOW</div></div>';
+    h+='<div class="q-btn at'+(val==='At'?' selected':'')+'" onclick="answer(\''+q.id+'\',\'At\')"><div class="q-btn-label">AT</div></div>';
+    h+='<div class="q-btn above'+(val==='Above'?' selected':'')+'" onclick="answer(\''+q.id+'\',\'Above\')"><div class="q-btn-label">ABOVE</div></div>';
+    h+='</div></div>';
+  }
+  h+='</div>';
+
+  var complete=sectionComplete(currentSection);
+  h+='<div class="bottom-nav">';
+  if(currentSection>0)h+='<div class="btn-back" onclick="prevSection()">← BACK</div>';
+  var nl=currentSection===SECTIONS.length-1?'FINISH':'NEXT →';
+  h+='<div class="btn-next '+(complete?'ready':'disabled')+'" onclick="'+(complete?'nextSection()':'')+'">' +nl+'</div>';
+  h+='</div>';
+
+  app.innerHTML=h;
+  var qa=document.querySelector('.q-area');
+  if(qa)qa.scrollTop=0;
+}
+
+function renderComplete(app){
+  var h='';
+  h+='<div class="hd"><div class="hd-left"><div class="hd-info"><div>BATTLE ASSESSMENT</div>';
+  h+='<div>Complete</div></div></div></div>';
+  h+='<div class="complete-screen">';
+  h+='<div class="complete-icon">⚔️</div>';
+  h+='<div class="complete-title">BATTLE ASSESSMENT COMPLETE</div>';
+  h+='<div class="complete-sub">'+mt(
+    'Your self-evaluation has been saved. Your coach will review the results.',
+    'Your team evaluation has been saved. Compare your perception against athlete data in My Assessment.'
+  )+'</div>';
+  h+='<div class="complete-btn" onclick="finishAssessment()">VIEW RESULTS</div>';
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+function answer(qId,val){answers[qId]=val;render();}
+function nextSection(){if(!sectionComplete(currentSection))return;currentSection++;render();window.scrollTo(0,0);}
+function prevSection(){if(currentSection>0){currentSection--;render();window.scrollTo(0,0);}}
+function goBack(){if(currentSection>0)prevSection();else if(confirm('Save progress and exit?'))saveAndExit();}
+function saveAndExit(){alert('Progress saved: '+answeredCount()+'/'+totalQ+' questions answered.\nYou can pick up where you left off.');}
+function finishAssessment(){alert('Assessment submitted! Redirecting to results...');}
+
+render();
+</script>
+</body>
+</html>

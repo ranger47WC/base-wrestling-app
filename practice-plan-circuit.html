@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASE Wrestling - Practice Plan: Technique</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--lt:#ccc;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,0.15);--gn:#27ae60;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);position:relative;overflow:hidden}
+.header{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.header-brand{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--gd)}
+.header-sub{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.prog{padding:16px 20px 0}.prog-labels{display:flex;justify-content:space-between;margin-bottom:8px}
+.prog-s{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;color:var(--gr)}
+.prog-s.a{color:var(--gd)}.prog-s.c{color:var(--gn)}
+.prog-bar{height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gd),var(--gdd));border-radius:2px;transition:width .6s}
+.screen{display:none;flex-direction:column;min-height:calc(100vh - 58px)}
+.screen.active{display:flex;animation:fsi .4s ease}
+@keyframes fsi{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+.announce{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center}
+.sec-num{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;color:var(--gdd);margin-bottom:8px;text-transform:uppercase}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:5px;color:var(--wh);margin-bottom:12px;line-height:1}
+.sec-desc{font-size:14px;color:var(--gr);margin-bottom:24px;line-height:1.5;max-width:300px}
+.btn-p{width:100%;max-width:300px;padding:16px 32px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.3)}.btn-p.off{opacity:.4;pointer-events:none}
+.btn-c{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-c:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.3)}.btn-c.off{opacity:.4;pointer-events:none}
+.btn-sec{width:100%;padding:14px;background:transparent;color:var(--gr);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .3s;margin-top:8px}
+.btn-sec:hover{border-color:var(--gdd);color:var(--gd)}
+.area{flex:1;padding:24px 20px;overflow-y:auto;padding-bottom:20px}
+.c-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:6px}
+.c-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;color:var(--wh);margin-bottom:6px}
+.c-desc{font-size:13px;color:var(--gr);margin-bottom:20px;line-height:1.5}
+.time-rem{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:rgba(200,168,78,.06);border:1px solid var(--gdd);border-radius:var(--r);margin-bottom:20px}
+.time-rem-l{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gd);font-weight:600}
+.time-rem-v{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--wh)}
+.chip-l{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-bottom:10px}
+.chips{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.chip{padding:13px 16px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--lt);font-size:14px;font-weight:600;cursor:pointer;transition:all .25s;text-align:center}
+.chip:hover{border-color:var(--gdd)}.chip.a{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.chips-h{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip-sm{padding:10px 14px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--lt);font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;text-align:center;flex:1;min-width:calc(50% - 4px)}
+.chip-sm:hover{border-color:var(--gdd)}.chip-sm.a{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.nested{margin-top:12px;padding:14px;background:rgba(0,0,0,.25);border-radius:var(--r);animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.ctrl{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:12px}
+.ctrl-row{display:flex;align-items:center;justify-content:space-between}
+.ctrl-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;color:var(--wh)}
+.pk{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pk-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);color:var(--wh);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Barlow',sans-serif;font-weight:600}
+.pk-btn:hover{border-color:var(--gd);background:var(--gdg)}
+.pk-v{text-align:center;min-width:40px}
+.pk-n{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--wh)}
+.pk-u{font-size:9px;color:var(--gr);letter-spacing:1px}
+.bar{padding:12px 20px 28px;border-top:1px solid var(--bd);background:var(--dk)}
+.sum{flex:1;padding:24px 20px;overflow-y:auto}
+.chk{width:70px;height:70px;border-radius:50%;background:rgba(39,174,96,.15);border:2px solid var(--gn);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:si .4s ease}
+@keyframes si{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.chk svg{width:32px;height:32px;fill:var(--gn)}
+.s-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;margin-bottom:8px}
+.s-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.s-t{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.s-tm{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--wh)}
+.s-det{font-size:12px;color:var(--lt);line-height:1.4}
+.s-tot{background:var(--gdg);border:1px solid var(--gdd);border-radius:var(--r);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;margin:14px 0}
+.s-tot-l{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.s-tot-v{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--wh)}
+.nxt{text-align:center;padding:16px;opacity:.6}
+.nxt .l{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gr);margin-bottom:4px}
+.nxt .n{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gdd)}
+.added-list{margin-bottom:16px}
+.added-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px}
+.added-name{font-size:13px;color:var(--wh);font-weight:600}
+.added-time{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);letter-spacing:1px}
+.added-x{background:none;border:none;color:var(--gr);font-size:16px;cursor:pointer;padding:0 4px;margin-left:8px}
+.added-x:hover{color:#e74c3c}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-brand">BASE</div>
+    <div class="header-sub">Practice Plan</div>
+  </div>
+  <div id="sc"></div>
+</div>
+<script>
+var SC=document.getElementById('sc');
+var CHK='<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>';
+var EX=[
+{id:'bk',name:'Bridge Kicks',dS:1,dR:10,unit:'reps',note:'1 set standard',showSets:false},
+{id:'bc',name:'Bridge Circles',dS:1,dR:5,unit:'each way',note:'1 set standard',showSets:false},
+{id:'pu',name:'Push Ups',dS:3,dR:25,unit:'reps',note:'3 x 25 standard',showSets:true},
+{id:'pl',name:'Pull Ups',dS:3,dR:10,unit:'reps',note:'3 x 10 standard',showSets:true},
+{id:'hv',name:'Hanging V Ups',dS:3,dR:10,unit:'reps',note:'3 x 10 standard',showSets:true},
+{id:'gm',name:'Good Mornings',dS:3,dR:10,unit:'reps',note:'3 x 10 standard',showSets:true},
+{id:'pg',name:'Partner Good Mornings',dS:3,dR:10,unit:'reps',note:'3 x 10 standard',showSets:true},
+{id:'ps',name:'Partner Squats',dS:3,dR:10,unit:'reps',note:'3 x 10 standard',showSets:true}
+];
+var D={};
+EX.forEach(function(e){D[e.id]={on:false,s:e.dS,r:e.dR}});
+
+function ren(h){SC.innerHTML=h;var s=SC.querySelector('.screen');if(s)s.classList.add('active')}
+function prg(done){
+  var p=done?100:90;
+  return '<div class="prog"><div class="prog-labels">'
+  +'<span class="prog-s c">Warm-Up &#10003;</span>'
+  +'<span class="prog-s c">Drill &#10003;</span>'
+  +'<span class="prog-s c">Battle &#10003;</span>'
+  +'<span class="prog-s c">Technique &#10003;</span>'
+  +'<span class="prog-s '+(done?'c':'a')+'">Circuit</span>'
+  +'</div><div class="prog-bar"><div class="prog-fill" style="width:'+p+'%"></div></div></div>';
+}
+function anyOn(){for(var i=0;i<EX.length;i++)if(D[EX[i].id].on)return true;return false}
+
+function showIntro(){
+  ren('<div class="screen">'+prg(false)
+  +'<div class="announce">'
+  +'<div class="sec-num">Section 5 of 5</div>'
+  +'<div class="sec-title">CIRCUIT</div>'
+  +'<div class="sec-desc">Pick exercises for your standard circuit. Adjust sets and reps for each.</div>'
+  +'<button class="btn-p" onclick="showPick()">SET UP CIRCUIT</button>'
+  +'</div></div>');
+}
+
+function showPick(){
+  var h='<div class="screen">'+prg(false)+'<div class="area">'
+  +'<div class="c-label">Standard Circuit</div>'
+  +'<div class="c-title">PICK YOUR EXERCISES</div>'
+  +'<div style="font-size:13px;color:#888;margin-bottom:20px;line-height:1.5">Tap to add. Adjust sets and reps.</div>';
+
+  EX.forEach(function(e){
+    var d=D[e.id];
+    var bg=d.on?'var(--gdg)':'var(--cd)';
+    var br=d.on?'var(--gd)':'var(--bd)';
+    var nc=d.on?'var(--gd)':'var(--wh)';
+    h+='<div style="background:'+bg+';border:1px solid '+br+';border-radius:var(--rl);padding:16px 18px;margin-bottom:10px">';
+    h+='<div style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="togEx(\''+e.id+'\')">';
+    var chkBg=d.on?'background:var(--gd);':'';
+    var chkBr=d.on?'var(--gd)':'var(--bd)';
+    h+='<div style="width:24px;height:24px;border-radius:6px;border:2px solid '+chkBr+';display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--bk);flex-shrink:0;'+chkBg+'">'+(d.on?'&#10003;':'')+'</div>';
+    h+='<div><div style="font-family:Bebas Neue,sans-serif;font-size:16px;letter-spacing:2px;color:'+nc+'">'+e.name.toUpperCase()+'</div>';
+    h+='<div style="font-size:10px;color:var(--gr)">'+e.note+'</div></div></div>';
+
+    if(d.on){
+      h+='<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd);display:flex;gap:12px">';
+      if(e.showSets){
+        h+='<div style="flex:1;text-align:center">';
+        h+='<div style="font-size:9px;color:var(--gr);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Sets</div>';
+        h+='<div style="display:flex;align-items:center;justify-content:center;gap:6px">';
+        h+='<button class="pk-btn" onclick="adjEx(\''+e.id+'\',\'s\',-1)">&#8722;</button>';
+        h+='<div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--wh);min-width:30px" id="'+e.id+'-s">'+d.s+'</div>';
+        h+='<button class="pk-btn" onclick="adjEx(\''+e.id+'\',\'s\',1)">+</button>';
+        h+='</div></div>';
+      }
+      h+='<div style="flex:1;text-align:center">';
+      h+='<div style="font-size:9px;color:var(--gr);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">'+e.unit+'</div>';
+      h+='<div style="display:flex;align-items:center;justify-content:center;gap:6px">';
+      h+='<button class="pk-btn" onclick="adjEx(\''+e.id+'\',\'r\',-1)">&#8722;</button>';
+      h+='<div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--wh);min-width:30px" id="'+e.id+'-r">'+d.r+'</div>';
+      h+='<button class="pk-btn" onclick="adjEx(\''+e.id+'\',\'r\',1)">+</button>';
+      h+='</div></div></div>';
+    }
+    h+='</div>';
+  });
+
+  h+='</div><div class="bar"><button class="btn-c '+(anyOn()?'':'off')+'" id="fin-btn" onclick="showSum()">FINISH CIRCUIT</button></div></div>';
+  ren(h);
+}
+
+function togEx(id){D[id].on=!D[id].on;showPick()}
+function adjEx(id,k,d){
+  var e=D[id];
+  if(k==='s')e.s=Math.max(1,Math.min(10,e.s+d));
+  else e.r=Math.max(1,Math.min(50,e.r+d));
+  var se=document.getElementById(id+'-s');if(se)se.textContent=e.s;
+  var re=document.getElementById(id+'-r');if(re)re.textContent=e.r;
+}
+
+function showSum(){
+  var cards='',cnt=0;
+  EX.forEach(function(e){
+    var d=D[e.id];if(!d.on)return;cnt++;
+    var det=e.showSets?d.s+' set'+(d.s>1?'s':'')+' x '+d.r+' '+e.unit:d.r+' '+e.unit;
+    cards+='<div class="s-card"><div class="s-hdr"><div class="s-t">'+e.name.toUpperCase()+'</div></div><div class="s-det">'+det+'</div></div>';
+  });
+  ren('<div class="screen">'+prg(true)
+  +'<div class="sum"><div style="text-align:center;margin-top:14px;margin-bottom:6px">'
+  +'<div class="chk">'+CHK+'</div>'
+  +'<div class="sec-num">CIRCUIT SET</div></div>'
+  +cards
+  +'<div class="s-tot"><div class="s-tot-l">EXERCISES</div><div class="s-tot-v">'+cnt+'</div></div>'
+  +'<div style="text-align:center;padding:20px"><div style="font-family:Bebas Neue,sans-serif;font-size:24px;letter-spacing:3px;color:var(--gn)">PRACTICE PLAN COMPLETE</div><div style="font-size:12px;color:var(--gr);margin-top:6px">All 5 sections configured</div></div>'
+  +'</div><div class="bar"><button class="btn-c" onclick="alert(\'Practice plan saved!\')">SAVE PRACTICE PLAN</button></div></div>');
+}
+
+showIntro();
+</script></body></html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athlete Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative;padding-bottom:72px}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.hd-left{display:flex;align-items:center;gap:8px}
+.hd-badge{background:var(--rd);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;padding:3px 10px;border-radius:4px}
+.hd-sub{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-profile{width:36px;height:36px;border-radius:50%;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all .2s}
+.hd-profile:hover{border-color:var(--gd);background:rgba(200,168,78,.2)}
+
+/* ── MAIN SCROLL ── */
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* ── CHARACTER CARD ── */
+.char-card{margin:16px 20px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;position:relative}
+.char-card::before{content:'';position:absolute;top:0;left:0;right:0;height:60%;background:radial-gradient(ellipse at 50% 0%,rgba(200,168,78,.08) 0%,transparent 70%);pointer-events:none}
+.char-top{padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
+.char-avatar{width:64px;height:64px;border-radius:16px;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:32px}
+.char-info{flex:1;margin-left:14px}
+.char-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--wh);line-height:1.1}
+.char-tier{font-size:11px;color:var(--gd);font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-top:2px}
+.char-level{background:var(--gdg);border:1px solid var(--gdd);border-radius:8px;padding:6px 12px;text-align:center}
+.char-level-num{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gd);line-height:1}
+.char-level-lbl{font-size:8px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600}
+
+/* XP Bar */
+.xp-section{padding:14px 20px 16px;position:relative;z-index:1}
+.xp-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.xp-label span{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600}
+.xp-label span em{color:var(--gd);font-style:normal}
+.xp-bar{height:8px;background:var(--bk);border-radius:4px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gd),var(--gdd));border-radius:4px;transition:width .8s ease}
+
+/* Stats Row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--bd)}
+.stat-box{padding:12px 8px;text-align:center;border-right:1px solid var(--bd)}
+.stat-box:last-child{border-right:none}
+.stat-icon{font-size:16px;margin-bottom:2px}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gd);line-height:1.2}
+.stat-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--gr);font-weight:600}
+
+/* ── WEEKLY STREAK ── */
+.streak{margin:0 20px 16px;display:flex;align-items:center;gap:4px;justify-content:space-between}
+.streak-day{flex:1;text-align:center;padding:8px 4px;border-radius:8px;background:var(--cd);border:1px solid var(--bd);transition:all .2s}
+.streak-day.done{border-color:var(--gn);background:var(--gng)}
+.streak-day.today{border-color:var(--gdd);background:var(--gdg2)}
+.streak-day .sd-name{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:1px;color:var(--gr)}
+.streak-day.done .sd-name{color:var(--gn)}
+.streak-day.today .sd-name{color:var(--gd)}
+.streak-day .sd-icon{font-size:14px;margin-top:2px}
+
+/* ── SECTION LABEL ── */
+.sec-label{padding:4px 20px 8px;display:flex;align-items:center;justify-content:space-between}
+.sec-label .sl-left{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;display:flex;align-items:center;gap:8px}
+.sec-label .sl-left::after{content:'';width:30px;height:1px;background:var(--bd)}
+.sec-label .sl-right{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px;font-weight:600;cursor:pointer}
+.sec-label .sl-right:hover{color:var(--gd)}
+
+/* ── DAILY BRIEF ── */
+.daily-brief{margin:0 20px 16px;padding:16px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);position:relative;overflow:hidden}
+.daily-brief::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gd)}
+.db-tag{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:6px;padding-left:10px}
+.db-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh);padding-left:10px;margin-bottom:4px}
+.db-text{font-size:12px;color:#aaa;line-height:1.5;padding-left:10px}
+
+/* ── TRAINING CARDS (horizontal scroll) ── */
+.cards-scroll{display:flex;gap:12px;padding:8px 20px 16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cards-scroll::-webkit-scrollbar{display:none}
+.t-card{min-width:220px;max-width:240px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;scroll-snap-align:start;transition:all .3s;cursor:pointer;flex-shrink:0}
+.t-card:hover{border-color:var(--gdd)}
+.t-card-top{padding:16px 16px 12px;border-bottom:1px solid var(--bd)}
+.t-card-tag{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:4px}
+.t-card-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--wh);line-height:1.1;margin-bottom:4px}
+.t-card-desc{font-size:11px;color:#aaa;line-height:1.4}
+.t-card-bot{padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.t-card-xp{font-size:11px;color:var(--gd);font-weight:700}
+.t-card-play{width:32px;height:32px;border-radius:50%;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center}
+.t-card-play svg{width:12px;height:12px;fill:var(--gd);margin-left:2px}
+
+/* ── GOALS SECTION ── */
+.goals{margin:0 20px 16px;display:flex;flex-direction:column;gap:8px}
+.goal-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r)}
+.goal-item .gi-icon{font-size:20px;flex-shrink:0}
+.goal-item .gi-info{flex:1}
+.goal-item .gi-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh);margin-bottom:4px}
+.goal-item .gi-bar{height:4px;background:var(--bk);border-radius:2px;overflow:hidden}
+.goal-item .gi-fill{height:100%;background:var(--gd);border-radius:2px}
+.goal-item .gi-pct{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);flex-shrink:0}
+
+/* ── QUICK ACCESS ── */
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 20px 20px}
+.quick-item{padding:16px 8px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);text-align:center;cursor:pointer;transition:all .2s}
+.quick-item:hover{border-color:var(--gdd)}
+.quick-item .qi-icon{font-size:24px;margin-bottom:4px}
+.quick-item .qi-name{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1.5px;color:#aaa}
+
+/* ── BOTTOM NAV ── */
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:var(--dk);border-top:1px solid var(--bd);display:flex;z-index:50;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer;transition:all .2s}
+.nav-item.active .nav-icon{color:var(--gd)}
+.nav-item.active .nav-lbl{color:var(--gd)}
+.nav-icon{font-size:20px;color:var(--gr);transition:color .2s}
+.nav-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--gr);font-weight:700;transition:color .2s}
+.nav-item:hover .nav-icon,.nav-item:hover .nav-lbl{color:var(--lt)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);padding:12px 24px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- HEADER -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-badge">BASE WRESTLING</div>
+      <div class="hd-sub">Dashboard</div>
+    </div>
+    <div class="hd-profile" onclick="toast('→ Athlete Profile')">🤼</div>
+  </div>
+
+  <div class="main">
+    <!-- CHARACTER CARD -->
+    <div class="char-card">
+      <div class="char-top">
+        <div class="char-avatar">🤼</div>
+        <div class="char-info">
+          <div class="char-name">TYLER RODRIGUEZ</div>
+          <div class="char-tier">⭐⭐⭐ .500 WRESTLER · 3-STAR</div>
+        </div>
+        <div class="char-level">
+          <div class="char-level-num">18</div>
+          <div class="char-level-lbl">Level</div>
+        </div>
+      </div>
+      <div class="xp-section">
+        <div class="xp-label">
+          <span><em>4,280</em> / 5,000 XP</span>
+          <span>NEXT: LEVEL <em>19</em></span>
+        </div>
+        <div class="xp-bar"><div class="xp-fill" style="width:85.6%"></div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-icon">💪</div><div class="stat-val">42</div><div class="stat-lbl">Strength</div></div>
+        <div class="stat-box"><div class="stat-icon">🤸</div><div class="stat-val">38</div><div class="stat-lbl">Athletics</div></div>
+        <div class="stat-box"><div class="stat-icon">🎯</div><div class="stat-val">51</div><div class="stat-lbl">Technique</div></div>
+        <div class="stat-box"><div class="stat-icon">🔥</div><div class="stat-val">67</div><div class="stat-lbl">Consistency</div></div>
+      </div>
+    </div>
+
+    <!-- WEEKLY STREAK -->
+    <div class="streak">
+      <div class="streak-day done"><div class="sd-name">M</div><div class="sd-icon">✅</div></div>
+      <div class="streak-day done"><div class="sd-name">T</div><div class="sd-icon">✅</div></div>
+      <div class="streak-day today"><div class="sd-name">W</div><div class="sd-icon">⭐</div></div>
+      <div class="streak-day"><div class="sd-name">T</div><div class="sd-icon">·</div></div>
+      <div class="streak-day"><div class="sd-name">F</div><div class="sd-icon">·</div></div>
+      <div class="streak-day"><div class="sd-name">S</div><div class="sd-icon">·</div></div>
+      <div class="streak-day"><div class="sd-name">S</div><div class="sd-icon">·</div></div>
+    </div>
+
+    <!-- SEASON RECORD -->
+    <div style="display:flex;gap:8px;margin:0 20px 16px">
+      <div style="flex:1;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#27ae60;line-height:1">18</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#aaa;font-weight:600;margin-top:2px">Wins</div>
+      </div>
+      <div style="flex:1;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#c8102e;line-height:1">7</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#aaa;font-weight:600;margin-top:2px">Losses</div>
+      </div>
+      <div style="flex:1;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gd);line-height:1">72%</div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#aaa;font-weight:600;margin-top:2px">Win Rate</div>
+      </div>
+    </div>
+
+    <!-- TRAINING CARDS (focus - before brief) -->
+    <div class="sec-label"><div class="sl-left">Today's Training</div><div class="sl-right">View All</div></div>
+    <div class="cards-scroll">
+      <div class="t-card" onclick="toast('+10 XP — Watch Video')">
+        <div class="t-card-top">
+          <div class="t-card-tag">Upper Body · Technique</div>
+          <div class="t-card-name">FRONT HEADLOCK SNAP DOWN</div>
+          <div class="t-card-desc">How to snap your opponent down and lock up the front headlock</div>
+        </div>
+        <div class="t-card-bot">
+          <div class="t-card-xp">+10 XP</div>
+          <div class="t-card-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+      </div>
+      <div class="t-card" onclick="toast('+10 XP — Watch Video')">
+        <div class="t-card-top">
+          <div class="t-card-tag">Upper Body · Technique</div>
+          <div class="t-card-name">GO BEHIND FROM FRONT HEADLOCK</div>
+          <div class="t-card-desc">Transition from front headlock control to a go-behind finish</div>
+        </div>
+        <div class="t-card-bot">
+          <div class="t-card-xp">+10 XP</div>
+          <div class="t-card-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+      </div>
+      <div class="t-card" onclick="toast('+10 XP — Watch Video')">
+        <div class="t-card-top">
+          <div class="t-card-tag">Upper Body · Strategy</div>
+          <div class="t-card-name">CONTROLLING THE MAT</div>
+          <div class="t-card-desc">How your stance and positioning sets up every attack</div>
+        </div>
+        <div class="t-card-bot">
+          <div class="t-card-xp">+10 XP</div>
+          <div class="t-card-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY BRIEF (after focus cards) -->
+    <div class="sec-label"><div class="sl-left">Coach's Brief</div></div>
+    <div class="daily-brief">
+      <div class="db-tag">Training Day · Wednesday</div>
+      <div class="db-title">FRONT HEADLOCK CONTROL</div>
+      <div class="db-text">Today's practice focuses on controlling the front headlock position. Watch the videos above before practice to get a head start on what Coach is covering today.</div>
+    </div>
+
+    <!-- ACTIVE GOALS -->
+    <div class="sec-label"><div class="sl-left">Active Goals</div><div class="sl-right">See All</div></div>
+    <div class="goals">
+      <div class="goal-item">
+        <div class="gi-icon">🎯</div>
+        <div class="gi-info">
+          <div class="gi-name">COMPLETE 3 TECHNIQUE VIDEOS THIS WEEK</div>
+          <div class="gi-bar"><div class="gi-fill" style="width:66%"></div></div>
+        </div>
+        <div class="gi-pct">2/3</div>
+      </div>
+      <div class="goal-item">
+        <div class="gi-icon">💪</div>
+        <div class="gi-info">
+          <div class="gi-name">BEAT CIRCUIT TIME (12:45)</div>
+          <div class="gi-bar"><div class="gi-fill" style="width:0%"></div></div>
+        </div>
+        <div class="gi-pct">0/1</div>
+      </div>
+      <div class="goal-item">
+        <div class="gi-icon">🔥</div>
+        <div class="gi-info">
+          <div class="gi-name">4 TRAINING SESSIONS THIS WEEK</div>
+          <div class="gi-bar"><div class="gi-fill" style="width:50%"></div></div>
+        </div>
+        <div class="gi-pct">2/4</div>
+      </div>
+    </div>
+
+    <!-- QUICK ACCESS -->
+    <div class="sec-label"><div class="sl-left">Quick Access</div></div>
+    <div class="quick-grid">
+      <div class="quick-item" onclick="toast('→ Content Library')"><div class="qi-icon">📚</div><div class="qi-name">Library</div></div>
+      <div class="quick-item" onclick="toast('→ Journal')"><div class="qi-icon">📓</div><div class="qi-name">Journal</div></div>
+      <div class="quick-item" onclick="toast('→ My Stats')"><div class="qi-icon">📊</div><div class="qi-name">Stats</div></div>
+      <div class="quick-item" onclick="toast('→ Assessments')"><div class="qi-icon">⚔️</div><div class="qi-name">Assess</div></div>
+      <div class="quick-item" onclick="toast('→ Gold Standard Circuit')"><div class="qi-icon">💪</div><div class="qi-name">Circuit</div></div>
+      <div class="quick-item" onclick="toast('→ Film Room')"><div class="qi-icon">🎬</div><div class="qi-name">Film</div></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bot-nav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-lbl">Home</div></div>
+    <div class="nav-item" onclick="toast('→ Training')"><div class="nav-icon">🤼</div><div class="nav-lbl">Train</div></div>
+    <div class="nav-item" onclick="toast('→ Stats')"><div class="nav-icon">📊</div><div class="nav-lbl">Stats</div></div>
+    <div class="nav-item" onclick="toast('→ Profile')"><div class="nav-icon">👤</div><div class="nav-lbl">Profile</div></div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+</div>
+<script>
+function toast(msg){const t=document.getElementById('toastEl');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+</script>
+</body>
+</html>

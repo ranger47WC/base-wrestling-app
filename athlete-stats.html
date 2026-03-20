@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — My Stats</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;padding-bottom:72px}
+
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;font-size:18px}
+.hd-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-r{width:36px}
+
+.tabs{display:flex;border-bottom:1px solid var(--bd);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:0;padding:12px 6px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.tab.active{color:var(--gd);border-bottom-color:var(--gd)}
+
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tc{display:none;padding:16px 20px}
+.tc.active{display:block}
+
+/* XP Tab */
+.xp-total{text-align:center;padding:20px 0}
+.xpt-num{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gd);line-height:1}
+.xpt-lbl{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#aaa;margin-top:4px}
+.xp-cats{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.xp-cat{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
+.xpc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.xpc-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh);display:flex;align-items:center;gap:8px}
+.xpc-val{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gd)}
+.xpc-bar{height:6px;background:var(--bk);border-radius:3px;overflow:hidden}
+.xpc-fill{height:100%;border-radius:3px}
+
+/* Achievements Tab */
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-item{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:16px 8px;text-align:center;transition:all .2s}
+.badge-item.earned{border-color:var(--gdd);background:var(--gdg2)}
+.badge-item.locked{opacity:.4}
+.bi-icon{font-size:28px;margin-bottom:6px}
+.bi-name{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--wh);margin-bottom:2px}
+.bi-desc{font-size:9px;color:#aaa;line-height:1.3}
+.badge-item.earned .bi-name{color:var(--gd)}
+
+/* Match History */
+.match-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px}
+.mi-result{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;flex-shrink:0}
+.mi-result.win{background:var(--gng);color:var(--gn);border:1px solid var(--gn)}
+.mi-result.loss{background:rgba(200,16,46,.1);color:var(--rd);border:1px solid rgba(200,16,46,.3)}
+.mi-info{flex:1}
+.mi-opp{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh)}
+.mi-detail{font-size:11px;color:#aaa}
+.mi-xp{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);flex-shrink:0}
+
+/* Training Log */
+.log-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--cd);border-radius:var(--r);margin-bottom:6px}
+.li-date{width:40px;text-align:center;flex-shrink:0}
+.li-day{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--wh)}
+.li-month{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px}
+.li-info{flex:1}
+.li-type{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--wh)}
+.li-detail{font-size:11px;color:#aaa}
+.li-xp{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);flex-shrink:0}
+
+.sec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;margin:12px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:var(--dk);border-top:1px solid var(--bd);display:flex;z-index:50;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer}
+.nav-icon{font-size:20px;color:#aaa}
+.nav-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#aaa;font-weight:700}
+.nav-item.active .nav-icon,.nav-item.active .nav-lbl{color:var(--gd)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <div class="hd-back">←</div>
+    <div class="hd-title">MY STATS</div>
+    <div class="hd-r"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">XP</div>
+    <div class="tab" onclick="switchTab(1)">Badges</div>
+    <div class="tab" onclick="switchTab(2)">Matches</div>
+    <div class="tab" onclick="switchTab(3)">Training</div>
+  </div>
+
+  <div class="main">
+    <!-- XP BREAKDOWN -->
+    <div class="tc active" id="tc0">
+      <div class="xp-total">
+        <div class="xpt-num">14,280</div>
+        <div class="xpt-lbl">Total XP Earned</div>
+      </div>
+      <div class="xp-cats">
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">🎯 Technique</div><div class="xpc-val">5,430 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:38%;background:var(--gd)"></div></div>
+        </div>
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">🔥 Consistency</div><div class="xpc-val">4,200 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:29%;background:var(--gn)"></div></div>
+        </div>
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">💪 Strength</div><div class="xpc-val">2,850 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:20%;background:var(--rd)"></div></div>
+        </div>
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">🤸 Athletics</div><div class="xpc-val">1,800 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:13%;background:var(--blu)"></div></div>
+        </div>
+      </div>
+      <div class="sec-lbl">This Week</div>
+      <div class="xp-cats">
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">Videos Watched</div><div class="xpc-val">+40 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:60%;background:var(--gd)"></div></div>
+        </div>
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">Training Sessions</div><div class="xpc-val">+150 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:50%;background:var(--gn)"></div></div>
+        </div>
+        <div class="xp-cat">
+          <div class="xpc-top"><div class="xpc-name">Journal Entries</div><div class="xpc-val">+50 XP</div></div>
+          <div class="xpc-bar"><div class="xpc-fill" style="width:40%;background:var(--blu)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="tc" id="tc1">
+      <div class="sec-lbl">Earned</div>
+      <div class="badge-grid">
+        <div class="badge-item earned"><div class="bi-icon">📜</div><div class="bi-name">LITERACY DIPLOMA</div><div class="bi-desc">All 14 athletic skills</div></div>
+        <div class="badge-item earned"><div class="bi-icon">🔥</div><div class="bi-name">WEEK WARRIOR</div><div class="bi-desc">4+ sessions in a week</div></div>
+        <div class="badge-item earned"><div class="bi-icon">📓</div><div class="bi-name">JOURNALER</div><div class="bi-desc">7-day journal streak</div></div>
+        <div class="badge-item earned"><div class="bi-icon">💪</div><div class="bi-name">GOLD STANDARD</div><div class="bi-desc">Complete the circuit</div></div>
+        <div class="badge-item earned"><div class="bi-icon">📺</div><div class="bi-name">FILM STUDENT</div><div class="bi-desc">Watch 10 technique videos</div></div>
+        <div class="badge-item earned"><div class="bi-icon">⚔️</div><div class="bi-name">FIRST BLOOD</div><div class="bi-desc">Win your first match</div></div>
+      </div>
+      <div class="sec-lbl" style="margin-top:20px">Locked</div>
+      <div class="badge-grid">
+        <div class="badge-item locked"><div class="bi-icon">🔒</div><div class="bi-name">IRON MAN</div><div class="bi-desc">10 circuit completions</div></div>
+        <div class="badge-item locked"><div class="bi-icon">🔒</div><div class="bi-name">FILM ROOM</div><div class="bi-desc">Log 10 matches</div></div>
+        <div class="badge-item locked"><div class="bi-icon">🔒</div><div class="bi-name">SEASON WARRIOR</div><div class="bi-desc">Full month all assignments</div></div>
+        <div class="badge-item locked"><div class="bi-icon">🔒</div><div class="bi-name">MASTER</div><div class="bi-desc">Master 5 techniques</div></div>
+        <div class="badge-item locked"><div class="bi-icon">🔒</div><div class="bi-name">STREAK KING</div><div class="bi-desc">30-day journal streak</div></div>
+        <div class="badge-item locked"><div class="bi-icon">🔒</div><div class="bi-name">CHAMPION</div><div class="bi-desc">Reach Level 100</div></div>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div class="tc" id="tc2">
+      <div style="text-align:center;padding:16px 0">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gn)">18</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#aaa;margin:0 8px">—</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--rd)">7</span>
+        <div style="font-size:11px;color:#aaa;margin-top:4px">72% WIN RATE</div>
+      </div>
+      <div class="match-item">
+        <div class="mi-result win">W</div>
+        <div class="mi-info"><div class="mi-opp">VS. TYLER ISD</div><div class="mi-detail">Pin · 2nd Period · Dual Meet</div></div>
+        <div class="mi-xp">+200</div>
+      </div>
+      <div class="match-item">
+        <div class="mi-result loss">L</div>
+        <div class="mi-info"><div class="mi-opp">VS. HIGHLAND PARK</div><div class="mi-detail">Decision 4-7 · Tournament Semi</div></div>
+        <div class="mi-xp">+50</div>
+      </div>
+      <div class="match-item">
+        <div class="mi-result win">W</div>
+        <div class="mi-info"><div class="mi-opp">VS. ALLEN</div><div class="mi-detail">Tech Fall 15-0 · Tournament QF</div></div>
+        <div class="mi-xp">+200</div>
+      </div>
+      <div class="match-item">
+        <div class="mi-result win">W</div>
+        <div class="mi-info"><div class="mi-opp">VS. MESQUITE</div><div class="mi-detail">Major Decision 12-3 · Dual</div></div>
+        <div class="mi-xp">+200</div>
+      </div>
+      <div class="match-item">
+        <div class="mi-result win">W</div>
+        <div class="mi-info"><div class="mi-opp">VS. SACHSE</div><div class="mi-detail">Decision 6-2 · Dual Meet</div></div>
+        <div class="mi-xp">+200</div>
+      </div>
+      <div class="match-item">
+        <div class="mi-result loss">L</div>
+        <div class="mi-info"><div class="mi-opp">VS. SOUTHLAKE</div><div class="mi-detail">Pin · 3rd Period · Tournament</div></div>
+        <div class="mi-xp">+50</div>
+      </div>
+    </div>
+
+    <!-- TRAINING LOG -->
+    <div class="tc" id="tc3">
+      <div style="text-align:center;padding:16px 0">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gd)">47</span>
+        <div style="font-size:11px;color:#aaa;margin-top:4px">TOTAL SESSIONS THIS SEASON</div>
+      </div>
+      <div class="log-item">
+        <div class="li-date"><div class="li-day">18</div><div class="li-month">Mar</div></div>
+        <div class="li-info"><div class="li-type">TRAINING DAY</div><div class="li-detail">90 min · Upper Body Focus</div></div>
+        <div class="li-xp">+75</div>
+      </div>
+      <div class="log-item">
+        <div class="li-date"><div class="li-day">17</div><div class="li-month">Mar</div></div>
+        <div class="li-info"><div class="li-type">TRAINING DAY</div><div class="li-detail">90 min · Leg Attacks</div></div>
+        <div class="li-xp">+75</div>
+      </div>
+      <div class="log-item">
+        <div class="li-date"><div class="li-day">15</div><div class="li-month">Mar</div></div>
+        <div class="li-info"><div class="li-type">COMPETITION</div><div class="li-detail">District Tournament · 2 matches</div></div>
+        <div class="li-xp">+250</div>
+      </div>
+      <div class="log-item">
+        <div class="li-date"><div class="li-day">14</div><div class="li-month">Mar</div></div>
+        <div class="li-info"><div class="li-type">CROSS-TRAINING</div><div class="li-detail">60 min · Games + Drill</div></div>
+        <div class="li-xp">+75</div>
+      </div>
+      <div class="log-item">
+        <div class="li-date"><div class="li-day">13</div><div class="li-month">Mar</div></div>
+        <div class="li-info"><div class="li-type">TRAINING DAY</div><div class="li-detail">90 min · Top/Bottom</div></div>
+        <div class="li-xp">+75</div>
+      </div>
+      <div class="log-item">
+        <div class="li-date"><div class="li-day">12</div><div class="li-month">Mar</div></div>
+        <div class="li-info"><div class="li-type">TRAINING DAY</div><div class="li-detail">90 min · Failed Attacks</div></div>
+        <div class="li-xp">+75</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bot-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-lbl">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">🤼</div><div class="nav-lbl">Train</div></div>
+    <div class="nav-item active"><div class="nav-icon">📊</div><div class="nav-lbl">Stats</div></div>
+    <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-lbl">Profile</div></div>
+  </div>
+</div>
+<script>
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.tc').forEach((t,i)=>t.classList.toggle('active',i===n));
+}
+</script>
+</body>
+</html>

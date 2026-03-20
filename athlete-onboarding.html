@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athlete Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.hd-left{display:flex;align-items:center;gap:10px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;color:var(--gr);font-size:18px}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-back.hidden{opacity:0;pointer-events:none}
+.hd-brand{display:flex;align-items:center;gap:8px}
+.hd-badge{background:var(--rd);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;padding:3px 10px;border-radius:4px}
+.hd-sub{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ── PROGRESS ── */
+.prog{padding:12px 20px 0;flex-shrink:0}
+.prog-steps{display:flex;gap:4px}
+.prog-dot{flex:1;height:3px;border-radius:2px;background:var(--bd);transition:background .4s}
+.prog-dot.active{background:var(--gd)}
+.prog-dot.done{background:var(--gn)}
+.prog-labels{display:flex;justify-content:space-between;padding:6px 0 0}
+.prog-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--gr);font-weight:700;transition:color .3s}
+.prog-lbl.active{color:var(--gd)}
+.prog-lbl.done{color:var(--gn)}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.active{display:flex}
+.scroll{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:20px 0 24px}
+.hero-icon{font-size:48px;margin-bottom:12px}
+.hero-tag{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--gdd);font-weight:600;margin-bottom:8px}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--wh);line-height:1.1;margin-bottom:8px}
+.hero-sub{font-size:13px;color:var(--lt);line-height:1.5;max-width:320px;margin:0 auto}
+
+/* ── FIELDS ── */
+.sec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;margin:20px 0 10px;padding-left:2px}
+.field{margin-bottom:14px}
+.field-label{font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.field-input{width:100%;padding:14px 16px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:14px;transition:border-color .2s;outline:none}
+.field-input::placeholder{color:#666}
+.field-input:focus{border-color:var(--gdd)}
+.field-select{width:100%;padding:14px 16px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:14px;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.field-select:focus{border-color:var(--gdd)}
+.field-row{display:flex;gap:10px}
+.field-row .field{flex:1}
+
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider-line{flex:1;height:1px;background:var(--bd)}
+.divider-txt{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--lt);font-weight:600;white-space:nowrap}
+
+/* ── VIDEO PLACEHOLDER ── */
+.video-placeholder{width:100%;aspect-ratio:16/9;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;cursor:pointer;transition:all .3s}
+.video-placeholder:hover{border-color:var(--gdd)}
+.video-play{width:56px;height:56px;border-radius:50%;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.video-placeholder:hover .video-play{background:var(--gd);border-color:var(--gd)}
+.video-play svg{width:20px;height:20px;fill:var(--gd);margin-left:3px}
+.video-placeholder:hover .video-play svg{fill:var(--bk)}
+.video-label{font-size:11px;color:var(--lt);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ── STAR RATING ── */
+.star-group{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.star-option{display:flex;align-items:center;gap:14px;padding:16px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .25s}
+.star-option:hover{border-color:var(--gdd)}
+.star-option.selected{border-color:var(--gd);background:var(--gdg2)}
+.star-stars{display:flex;gap:3px;flex-shrink:0}
+.star-stars .s{width:18px;height:18px;color:var(--gd)}
+.star-stars .s.empty{color:var(--bd)}
+.star-info{flex:1}
+.star-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh);margin-bottom:2px}
+.star-desc{font-size:11px;color:var(--lt);line-height:1.4}
+
+/* ── GOAL PICKER ── */
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.goal-option{padding:16px 12px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);cursor:pointer;text-align:center;transition:all .25s}
+.goal-option:hover{border-color:var(--gdd)}
+.goal-option.selected{border-color:var(--gd);background:var(--gdg2)}
+.goal-icon{font-size:24px;margin-bottom:6px}
+.goal-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh);margin-bottom:2px}
+.goal-desc{font-size:10px;color:var(--lt);line-height:1.3}
+
+/* ── FAMILIARITY MAP ── */
+.fam-section{margin:12px 0}
+.fam-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r) var(--r) 0 0;cursor:pointer}
+.fam-header-left{display:flex;align-items:center;gap:10px}
+.fam-header .fam-icon{font-size:18px}
+.fam-header .fam-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh)}
+.fam-count{font-size:11px;color:var(--gd);font-weight:700}
+.fam-body{background:var(--bk);border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);padding:10px 14px;display:none}
+.fam-body.open{display:block}
+.fam-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+.fam-item:last-child{border-bottom:none}
+.fam-item-name{font-size:13px;color:var(--lt)}
+.fam-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
+.fam-check.checked{border-color:var(--gd);background:var(--gdg)}
+.fam-check svg{width:14px;height:14px;opacity:0;transition:opacity .2s}
+.fam-check.checked svg{opacity:1}
+
+/* ── RECORD INPUTS ── */
+.record-row{display:flex;gap:16px;align-items:center;justify-content:center;margin:20px 0}
+.record-box{text-align:center}
+.record-box label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gr);font-weight:600;margin-bottom:6px}
+.record-box input{width:80px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Bebas Neue',sans-serif;font-size:28px;text-align:center;outline:none;letter-spacing:2px}
+.record-box input:focus{border-color:var(--gdd)}
+.record-dash{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gr);margin-top:20px}
+
+/* ── BOTTOM BUTTON ── */
+.bottom-btn{padding:16px 20px 32px;flex-shrink:0;border-top:1px solid var(--bd);background:var(--dk)}
+.btn-next{width:100%;padding:18px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.3)}
+.btn-next:active{transform:translateY(0)}
+.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-skip{width:100%;padding:14px;background:transparent;border:1px solid var(--bd);color:var(--gr);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;border-radius:var(--r);cursor:pointer;transition:all .2s;margin-top:8px}
+.btn-skip:hover{border-color:var(--gdd);color:var(--gd)}
+
+/* ── SUMMARY CARD ── */
+.summary-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin:16px 0}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)}
+.sum-row:last-child{border-bottom:none}
+.sum-label{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:1px}
+.sum-value{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--gd)}
+
+/* ── ASSESSMENT ROUTE ── */
+.assess-routes{display:flex;flex-direction:column;gap:10px;margin:16px 0}
+.assess-route{display:flex;align-items:center;gap:14px;padding:16px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .25s}
+.assess-route:hover{border-color:var(--gdd)}
+.assess-route .ar-icon{width:44px;height:44px;border-radius:12px;background:var(--gdg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.assess-route .ar-info{flex:1}
+.assess-route .ar-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh);margin-bottom:2px}
+.assess-route .ar-desc{font-size:11px;color:var(--gr);line-height:1.4}
+.assess-route .ar-arrow{color:var(--gr);font-size:18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);padding:12px 24px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- HEADER -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back hidden" id="backBtn" onclick="goBack()">←</div>
+      <div class="hd-brand">
+        <div class="hd-badge">BASE WRESTLING</div>
+        <div class="hd-sub">Athlete Setup</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog">
+    <div class="prog-steps">
+      <div class="prog-dot active" id="pd0"></div>
+      <div class="prog-dot" id="pd1"></div>
+      <div class="prog-dot" id="pd2"></div>
+      <div class="prog-dot" id="pd3"></div>
+      <div class="prog-dot" id="pd4"></div>
+      <div class="prog-dot" id="pd5"></div>
+    </div>
+    <div class="prog-labels">
+      <span class="prog-lbl active" id="pl0">Welcome</span>
+      <span class="prog-lbl" id="pl1">Profile</span>
+      <span class="prog-lbl" id="pl2">Team</span>
+      <span class="prog-lbl" id="pl3">Rating</span>
+      <span class="prog-lbl" id="pl4">Attacks</span>
+      <span class="prog-lbl" id="pl5">Go</span>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 0: WELCOME ═══ -->
+  <div class="screen active" id="s0">
+    <div class="scroll">
+      <div class="hero">
+        <div class="hero-icon">🤼</div>
+        <div class="hero-tag">Welcome to BASE Wrestling</div>
+        <div class="hero-title">YOUR JOURNEY<br>STARTS HERE</div>
+        <div class="hero-sub">Watch this quick intro to see how BASE helps you become the best wrestler you can be</div>
+      </div>
+      <div class="video-placeholder" onclick="this.style.borderColor='var(--gn)'">
+        <div class="video-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="video-label">Watch Intro · 2 min</div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gd);margin-bottom:6px">THE 4 PLEDGES</div>
+        <div style="font-size:13px;color:var(--lt);line-height:1.8">
+          1. Learn one thing today<br>
+          2. Get better at that one thing<br>
+          3. Help someone else do the same<br>
+          4. Have fun doing it
+        </div>
+      </div>
+    </div>
+    <div class="bottom-btn">
+      <button class="btn-next" onclick="goTo(1)">LET'S GO</button>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 1: PROFILE ═══ -->
+  <div class="screen" id="s1">
+    <div class="scroll">
+      <div class="hero">
+        <div class="hero-icon">👤</div>
+        <div class="hero-tag">Step 1 of 5</div>
+        <div class="hero-title">YOUR PROFILE</div>
+        <div class="hero-sub">Tell us about yourself</div>
+      </div>
+      <div class="sec-lbl">Your Info</div>
+      <div class="field-row">
+        <div class="field"><div class="field-label">First Name</div><input class="field-input" type="text" placeholder="First name" id="fname"></div>
+        <div class="field"><div class="field-label">Last Name</div><input class="field-input" type="text" placeholder="Last name" id="lname"></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">Grade</div>
+          <select class="field-select" id="grade">
+            <option value="">Select</option>
+            <option>6th</option><option>7th</option><option>8th</option>
+            <option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Weight Class</div>
+          <input class="field-input" type="number" placeholder="lbs" id="weight">
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">Years Wrestling</div>
+        <select class="field-select" id="experience">
+          <option value="">Select</option>
+          <option>First Year</option><option>1-2 Years</option><option>3-4 Years</option><option>5+ Years</option>
+        </select>
+      </div>
+    </div>
+    <div class="bottom-btn">
+      <button class="btn-next" onclick="goTo(2)">NEXT</button>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 2: JOIN TEAM ═══ -->
+  <div class="screen" id="s2">
+    <div class="scroll">
+      <div class="hero">
+        <div class="hero-icon">🏟️</div>
+        <div class="hero-tag">Step 2 of 5</div>
+        <div class="hero-title">JOIN YOUR TEAM</div>
+        <div class="hero-sub">Enter the athlete code your coach gave you</div>
+      </div>
+      <div class="field" style="margin-top:20px">
+        <div class="field-label">Athlete Team Code</div>
+        <input class="field-input" type="text" placeholder="Enter 6-digit code" id="teamCode" maxlength="6" style="text-align:center;font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:8px">
+      </div>
+      <div id="teamConfirm" style="display:none;margin-top:20px">
+        <div class="summary-card">
+          <div class="sum-row">
+            <span class="sum-label">Team</span>
+            <span class="sum-value" id="teamName">ROCKWALL YELLOWJACKETS</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-label">Coach</span>
+            <span class="sum-value" id="coachName">COACH HROVAT</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-label">Level</span>
+            <span class="sum-value" id="teamLevel">HIGH SCHOOL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-btn">
+      <button class="btn-next" onclick="goTo(3)" id="btnTeam" disabled>JOIN TEAM</button>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 3: STAR SELF-RATING ═══ -->
+  <div class="screen" id="s3">
+    <div class="scroll">
+      <div class="hero">
+        <div class="hero-icon">⭐</div>
+        <div class="hero-tag">Step 3 of 4</div>
+        <div class="hero-title">RATE YOURSELF</div>
+        <div class="hero-sub">Be honest — this helps us build your training plan. Where are you right now?</div>
+      </div>
+      <div class="star-group" id="starGroup">
+        <div class="star-option" onclick="selectStar(1,this)" data-star="1">
+          <div class="star-stars"><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg></div>
+          <div class="star-info"><div class="star-name">ROOKIE</div><div class="star-desc">First year or still learning the basics</div></div>
+        </div>
+        <div class="star-option" onclick="selectStar(2,this)" data-star="2">
+          <div class="star-stars"><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg></div>
+          <div class="star-info"><div class="star-name">NOVICE</div><div class="star-desc">Some experience, working on fundamentals</div></div>
+        </div>
+        <div class="star-option" onclick="selectStar(3,this)" data-star="3">
+          <div class="star-stars"><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg></div>
+          <div class="star-info"><div class="star-name">.500 WRESTLER</div><div class="star-desc">Competitive, around a .500 winning percentage</div></div>
+        </div>
+        <div class="star-option" onclick="selectStar(4,this)" data-star="4">
+          <div class="star-stars"><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg></div>
+          <div class="star-info"><div class="star-name">STATE QUALIFIER</div><div class="star-desc">Winning record, competing at the state level</div></div>
+        </div>
+        <div class="star-option" onclick="selectStar(5,this)" data-star="5">
+          <div class="star-stars"><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg><svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg></div>
+          <div class="star-info">
+            <div class="star-name">STATE PLACER</div>
+            <div class="star-desc">Top 6 at state tournament</div>
+            <div id="champRadios" style="display:none;margin-top:8px;display:none">
+              <div style="font-size:11px;color:var(--gd);font-weight:600;margin-bottom:6px">STATE CHAMPION?</div>
+              <div style="display:flex;gap:16px">
+                <label onclick="event.stopPropagation();selectChampRadio('1x')" style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--lt)"><span class="champ-dot" id="cd1" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;transition:all .2s"></span>1x</label>
+                <label onclick="event.stopPropagation();selectChampRadio('2x')" style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--lt)"><span class="champ-dot" id="cd2" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;transition:all .2s"></span>2x</label>
+                <label onclick="event.stopPropagation();selectChampRadio('3x')" style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--lt)"><span class="champ-dot" id="cd3" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;transition:all .2s"></span>3x</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-txt">Season Goal</div><div class="divider-line"></div></div>
+      <div class="goal-grid" id="goalGrid">
+        <div class="goal-option" onclick="selectGoal(this)"><div class="goal-icon">&#127919;</div><div class="goal-name">MAKE VARSITY</div><div class="goal-desc">Earn a starting spot</div></div>
+        <div class="goal-option" onclick="selectGoal(this)"><div class="goal-icon">&#9878;&#65039;</div><div class="goal-name">.500 WRESTLER</div><div class="goal-desc">Win half your matches</div></div>
+        <div class="goal-option" onclick="selectGoal(this)"><div class="goal-icon">&#127963;&#65039;</div><div class="goal-name">STATE QUALIFIER</div><div class="goal-desc">Qualify for state tournament</div></div>
+        <div class="goal-option" onclick="selectGoal(this)"><div class="goal-icon">&#127941;</div><div class="goal-name">STATE PLACER</div><div class="goal-desc">Top 6 at state</div></div>
+        <div class="goal-option" onclick="selectGoal(this)"><div class="goal-icon">&#128081;</div><div class="goal-name">STATE CHAMPION</div><div class="goal-desc">Win the whole thing</div></div>
+      </div>
+    </div>
+    <div class="bottom-btn">
+      <button class="btn-next" onclick="handleRatingNext()">NEXT</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: FAVORITE ATTACKS (3-star+ only) -->
+  <div class="screen" id="s4">
+    <div class="scroll">
+      <div class="hero">
+        <div class="hero-icon">&#127919;</div>
+        <div class="hero-tag">Step 4 of 5</div>
+        <div class="hero-title">YOUR ATTACKS</div>
+        <div class="hero-sub">Pick your #1 and #2 favorite in each category</div>
+      </div>
+      <div class="sec-lbl">Upper Body Attacks</div>
+      <div class="sec-lbl" style="margin-top:0;color:var(--gd);font-size:10px">#1</div>
+      <div class="goal-grid" id="atkUB1">
+        <div class="goal-option" onclick="selectAtk('ub1',this)"><div class="goal-name">FRONT HEADLOCK</div></div>
+        <div class="goal-option" onclick="selectAtk('ub1',this)"><div class="goal-name">GET TO THE BACK</div></div>
+        <div class="goal-option" onclick="selectAtk('ub1',this)"><div class="goal-name">DOUBLE UNDERS</div></div>
+      </div>
+      <div class="sec-lbl" style="margin-top:8px;color:var(--gd);font-size:10px">#2</div>
+      <div class="goal-grid" id="atkUB2">
+        <div class="goal-option" onclick="selectAtk('ub2',this)"><div class="goal-name">FRONT HEADLOCK</div></div>
+        <div class="goal-option" onclick="selectAtk('ub2',this)"><div class="goal-name">GET TO THE BACK</div></div>
+        <div class="goal-option" onclick="selectAtk('ub2',this)"><div class="goal-name">DOUBLE UNDERS</div></div>
+      </div>
+
+      <div class="sec-lbl" style="margin-top:20px">Leg Attacks</div>
+      <div class="sec-lbl" style="margin-top:0;color:var(--gd);font-size:10px">#1</div>
+      <div class="goal-grid" id="atkLeg1">
+        <div class="goal-option" onclick="selectAtk('leg1',this)"><div class="goal-name">HEAD INSIDE SINGLE</div></div>
+        <div class="goal-option" onclick="selectAtk('leg1',this)"><div class="goal-name">HEAD OUTSIDE SINGLE</div></div>
+        <div class="goal-option" onclick="selectAtk('leg1',this)"><div class="goal-name">DOUBLE LEG</div></div>
+        <div class="goal-option" onclick="selectAtk('leg1',this)"><div class="goal-name">FIREMAN'S CARRY</div></div>
+      </div>
+      <div class="sec-lbl" style="margin-top:8px;color:var(--gd);font-size:10px">#2</div>
+      <div class="goal-grid" id="atkLeg2">
+        <div class="goal-option" onclick="selectAtk('leg2',this)"><div class="goal-name">HEAD INSIDE SINGLE</div></div>
+        <div class="goal-option" onclick="selectAtk('leg2',this)"><div class="goal-name">HEAD OUTSIDE SINGLE</div></div>
+        <div class="goal-option" onclick="selectAtk('leg2',this)"><div class="goal-name">DOUBLE LEG</div></div>
+        <div class="goal-option" onclick="selectAtk('leg2',this)"><div class="goal-name">FIREMAN'S CARRY</div></div>
+      </div>
+
+      <div class="sec-lbl" style="margin-top:20px">Top Attacks</div>
+      <div class="sec-lbl" style="margin-top:0;color:var(--gd);font-size:10px">#1</div>
+      <div class="goal-grid" id="atkTop1">
+        <div class="goal-option" onclick="selectAtk('top1',this)"><div class="goal-name">BREAKDOWN TO UPPER BODY</div></div>
+        <div class="goal-option" onclick="selectAtk('top1',this)"><div class="goal-name">BREAKDOWN TO LEGS IN</div></div>
+      </div>
+
+      <div class="sec-lbl" style="margin-top:20px">Bottom Attacks</div>
+      <div class="sec-lbl" style="margin-top:0;color:var(--gd);font-size:10px">#1</div>
+      <div class="goal-grid" id="atkBot1">
+        <div class="goal-option" onclick="selectAtk('bot1',this)"><div class="goal-name">ESCAPES</div></div>
+        <div class="goal-option" onclick="selectAtk('bot1',this)"><div class="goal-name">REVERSALS</div></div>
+      </div>
+    </div>
+    <div class="bottom-btn">
+      <button class="btn-next" onclick="goTo(5)">NEXT</button>
+    </div>
+  </div>
+  <!-- SCREEN 5: SUMMARY & GO -->
+  <div class="screen" id="s5">
+    <div class="scroll">
+      <div class="hero">
+        <div class="hero-icon">&#128640;</div>
+        <div class="hero-tag" style="color:var(--gd)">You're All Set</div>
+        <div class="hero-title">LET'S GO</div>
+        <div class="hero-sub">Here's your profile summary. Complete your assessments from the dashboard to unlock personalized training.</div>
+      </div>
+      <div class="summary-card">
+        <div class="sum-row"><span class="sum-label" style="color:#aaa">Name</span><span class="sum-value" id="sumName">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label" style="color:#aaa">Team</span><span class="sum-value" id="sumTeam">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label" style="color:#aaa">Grade</span><span class="sum-value" id="sumGrade">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label" style="color:#aaa">Weight</span><span class="sum-value" id="sumWeight">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label" style="color:#aaa">Self Rating</span><span class="sum-value" id="sumRating">&mdash;</span></div>
+        <div class="sum-row"><span class="sum-label" style="color:#aaa">Season Goal</span><span class="sum-value" id="sumGoal">&mdash;</span></div>
+      </div>
+      <div id="sumAttacks" style="display:none">
+        <div class="divider"><div class="divider-line"></div><div class="divider-txt">Your Favorite Attacks</div><div class="divider-line"></div></div>
+        <div class="summary-card" id="sumAttacksCard"></div>
+      </div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-txt">Assessments Available on Dashboard</div><div class="divider-line"></div></div>
+      <div class="assess-routes">
+        <div class="assess-route"><div class="ar-icon">&#9876;&#65039;</div><div class="ar-info"><div class="ar-name">BATTLE ASSESSMENT</div><div class="ar-desc" style="color:#aaa">48 questions &middot; Rate yourself in every position</div></div><div class="ar-arrow" style="color:#aaa">&rarr;</div></div>
+        <div class="assess-route"><div class="ar-icon">&#129336;</div><div class="ar-info"><div class="ar-name">ATHLETIC ASSESSMENT</div><div class="ar-desc" style="color:#aaa">14 movements &middot; Physical Literacy Diploma</div></div><div class="ar-arrow" style="color:#aaa">&rarr;</div></div>
+        <div class="assess-route"><div class="ar-icon">&#128170;</div><div class="ar-info"><div class="ar-name">GOLD STANDARD CIRCUIT</div><div class="ar-desc" style="color:#aaa">Timed exercise circuit &middot; Your fitness baseline</div></div><div class="ar-arrow" style="color:#aaa">&rarr;</div></div>
+      </div>
+    </div>
+    <div class="bottom-btn">
+      <button class="btn-next" onclick="toast('&rarr; Athlete Dashboard')">GO TO DASHBOARD</button>
+    </div>
+  </div>
+  <!-- TOAST -->
+  <div class="toast" id="toastEl"></div>
+</div>
+
+<script>
+let step = 0;
+let selectedStar = 0;
+let selectedGoal = '';
+let selectedChamp = '';
+let selectedAtk1 = '';
+let selectedAtk2 = '';
+
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  for(let i=0;i<6;i++){
+    const d=document.getElementById('pd'+i), l=document.getElementById('pl'+i);
+    d.className='prog-dot'+(i<n?' done':i===n?' active':'');
+    l.className='prog-lbl'+(i<n?' done':i===n?' active':'');
+  }
+  document.getElementById('backBtn').classList.toggle('hidden',n===0);
+  step=n;
+  if(n===5) populateSummary();
+  document.querySelectorAll('.scroll').forEach(s=>s.scrollTop=0);
+}
+
+function goBack(){
+  if(step===5 && selectedStar < 3) { goTo(3); return; }
+  if(step>0) goTo(step-1);
+}
+
+// After rating screen, route 3-star+ to favorites, 1-2 star skip to summary
+function handleRatingNext(){
+  if(selectedStar >= 3) { goTo(4); }
+  else { goTo(5); }
+}
+
+function selectStar(n,el){
+  selectedStar=n;
+  document.querySelectorAll('.star-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  // Show champ radios only for State Placer (5-star)
+  var cr = document.getElementById('champRadios');
+  if(n===5) { cr.style.display='block'; }
+  else { cr.style.display='none'; selectedChamp=''; clearChampDots(); }
+}
+
+function clearChampDots(){
+  ['cd1','cd2','cd3'].forEach(function(id){
+    document.getElementById(id).style.borderColor='var(--bd)';
+    document.getElementById(id).style.background='transparent';
+    document.getElementById(id).innerHTML='';
+  });
+}
+
+function selectChampRadio(tier){
+  clearChampDots();
+  selectedChamp=tier;
+  var map={'1x':'cd1','2x':'cd2','3x':'cd3'};
+  var dot=document.getElementById(map[tier]);
+  dot.style.borderColor='var(--gd)';
+  dot.style.background='var(--gd)';
+  dot.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:var(--bk);display:block"></span>';
+}
+
+
+function selectGoal(el){
+  document.querySelectorAll('#goalGrid .goal-option').forEach(function(o){o.classList.remove('selected')});
+  el.classList.add('selected');
+  selectedGoal=el.querySelector('.goal-name').textContent;
+}
+
+// Simple single-select per attack group (#1 and #2 are separate grids)
+var atkPicks={ub1:'',ub2:'',leg1:'',leg2:'',top1:'',bot1:''};
+var atkGridMap={ub1:'atkUB1',ub2:'atkUB2',leg1:'atkLeg1',leg2:'atkLeg2',top1:'atkTop1',bot1:'atkBot1'};
+function selectAtk(group,el){
+  document.querySelectorAll('#'+atkGridMap[group]+' .goal-option').forEach(function(o){o.classList.remove('selected')});
+  el.classList.add('selected');
+  atkPicks[group]=el.querySelector('.goal-name').textContent;
+}
+
+// Team code simulation
+var codeInput=document.getElementById('teamCode');
+codeInput.addEventListener('input',function(){
+  if(this.value.length>=6){
+    document.getElementById('teamConfirm').style.display='block';
+    document.getElementById('btnTeam').disabled=false;
+  } else {
+    document.getElementById('teamConfirm').style.display='none';
+    document.getElementById('btnTeam').disabled=true;
+  }
+});
+
+function populateSummary(){
+  var fn=document.getElementById('fname').value||'—';
+  var ln=document.getElementById('lname').value||'';
+  document.getElementById('sumName').textContent=(fn+' '+ln).trim().toUpperCase()||'—';
+  document.getElementById('sumTeam').textContent=document.getElementById('teamName').textContent;
+  document.getElementById('sumGrade').textContent=(document.getElementById('grade').value||'—').toUpperCase();
+  var w=document.getElementById('weight').value;
+  document.getElementById('sumWeight').textContent=w?w+' LBS':'—';
+  var starNames={1:'1★ ROOKIE',2:'2★ NOVICE',3:'3★ .500 WRESTLER',4:'4★ STATE QUALIFIER',5:'5★ STATE PLACER'};
+  var ratingText=starNames[selectedStar]||'—';
+  if(selectedStar===5 && selectedChamp) ratingText='5★ STATE CHAMPION ('+selectedChamp.toUpperCase()+')';
+  document.getElementById('sumRating').textContent=ratingText;
+  document.getElementById('sumGoal').textContent=selectedGoal||'—';
+  var sumAtk=document.getElementById('sumAttacks');
+  if(selectedStar>=3){
+    sumAtk.style.display='block';
+    var html='';
+    if(atkPicks.ub1) html+='<div class="sum-row"><span class="sum-label" style="color:#aaa">Upper Body #1</span><span class="sum-value">'+atkPicks.ub1+'</span></div>';
+    if(atkPicks.ub2) html+='<div class="sum-row"><span class="sum-label" style="color:#aaa">Upper Body #2</span><span class="sum-value">'+atkPicks.ub2+'</span></div>';
+    if(atkPicks.leg1) html+='<div class="sum-row"><span class="sum-label" style="color:#aaa">Leg Attack #1</span><span class="sum-value">'+atkPicks.leg1+'</span></div>';
+    if(atkPicks.leg2) html+='<div class="sum-row"><span class="sum-label" style="color:#aaa">Leg Attack #2</span><span class="sum-value">'+atkPicks.leg2+'</span></div>';
+    if(atkPicks.top1) html+='<div class="sum-row"><span class="sum-label" style="color:#aaa">Top Attack</span><span class="sum-value">'+atkPicks.top1+'</span></div>';
+    if(atkPicks.bot1) html+='<div class="sum-row"><span class="sum-label" style="color:#aaa">Bottom Attack</span><span class="sum-value">'+atkPicks.bot1+'</span></div>';
+    document.getElementById('sumAttacksCard').innerHTML=html||'<div class="sum-row"><span class="sum-label" style="color:#aaa">None selected</span></div>';
+  } else { sumAtk.style.display='none'; }
+}
+
+function toast(msg){
+  var t=document.getElementById('toastEl');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2400);
+}
+</script>
+</body>
+</html>

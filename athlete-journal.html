@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;padding-bottom:72px}
+
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;font-size:18px}
+.hd-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-streak{font-size:11px;color:var(--gd);font-weight:700}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid var(--bd)}
+.tab{flex:1;padding:12px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:var(--gd);border-bottom-color:var(--gd)}
+
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tab-content{display:none;padding:16px 20px}
+.tab-content.active{display:block}
+
+/* Off-day card */
+.offday-card{background:var(--cd);border:1px solid var(--gdd);border-radius:var(--rl);padding:18px;margin-bottom:16px;position:relative;overflow:hidden}
+.offday-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gd)}
+.od-tag{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:6px;padding-left:10px}
+.od-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh);padding-left:10px;margin-bottom:4px}
+.od-text{font-size:12px;color:var(--lt);line-height:1.5;padding-left:10px;margin-bottom:12px}
+.od-btn{margin-left:10px;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:var(--gdg);border:1px solid var(--gdd);border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gd);cursor:pointer;transition:all .2s}
+.od-btn:hover{background:rgba(200,168,78,.2);border-color:var(--gd)}
+
+/* Pledges */
+.sec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.pledge-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.pledge{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .2s}
+.pledge:hover{border-color:var(--gdd)}
+.pledge.checked{border-color:var(--gn);background:var(--gng)}
+.pledge-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.pledge.checked .pledge-check{border-color:var(--gn);background:rgba(39,174,96,.15)}
+.pledge-check svg{width:14px;height:14px;stroke:var(--gn);fill:none;stroke-width:3;opacity:0;transition:opacity .2s}
+.pledge.checked .pledge-check svg{opacity:1}
+.pledge-num{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gdd);width:24px;text-align:center;flex-shrink:0}
+.pledge.checked .pledge-num{color:var(--gn)}
+.pledge-text{font-size:13px;color:var(--lt);flex:1}
+.pledge.checked .pledge-text{color:var(--gn)}
+
+/* Mood */
+.mood-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.mood{width:48px;height:48px;border-radius:50%;background:var(--cd);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all .25s}
+.mood:hover{border-color:var(--gdd);transform:scale(1.1)}
+.mood.selected{border-color:var(--gd);background:var(--gdg);transform:scale(1.15)}
+
+/* Reflection */
+.reflect-area{width:100%;min-height:120px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:14px;resize:vertical;outline:none;line-height:1.6}
+.reflect-area::placeholder{color:var(--ph)}
+.reflect-area:focus{border-color:var(--gdd)}
+
+/* XP preview */
+.xp-preview{margin:16px 0;padding:14px;background:var(--gdg2);border:1px solid var(--gdd);border-radius:var(--r);display:flex;align-items:center;justify-content:space-between}
+.xp-preview-left{font-size:12px;color:var(--lt)}
+.xp-preview-right{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gd);letter-spacing:1px}
+
+/* Save button */
+.save-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;margin-top:8px}
+.save-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,168,78,.3)}
+
+/* Past entries */
+.past-entry{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.pe-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pe-date{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh)}
+.pe-mood{font-size:18px}
+.pe-pledges{display:flex;gap:6px;margin-bottom:6px}
+.pe-p{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.pe-p.done{background:var(--gng);color:var(--gn);border:1px solid var(--gn)}
+.pe-p.miss{background:var(--cd);color:#aaa;border:1px solid var(--bd)}
+.pe-text{font-size:12px;color:var(--lt);line-height:1.4}
+
+/* Bottom nav */
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:var(--dk);border-top:1px solid var(--bd);display:flex;z-index:50;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer}
+.nav-icon{font-size:20px;color:#aaa}
+.nav-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#aaa;font-weight:700}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);padding:12px 24px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <div class="hd-back" onclick="toast('← Back')">←</div>
+    <div class="hd-title">JOURNAL</div>
+    <div class="hd-streak">🔥 12 Day Streak</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Today</div>
+    <div class="tab" onclick="switchTab(1)">Past Entries</div>
+  </div>
+
+  <div class="main">
+    <!-- TODAY -->
+    <div class="tab-content active" id="tab0">
+      <!-- Off-day content -->
+      <div class="offday-card">
+        <div class="od-tag">Off Day · Self</div>
+        <div class="od-title">WHAT YOU CONSUME MATTERS</div>
+        <div class="od-text">Today's focus: Self — one of the 5 things you control. What you eat, watch, and listen to shapes who you become as a wrestler and a person.</div>
+        <div class="od-btn" onclick="toast('+10 XP — Watch Video')">▶ WATCH VIDEO · +10 XP</div>
+      </div>
+
+      <div class="sec-lbl">Daily Pledges</div>
+      <div class="pledge-list">
+        <div class="pledge" onclick="togglePledge(this)">
+          <div class="pledge-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="pledge-num">1</div>
+          <div class="pledge-text">Learn one thing today</div>
+        </div>
+        <div class="pledge" onclick="togglePledge(this)">
+          <div class="pledge-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="pledge-num">2</div>
+          <div class="pledge-text">Get better at that one thing</div>
+        </div>
+        <div class="pledge" onclick="togglePledge(this)">
+          <div class="pledge-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="pledge-num">3</div>
+          <div class="pledge-text">Help someone else do the same</div>
+        </div>
+        <div class="pledge" onclick="togglePledge(this)">
+          <div class="pledge-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="pledge-num">4</div>
+          <div class="pledge-text">Have fun doing it</div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">How Are You Feeling?</div>
+      <div class="mood-row">
+        <div class="mood" onclick="selectMood(this)">😤</div>
+        <div class="mood" onclick="selectMood(this)">😔</div>
+        <div class="mood" onclick="selectMood(this)">😐</div>
+        <div class="mood" onclick="selectMood(this)">🙂</div>
+        <div class="mood" onclick="selectMood(this)">🔥</div>
+      </div>
+
+      <div class="sec-lbl">Reflection</div>
+      <textarea class="reflect-area" placeholder="What did you learn today? What are you working on? How did practice go?"></textarea>
+
+      <div class="xp-preview">
+        <div class="xp-preview-left">Journal Entry XP</div>
+        <div class="xp-preview-right">+25 XP</div>
+      </div>
+
+      <button class="save-btn" onclick="toast('Journal saved! +25 XP')">SAVE ENTRY</button>
+    </div>
+
+    <!-- PAST ENTRIES -->
+    <div class="tab-content" id="tab1">
+      <div class="past-entry">
+        <div class="pe-top"><div class="pe-date">TUESDAY, MAR 18</div><div class="pe-mood">🔥</div></div>
+        <div class="pe-pledges">
+          <div class="pe-p done">✓</div><div class="pe-p done">✓</div><div class="pe-p done">✓</div><div class="pe-p done">✓</div>
+        </div>
+        <div class="pe-text">Worked on my front headlock snap today. Coach showed us a new angle and it clicked. Hit it three times in live. Feeling great about district.</div>
+      </div>
+      <div class="past-entry">
+        <div class="pe-top"><div class="pe-date">MONDAY, MAR 17</div><div class="pe-mood">🙂</div></div>
+        <div class="pe-pledges">
+          <div class="pe-p done">✓</div><div class="pe-p done">✓</div><div class="pe-p miss">✗</div><div class="pe-p done">✓</div>
+        </div>
+        <div class="pe-text">Focused on underhook. Still need to work on my finish from there. Watched the video twice tonight.</div>
+      </div>
+      <div class="past-entry">
+        <div class="pe-top"><div class="pe-date">SUNDAY, MAR 16</div><div class="pe-mood">😐</div></div>
+        <div class="pe-pledges">
+          <div class="pe-p done">✓</div><div class="pe-p miss">✗</div><div class="pe-p miss">✗</div><div class="pe-p done">✓</div>
+        </div>
+        <div class="pe-text">Off day. Watched the Self video about nutrition. Need to eat better before tournaments.</div>
+      </div>
+      <div class="past-entry">
+        <div class="pe-top"><div class="pe-date">SATURDAY, MAR 15</div><div class="pe-mood">😤</div></div>
+        <div class="pe-pledges">
+          <div class="pe-p done">✓</div><div class="pe-p done">✓</div><div class="pe-p done">✓</div><div class="pe-p miss">✗</div>
+        </div>
+        <div class="pe-text">Lost in the semis at the tournament. Gave up an underhook and got scored on. Need to be better in that position.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bot-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-lbl">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">🤼</div><div class="nav-lbl">Train</div></div>
+    <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-lbl">Stats</div></div>
+    <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-lbl">Profile</div></div>
+  </div>
+  <div class="toast" id="toastEl"></div>
+</div>
+<script>
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.tab-content').forEach((t,i)=>t.classList.toggle('active',i===n));
+}
+function togglePledge(el){el.classList.toggle('checked')}
+function selectMood(el){
+  document.querySelectorAll('.mood').forEach(m=>m.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toast(m){const t=document.getElementById('toastEl');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+</script>
+</body>
+</html>

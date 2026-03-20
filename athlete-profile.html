@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athlete Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;padding-bottom:72px}
+
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;font-size:18px}
+.hd-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-edit{font-size:11px;color:var(--gd);text-transform:uppercase;letter-spacing:2px;font-weight:600;cursor:pointer}
+
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* Hero */
+.profile-hero{text-align:center;padding:28px 20px;position:relative}
+.profile-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:100%;background:radial-gradient(ellipse at 50% 20%,rgba(200,168,78,.08) 0%,transparent 70%);pointer-events:none}
+.p-avatar{width:80px;height:80px;border-radius:20px;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 12px}
+.p-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--wh)}
+.p-meta{font-size:12px;color:#aaa;margin-top:4px}
+.p-meta span{color:var(--gd);font-weight:600}
+.p-stars{display:flex;justify-content:center;gap:4px;margin-top:8px}
+.p-stars .s{width:20px;height:20px;color:var(--gd)}
+.p-stars .s.empty{color:var(--bd)}
+
+/* Level card */
+.level-card{margin:0 20px 16px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:16px}
+.lc-circle{width:60px;height:60px;border-radius:50%;background:var(--gdg);border:2px solid var(--gdd);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.lc-num{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gd);line-height:1}
+.lc-lbl{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:var(--gdd);font-weight:600}
+.lc-info{flex:1}
+.lc-tier{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh);margin-bottom:2px}
+.lc-xp{font-size:11px;color:#aaa;margin-bottom:6px}
+.lc-xp em{color:var(--gd);font-style:normal;font-weight:600}
+.lc-bar{height:6px;background:var(--bk);border-radius:3px;overflow:hidden}
+.lc-fill{height:100%;background:linear-gradient(90deg,var(--gd),var(--gdd));border-radius:3px}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 20px 16px}
+.stat-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px;text-align:center}
+.sc-icon{font-size:20px;margin-bottom:4px}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gd);line-height:1.1}
+.sc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#aaa;font-weight:600;margin-top:2px}
+.sc-bar{height:3px;background:var(--bk);border-radius:2px;margin-top:8px;overflow:hidden}
+.sc-fill{height:100%;border-radius:2px}
+
+/* Section label */
+.sec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;margin:16px 20px 10px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* Season record */
+.record-bar{margin:0 20px 16px;display:flex;gap:8px}
+.rec-box{flex:1;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px;text-align:center}
+.rec-val{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1}
+.rec-val.wins{color:var(--gn)}
+.rec-val.losses{color:var(--rd)}
+.rec-val.pct{color:var(--gd)}
+.rec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#aaa;font-weight:600;margin-top:4px}
+
+/* Assessments */
+.assess-list{margin:0 20px 16px;display:flex;flex-direction:column;gap:8px}
+.assess-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r)}
+.ai-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ai-icon.done{background:var(--gng);border:1px solid var(--gn)}
+.ai-icon.pending{background:var(--gdg);border:1px solid var(--gdd)}
+.ai-info{flex:1}
+.ai-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh)}
+.ai-status{font-size:11px;margin-top:2px}
+.ai-status.done{color:var(--gn)}
+.ai-status.pending{color:var(--gdd)}
+.ai-score{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gd)}
+
+/* Activity feed */
+.feed{margin:0 20px 20px;display:flex;flex-direction:column;gap:6px}
+.feed-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--cd);border-radius:8px}
+.fi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fi-dot.xp{background:var(--gd)}
+.fi-dot.badge{background:var(--gn)}
+.fi-dot.match{background:var(--blu)}
+.fi-text{flex:1;font-size:12px;color:var(--lt)}
+.fi-time{font-size:10px;color:#aaa;flex-shrink:0}
+
+/* Bottom nav */
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;background:var(--dk);border-top:1px solid var(--bd);display:flex;z-index:50;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer}
+.nav-icon{font-size:20px;color:#aaa}
+.nav-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#aaa;font-weight:700}
+.nav-item.active .nav-icon,.nav-item.active .nav-lbl{color:var(--gd)}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);padding:12px 24px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <div class="hd-back" onclick="toast('← Back')">←</div>
+    <div class="hd-title">MY PROFILE</div>
+    <div class="hd-edit" onclick="toast('Edit Profile')">Edit</div>
+  </div>
+
+  <div class="main">
+    <div class="profile-hero">
+      <div class="p-avatar">🤼</div>
+      <div class="p-name">TYLER RODRIGUEZ</div>
+      <div class="p-meta">Junior · 152 lbs · <span>Rockwall Yellowjackets</span></div>
+      <div class="p-stars">
+        <svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg>
+        <svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg>
+        <svg class="s" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg>
+        <svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg>
+        <svg class="s empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="currentColor"/></svg>
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="lc-circle"><div class="lc-num">18</div><div class="lc-lbl">Level</div></div>
+      <div class="lc-info">
+        <div class="lc-tier">🥈 NOVICE</div>
+        <div class="lc-xp"><em>4,280</em> / 5,000 XP to Level 19</div>
+        <div class="lc-bar"><div class="lc-fill" style="width:85.6%"></div></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="sc-icon">💪</div><div class="sc-val">42</div><div class="sc-lbl">Strength</div><div class="sc-bar"><div class="sc-fill" style="width:42%;background:var(--rd)"></div></div></div>
+      <div class="stat-card"><div class="sc-icon">🤸</div><div class="sc-val">38</div><div class="sc-lbl">Athletics</div><div class="sc-bar"><div class="sc-fill" style="width:38%;background:var(--blu)"></div></div></div>
+      <div class="stat-card"><div class="sc-icon">🎯</div><div class="sc-val">51</div><div class="sc-lbl">Technique</div><div class="sc-bar"><div class="sc-fill" style="width:51%;background:var(--gd)"></div></div></div>
+      <div class="stat-card"><div class="sc-icon">🔥</div><div class="sc-val">67</div><div class="sc-lbl">Consistency</div><div class="sc-bar"><div class="sc-fill" style="width:67%;background:var(--gn)"></div></div></div>
+    </div>
+
+    <div class="sec-lbl">Season Record</div>
+    <div class="record-bar">
+      <div class="rec-box"><div class="rec-val wins">18</div><div class="rec-lbl">Wins</div></div>
+      <div class="rec-box"><div class="rec-val losses">7</div><div class="rec-lbl">Losses</div></div>
+      <div class="rec-box"><div class="rec-val pct">72%</div><div class="rec-lbl">Win Rate</div></div>
+    </div>
+
+    <div class="sec-lbl">Assessments</div>
+    <div class="assess-list">
+      <div class="assess-item">
+        <div class="ai-icon done">⚔️</div>
+        <div class="ai-info"><div class="ai-name">BATTLE ASSESSMENT</div><div class="ai-status done">Completed · 3 Star</div></div>
+        <div class="ai-score">62/96</div>
+      </div>
+      <div class="assess-item">
+        <div class="ai-icon done">🤸</div>
+        <div class="ai-info"><div class="ai-name">ATHLETIC ASSESSMENT</div><div class="ai-status done">Completed · 12/14 skills</div></div>
+        <div class="ai-score">12/14</div>
+      </div>
+      <div class="assess-item">
+        <div class="ai-icon done">💪</div>
+        <div class="ai-info"><div class="ai-name">GOLD STANDARD CIRCUIT</div><div class="ai-status done">Best: 12:45</div></div>
+        <div class="ai-score">12:45</div>
+      </div>
+      <div class="assess-item">
+        <div class="ai-icon pending">📋</div>
+        <div class="ai-info"><div class="ai-name">SKILL ASSESSMENT</div><div class="ai-status pending">Not started</div></div>
+        <div class="ai-score" style="color:#aaa">—</div>
+      </div>
+    </div>
+
+    <div class="sec-lbl">Recent Activity</div>
+    <div class="feed">
+      <div class="feed-item"><div class="fi-dot xp"></div><div class="fi-text">Watched Front Headlock Snap Down · <strong style="color:var(--gd)">+10 XP</strong></div><div class="fi-time">2h ago</div></div>
+      <div class="feed-item"><div class="fi-dot xp"></div><div class="fi-text">Completed training session · <strong style="color:var(--gd)">+75 XP</strong></div><div class="fi-time">Yesterday</div></div>
+      <div class="feed-item"><div class="fi-dot match"></div><div class="fi-text">Won vs. Tyler ISD · <strong style="color:var(--gd)">+200 XP</strong></div><div class="fi-time">2 days ago</div></div>
+      <div class="feed-item"><div class="fi-dot badge"></div><div class="fi-text">Earned <strong style="color:var(--gn)">Full Training Week</strong> badge</div><div class="fi-time">3 days ago</div></div>
+      <div class="feed-item"><div class="fi-dot xp"></div><div class="fi-text">Beat circuit record · <strong style="color:var(--gd)">+200 XP</strong></div><div class="fi-time">4 days ago</div></div>
+    </div>
+  </div>
+
+  <div class="bot-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-lbl">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">🤼</div><div class="nav-lbl">Train</div></div>
+    <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-lbl">Stats</div></div>
+    <div class="nav-item active"><div class="nav-icon">👤</div><div class="nav-lbl">Profile</div></div>
+  </div>
+  <div class="toast" id="toastEl"></div>
+</div>
+<script>function toast(m){const t=document.getElementById('toastEl');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}</script>
+</body>
+</html>
