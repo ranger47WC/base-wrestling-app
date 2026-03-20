@@ -542,9 +542,10 @@ function toggleDrawer(){
   document.getElementById('overlay').classList.toggle('open');
 }
 function drawerNav(name){
-  toast('Opening '+name+'...');toggleDrawer();
-  document.querySelectorAll('.drawer-item').forEach(function(i){i.classList.remove('active');});
-  event.currentTarget.classList.add('active');
+  var map={'Plan Practice':'practice-plan-battle.html','Weekly Schedule':'weekly-schedule.html','Roster':'coach-roster.html','Team Stats':'team-stats.html','Assessments':'battle-assessment-intake.html','Content Library':'content-library.html','Assign Content':'content-library.html','Monthly Focus':'season-generator.html','Coach Assessment':'coach-assessment.html','Settings':'coach-settings.html'};
+  if(map[name]){location.href=map[name];}
+  else{toast('Opening '+name+'...');}
+  toggleDrawer();
 }
 
 // ── ATTENDANCE ──
