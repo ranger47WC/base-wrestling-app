@@ -597,7 +597,7 @@ function cBtn(code,type){return'<div class="cr"><button class="cb" onclick="copy
 function copyC(c){navigator.clipboard.writeText(c).catch(function(){});toast('Code copied!');}
 function smsC(c,t){var m=t==='head'?'Claim your team on BASE Wrestling as Head Coach: '+c:t==='coach'?'Join our coaching staff on BASE Wrestling: '+c:'Join our team on BASE Wrestling: '+c;window.location.href='sms:?body='+encodeURIComponent(m);}
 function toast(m){var t=$('toastEl');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
-function goToDash(){window.parent.postMessage('go-dashboard','*');}
+function goToDash(){window.top.location.href='coach-dashboard.html';}
 </script>
 </body>
 </html>
