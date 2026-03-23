@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#999;--grd:#999;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;flex:1;min-height:100vh}
+.screen.active{display:flex}
+
+/* ── LOGIN/SIGNUP SCREEN ── */
+.auth-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;position:relative;overflow:hidden}
+.auth-screen::before{content:'';position:absolute;top:-40%;left:-40%;width:180%;height:180%;background:radial-gradient(circle at 50% 55%,rgba(200,168,78,.06) 0%,transparent 50%);animation:glow 6s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+
+.auth-logo{position:relative;z-index:1;margin-bottom:8px}
+.auth-logo-badge{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:var(--rd);background:rgba(200,16,46,.12);border:1px solid rgba(200,16,46,.25);padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px}
+.auth-logo-title{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:6px;color:var(--wh);line-height:.9}
+.auth-logo-title span{color:var(--gd)}
+.auth-logo-sub{font-size:12px;color:var(--gr);letter-spacing:2px;text-transform:uppercase;margin-top:8px;font-weight:500}
+
+/* ── FORM ── */
+.auth-form{width:100%;max-width:320px;position:relative;z-index:1;margin-top:32px}
+.auth-input{width:100%;padding:14px 16px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;outline:none;transition:border-color .2s;margin-bottom:10px}
+.auth-input:focus{border-color:var(--gd)}
+.auth-input::placeholder{color:var(--ph)}
+
+/* Name field — only shows on signup */
+.auth-name{display:none}
+.auth-name.show{display:block}
+
+/* ── ROLE PICKER ── */
+.role-picker{display:flex;gap:8px;margin:14px 0}
+.role-btn{flex:1;padding:14px 8px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);cursor:pointer;text-align:center;transition:all .2s;position:relative}
+.role-btn:hover{border-color:var(--gdd)}
+.role-btn.active{border-color:var(--gd);background:var(--gdg)}
+.role-btn.disabled{opacity:.4;cursor:default}
+.role-btn.disabled:hover{border-color:var(--bd)}
+.role-icon{font-size:22px;display:block;margin-bottom:4px}
+.role-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh)}
+.role-btn.active .role-name{color:var(--gd)}
+.role-btn.disabled .role-name{color:var(--gr)}
+.role-soon{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:var(--rd);font-weight:700;position:absolute;top:6px;right:6px;background:var(--rdg);padding:2px 5px;border-radius:3px;display:none}
+.role-btn.disabled .role-soon{display:block}
+
+/* ── AUTH BUTTON ── */
+.auth-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;margin-top:8px}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.3)}
+.auth-btn.off{opacity:.4;pointer-events:none}
+
+/* ── TOGGLE LINK ── */
+.auth-toggle{margin-top:16px;font-size:13px;color:var(--gr);position:relative;z-index:1}
+.auth-toggle a{color:var(--gd);cursor:pointer;font-weight:600;text-decoration:none}
+.auth-toggle a:hover{text-decoration:underline}
+
+/* ── ERROR ── */
+.auth-error{background:var(--rdg);border:1px solid rgba(200,16,46,.3);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--rd);text-align:left;display:none}
+.auth-error.show{display:block}
+
+/* ── FORGOT PASSWORD ── */
+.auth-forgot{margin-top:10px;font-size:12px;position:relative;z-index:1}
+.auth-forgot a{color:var(--gr);cursor:pointer;text-decoration:none}
+.auth-forgot a:hover{color:var(--gd)}
+
+/* ── LOADING ── */
+.auth-loading{display:none;align-items:center;justify-content:center;gap:8px;padding:16px;color:var(--gd);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px}
+.auth-loading.show{display:flex}
+.spinner{width:18px;height:18px;border:2px solid var(--bd);border-top:2px solid var(--gd);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── RESET PASSWORD SCREEN ── */
+.reset-form{width:100%;max-width:320px;position:relative;z-index:1;margin-top:32px}
+.reset-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--gd);margin-bottom:6px}
+.reset-desc{font-size:13px;color:var(--gr);margin-bottom:20px;line-height:1.5}
+.reset-success{background:var(--gng);border:1px solid rgba(39,174,96,.3);border-radius:var(--r);padding:14px;font-size:13px;color:var(--gn);text-align:center;display:none}
+.reset-success.show{display:block}
+.auth-back{font-size:13px;color:var(--gr);cursor:pointer;margin-top:16px;position:relative;z-index:1}
+.auth-back:hover{color:var(--gd)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--cd);border:1px solid var(--gdd);color:var(--gd);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:10px 20px;border-radius:var(--r);opacity:0;transition:all .3s;z-index:200;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════
+       SCREEN 1: LOGIN / SIGNUP
+  ══════════════════════════════════════ -->
+  <div class="screen active" id="scr-auth">
+    <div class="auth-screen">
+      <div class="auth-logo">
+        <div class="auth-logo-badge">EST. 2024</div>
+        <div class="auth-logo-title">BASE<br><span>WRESTLING</span></div>
+        <div class="auth-logo-sub">Built for Athletes. Designed for Coaches.</div>
+      </div>
+
+      <div class="auth-form" id="auth-form">
+        <div class="auth-error" id="auth-error"></div>
+
+        <!-- Name (signup only) -->
+        <input class="auth-input auth-name" id="auth-name" type="text" placeholder="Full Name" autocomplete="name">
+
+        <!-- Email -->
+        <input class="auth-input" id="auth-email" type="email" placeholder="Email" autocomplete="email">
+
+        <!-- Password -->
+        <input class="auth-input" id="auth-pass" type="password" placeholder="Password" autocomplete="current-password">
+
+        <!-- Role picker -->
+        <div class="role-picker" id="role-picker">
+          <div class="role-btn active" id="role-coach" onclick="pickRole('coach')">
+            <span class="role-icon">🏆</span>
+            <span class="role-name">COACH</span>
+          </div>
+          <div class="role-btn" id="role-athlete" onclick="pickRole('athlete')">
+            <span class="role-icon">🤼</span>
+            <span class="role-name">ATHLETE</span>
+          </div>
+          <div class="role-btn disabled" id="role-parent">
+            <span class="role-icon">👪</span>
+            <span class="role-name">PARENT</span>
+            <span class="role-soon">FALL 2026</span>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="auth-btn" id="auth-btn" onclick="doAuth()">SIGN IN</button>
+
+        <div class="auth-loading" id="auth-loading">
+          <div class="spinner"></div>
+          <span>AUTHENTICATING...</span>
+        </div>
+
+        <div class="auth-toggle" id="auth-toggle">
+          Don't have an account? <a onclick="toggleMode()">Create Account</a>
+        </div>
+
+        <div class="auth-forgot" id="auth-forgot">
+          <a onclick="showReset()">Forgot password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 2: RESET PASSWORD
+  ══════════════════════════════════════ -->
+  <div class="screen" id="scr-reset">
+    <div class="auth-screen">
+      <div class="auth-logo">
+        <div class="auth-logo-title" style="font-size:36px">BASE<br><span>WRESTLING</span></div>
+      </div>
+      <div class="reset-form">
+        <div class="reset-title">RESET PASSWORD</div>
+        <div class="reset-desc">Enter your email and we'll send you a link to reset your password.</div>
+        <div class="auth-error" id="reset-error"></div>
+        <input class="auth-input" id="reset-email" type="email" placeholder="Email" autocomplete="email">
+        <button class="auth-btn" onclick="doReset()">SEND RESET LINK</button>
+        <div class="reset-success" id="reset-success">Reset link sent. Check your email.</div>
+        <div class="auth-back" onclick="showAuth()">← Back to Sign In</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toastEl"></div>
+
+<!-- ══════════════════════════════════════
+     FIREBASE SDK
+══════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════
+// STATE (defined before Firebase loads)
+// ══════════════════════════════════════
+var mode = 'login';
+var selectedRole = 'coach';
+var auth = null;
+var db = null;
+var firebaseReady = false;
+
+// ══════════════════════════════════════
+// ROLE PICKER
+// ══════════════════════════════════════
+function pickRole(role) {
+  if (role === 'parent') return;
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('role-' + role).classList.add('active');
+}
+
+// ══════════════════════════════════════
+// TOGGLE LOGIN / SIGNUP
+// ══════════════════════════════════════
+function toggleMode() {
+  mode = mode === 'login' ? 'signup' : 'login';
+  var nameField = document.getElementById('auth-name');
+  var btn = document.getElementById('auth-btn');
+  var toggle = document.getElementById('auth-toggle');
+  var forgot = document.getElementById('auth-forgot');
+  var picker = document.getElementById('role-picker');
+
+  if (mode === 'signup') {
+    nameField.classList.add('show');
+    btn.textContent = 'CREATE ACCOUNT';
+    toggle.innerHTML = 'Already have an account? <a onclick="toggleMode()">Sign In</a>';
+    forgot.style.display = 'none';
+    picker.style.display = 'flex';
+  } else {
+    nameField.classList.remove('show');
+    btn.textContent = 'SIGN IN';
+    toggle.innerHTML = 'Don\'t have an account? <a onclick="toggleMode()">Create Account</a>';
+    forgot.style.display = 'block';
+    picker.style.display = 'none';
+  }
+  hideError();
+}
+
+// ══════════════════════════════════════
+// AUTH ACTION
+// ══════════════════════════════════════
+function doAuth() {
+  if (!firebaseReady) { showError('Firebase not connected. Deploy to GitHub Pages and add your real API key to enable login.'); return; }
+
+  var email = document.getElementById('auth-email').value.trim();
+  var pass = document.getElementById('auth-pass').value;
+  var name = document.getElementById('auth-name').value.trim();
+
+  if (!email || !pass) { showError('Please enter your email and password.'); return; }
+  if (mode === 'signup' && !name) { showError('Please enter your name.'); return; }
+  if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
+
+  showLoading(true);
+  hideError();
+
+  if (mode === 'signup') {
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(function(cred) {
+        return db.collection('users').doc(cred.user.uid).set({
+          name: name,
+          email: email,
+          role: selectedRole,
+          onboardingComplete: false,
+          createdAt: new Date()
+        });
+      })
+      .then(function() {
+        showLoading(false);
+        routeUser(selectedRole, false);
+      })
+      .catch(function(err) {
+        showLoading(false);
+        handleAuthError(err);
+      });
+  } else {
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(function(cred) {
+        return db.collection('users').doc(cred.user.uid).get();
+      })
+      .then(function(doc) {
+        showLoading(false);
+        if (doc.exists) {
+          var data = doc.data();
+          routeUser(data.role, data.onboardingComplete);
+        } else {
+          showError('Account found but profile missing. Contact support.');
+        }
+      })
+      .catch(function(err) {
+        showLoading(false);
+        handleAuthError(err);
+      });
+  }
+}
+
+// ══════════════════════════════════════
+// ROUTING
+// ══════════════════════════════════════
+function routeUser(role, onboardingComplete) {
+  if (role === 'coach') {
+    if (onboardingComplete) {
+      window.location.href = 'coach-dashboard.html';
+    } else {
+      window.location.href = 'coach-onboarding.html';
+    }
+  } else if (role === 'athlete') {
+    if (onboardingComplete) {
+      window.location.href = 'athlete-dashboard.html';
+    } else {
+      window.location.href = 'athlete-onboarding.html';
+    }
+  }
+}
+
+// ══════════════════════════════════════
+// PASSWORD RESET
+// ══════════════════════════════════════
+function showReset() {
+  document.getElementById('scr-auth').classList.remove('active');
+  document.getElementById('scr-reset').classList.add('active');
+}
+
+function showAuth() {
+  document.getElementById('scr-reset').classList.remove('active');
+  document.getElementById('scr-auth').classList.add('active');
+}
+
+function doReset() {
+  if (!firebaseReady) { return; }
+  var email = document.getElementById('reset-email').value.trim();
+  if (!email) {
+    document.getElementById('reset-error').textContent = 'Please enter your email.';
+    document.getElementById('reset-error').classList.add('show');
+    return;
+  }
+  auth.sendPasswordResetEmail(email)
+    .then(function() {
+      document.getElementById('reset-success').classList.add('show');
+      document.getElementById('reset-error').classList.remove('show');
+    })
+    .catch(function(err) {
+      document.getElementById('reset-error').textContent = 'No account found with that email.';
+      document.getElementById('reset-error').classList.add('show');
+      document.getElementById('reset-success').classList.remove('show');
+    });
+}
+
+// ══════════════════════════════════════
+// ERROR HANDLING
+// ══════════════════════════════════════
+function handleAuthError(err) {
+  var msg = 'Something went wrong. Try again.';
+  if (err.code === 'auth/user-not-found') msg = 'No account found with that email.';
+  else if (err.code === 'auth/wrong-password') msg = 'Incorrect password.';
+  else if (err.code === 'auth/email-already-in-use') msg = 'An account with that email already exists. Try signing in.';
+  else if (err.code === 'auth/invalid-email') msg = 'Please enter a valid email address.';
+  else if (err.code === 'auth/weak-password') msg = 'Password must be at least 6 characters.';
+  else if (err.code === 'auth/too-many-requests') msg = 'Too many attempts. Please wait a moment and try again.';
+  else if (err.code === 'auth/network-request-failed') msg = 'Network error. Check your connection.';
+  showError(msg);
+}
+
+function showError(msg) {
+  var el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function hideError() {
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+function showLoading(on) {
+  document.getElementById('auth-btn').style.display = on ? 'none' : 'block';
+  document.getElementById('auth-loading').classList.toggle('show', on);
+}
+
+function toast(msg) {
+  var t = document.getElementById('toastEl');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+
+// ENTER KEY
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('scr-auth').classList.contains('active')) {
+    doAuth();
+  }
+});
+</script>
+
+<!-- Firebase loads AFTER all functions are defined -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+// Initialize Firebase — only if SDK loaded
+if (typeof firebase !== 'undefined') {
+  firebase.initializeApp({
+    apiKey: "AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+    authDomain: "base-wrestling-app.firebaseapp.com",
+    projectId: "base-wrestling-app",
+    storageBucket: "base-wrestling-app.firebasestorage.app",
+    messagingSenderId: "368548684923",
+    appId: "1:368548684923:web:0fc54795d1f375b0e6eede",
+    measurementId: "G-BXB5R9YVYF"
+  });
+
+  auth = firebase.auth();
+  db = firebase.firestore();
+  firebaseReady = true;
+
+  // Check if already logged in
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      db.collection('users').doc(user.uid).get().then(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          routeUser(data.role, data.onboardingComplete);
+        }
+      });
+    }
+  });
+} else {
+  // Firebase SDK couldn't load (blocked in preview)
+  // UI still works — doAuth will show a message
+  console.log('Firebase SDK not available — preview mode. Deploy to GitHub Pages for full auth.');
+}
+</script>
+</body>
+</html>
