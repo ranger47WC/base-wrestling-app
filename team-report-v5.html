@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.tab-bar{display:flex;padding:0 20px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.tab{flex:1;padding:12px 8px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--grd);cursor:pointer;text-align:center;border-bottom:2px solid transparent}
+.tab.active{color:var(--gd);border-bottom-color:var(--gd)}
+.tab-content{display:none;flex:1;overflow-y:auto}.tab-content.active{display:block}
+.summary-bar{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--bd)}
+.sb-stat{flex:1;text-align:center;padding:10px 6px;background:var(--cd);border-radius:var(--r);border:1px solid var(--bd)}
+.sb-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--gd)}
+.sb-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-top:2px}
+.sl{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;padding:0 20px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.section{padding:16px 0 0}
+.yr-hdr{padding:8px 20px 4px;display:flex;align-items:center;gap:8px}
+.yr-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--lt)}
+.yr-line{flex:1;height:1px;background:var(--bd)}
+.yr-count{font-size:11px;color:var(--gr);font-weight:600}
+.ath-row{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;border-bottom:1px solid var(--bd)}
+.ath-yr-box{width:38px;height:38px;border-radius:9px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd)}
+.ath-info{flex:1}.ath-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px}
+.ath-detail{font-size:12px;color:var(--gr);margin-top:1px}
+.ath-wl{font-family:'Bebas Neue',sans-serif;font-size:15px}.w{color:var(--gn)}.l{color:var(--rd)}.d{color:var(--grd)}
+.ov-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:0 20px 12px;padding:16px;overflow:hidden}
+.ov-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd);margin-bottom:10px}
+.class-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.cr-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--lt);width:32px;flex-shrink:0}
+.cr-bar{display:flex;flex:1;height:22px;border-radius:4px;overflow:hidden}
+.cr-bar-w{background:rgba(39,174,96,.3);display:flex;align-items:center;justify-content:center}
+.cr-bar-w span{font-size:11px;font-weight:700;color:var(--gn)}
+.cr-bar-l{background:rgba(200,16,46,.25);display:flex;align-items:center;justify-content:center}
+.cr-bar-l span{font-size:11px;font-weight:700;color:var(--rd)}
+.cr-record{font-size:12px;color:var(--gr);width:55px;text-align:right;flex-shrink:0;font-weight:600}
+.ac-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.ac-icon{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+.ac-info{flex:1}.ac-name{font-size:13px;font-weight:600;color:var(--wh)}
+.ac-bar-wrap{height:6px;background:var(--bd);border-radius:3px;margin-top:4px;overflow:hidden}
+.ac-bar-fill{height:100%;border-radius:3px}
+.ac-bar-fill.good{background:var(--gn)}.ac-bar-fill.ok{background:var(--gd)}.ac-bar-fill.weak{background:var(--rd)}
+.ac-val{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--wh);flex-shrink:0;width:50px;text-align:right}
+.ac-arrow{color:var(--grd);font-size:12px;flex-shrink:0}
+.ac-row.open .ac-arrow{transform:rotate(90deg);color:var(--gd)}
+.ac-missing{font-size:12px;padding:4px 0;display:flex;align-items:center;gap:6px}
+.ac-missing-dot{width:6px;height:6px;border-radius:50%;background:var(--rd);flex-shrink:0}
+.sit-row{display:flex;align-items:center;gap:8px;padding:6px 0}
+.sit-label{font-size:12px;color:var(--lt);flex:1;font-weight:500}
+.sit-bar{flex:2;height:8px;background:var(--bd);border-radius:4px;overflow:hidden}
+.sit-fill{height:100%;border-radius:4px}
+.sit-fill.good{background:var(--gn)}.sit-fill.ok{background:var(--gd)}.sit-fill.weak{background:var(--rd)}
+.sit-val{font-family:'Bebas Neue',sans-serif;font-size:13px;width:40px;text-align:right}
+.sit-val.good{color:var(--gn)}.sit-val.ok{color:var(--gd)}.sit-val.weak{color:var(--rd)}
+.cvt-header{display:flex;align-items:center;gap:6px;padding:0 0 8px;margin-bottom:8px;border-bottom:1px solid var(--bd)}
+.cvt-label-left{flex:1;font-size:12px;color:var(--gr);font-weight:600}
+.cvt-col{font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:700;text-align:center;min-width:55px}
+.cvt-col.coach{color:var(--blu)}.cvt-col.team{color:var(--gd)}.cvt-col.gap{color:var(--gr)}
+.comp-row{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.comp-label{font-size:12px;color:var(--lt);flex:1;font-weight:500}
+.comp-badge{font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:4px 8px;border-radius:4px;font-weight:700;text-align:center;min-width:55px}
+.comp-badge.above{background:var(--gng);color:var(--gn)}
+.comp-badge.at{background:var(--gdg);color:var(--gd)}
+.comp-badge.below{background:var(--rdg);color:var(--rd)}
+.comp-status{font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:700;min-width:44px;text-align:center;color:var(--wh)}
+.profile-screen{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:var(--dk);z-index:50;flex-direction:column;overflow:hidden}
+.profile-screen.open{display:flex}
+.prof-scroll{flex:1;overflow-y:auto;padding-bottom:40px}
+.prof-hero{text-align:center;padding:20px 20px 16px;border-bottom:1px solid var(--bd)}
+.prof-avatar{width:64px;height:64px;border-radius:50%;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px}
+.prof-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px}
+.prof-sub{font-size:13px;color:var(--gr);margin-top:2px}
+.prof-star-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px}
+.ps-label{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:1px;font-weight:600;width:40px;text-align:right}
+.ps-stars{font-size:14px;color:var(--gd);letter-spacing:2px}.ps-dim{color:var(--bd)}
+.prof-stats{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--bd)}
+.ps-box{flex:1;text-align:center;padding:10px;background:var(--cd);border-radius:var(--r);border:1px solid var(--bd)}
+.ps-val{font-family:'Bebas Neue',sans-serif;font-size:20px}.ps-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-top:2px}
+.pa-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:0 20px 10px;overflow:hidden}
+.pa-card.open{border-color:var(--gdd)}
+.pa-header{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer}
+.pa-icon{font-size:18px;flex-shrink:0}.pa-info{flex:1}
+.pa-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px}
+.pa-status{font-size:11px;margin-top:2px}.pa-status.done{color:var(--gn)}.pa-status.pending{color:var(--grd)}
+.pa-arrow{color:var(--grd);font-size:12px}.pa-card.open .pa-arrow{transform:rotate(90deg);color:var(--gd)}
+.pa-body{display:none;padding:0 16px 14px;border-top:1px solid var(--bd)}.pa-card.open .pa-body{display:block}
+.pa-detail-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)}
+.pa-detail-row:last-child{border-bottom:none}
+.pa-detail-name{font-size:12px;color:var(--lt)}
+.pa-detail-val{font-size:12px;font-weight:700}
+.pa-detail-val.pass{color:var(--gn)}.pa-detail-val.fail{color:var(--rd)}.pa-detail-val.ip{color:var(--rd)}.pa-detail-val.at-rank{color:var(--gd)}
+.pa-sub{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gd);font-weight:700;padding:10px 0 4px;border-bottom:1px solid var(--bd)}
+.skill-badge{font-size:9px;text-transform:uppercase;letter-spacing:1px;padding:3px 7px;border-radius:3px;font-weight:700}
+.skill-badge.learning{background:var(--rdg);color:var(--rd)}
+.skill-badge.practicing{background:var(--gdg);color:var(--gd)}
+.skill-badge.ready{background:rgba(39,174,96,.25);color:var(--gn)}
+.activity-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}
+.activity-row:last-child{border-bottom:none}
+.activity-label{font-size:13px;color:var(--lt)}
+.activity-val{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);letter-spacing:1px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.pad-bottom{height:40px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd"><div class="hd-left"><div class="hd-back" onclick="handleBack()">←</div><div class="hd-info"><div>TEAM</div><div>Ranger-47 · High School Boys</div></div></div></div>
+<div class="tab-bar"><div class="tab active" onclick="switchTab('athletes',this)">ATHLETES</div><div class="tab" onclick="switchTab('overview',this)">TEAM OVERVIEW</div></div>
+
+<div class="tab-content active" id="tab-athletes">
+<div class="summary-bar"><div class="sb-stat"><div class="sb-val">13</div><div class="sb-label">Athletes</div></div><div class="sb-stat"><div class="sb-val">142-86</div><div class="sb-label">Record</div></div><div class="sb-stat"><div class="sb-val">62%</div><div class="sb-label">Win Rate</div></div></div>
+<div id="roster-list"></div><div class="pad-bottom"></div>
+</div>
+
+<div class="tab-content" id="tab-overview">
+<div class="summary-bar"><div class="sb-stat"><div class="sb-val">13</div><div class="sb-label">Athletes</div></div><div class="sb-stat"><div class="sb-val">142-86</div><div class="sb-label">Record</div></div><div class="sb-stat"><div class="sb-val">⭐ 2.4</div><div class="sb-label">Avg Rank</div></div><div class="sb-stat"><div class="sb-val">84%</div><div class="sb-label">Attendance</div></div></div>
+<div class="section"><div class="sl">Record by Class</div><div class="ov-card">
+<div class="class-row"><div class="cr-label">SR</div><div class="cr-bar"><div class="cr-bar-w" style="width:68%"><span>71</span></div><div class="cr-bar-l" style="width:32%"><span>18</span></div></div><div class="cr-record">71 - 18</div></div>
+<div class="class-row"><div class="cr-label">JR</div><div class="cr-bar"><div class="cr-bar-w" style="width:63%"><span>30</span></div><div class="cr-bar-l" style="width:37%"><span>17</span></div></div><div class="cr-record">30 - 17</div></div>
+<div class="class-row"><div class="cr-label">SO</div><div class="cr-bar"><div class="cr-bar-w" style="width:47%"><span>30</span></div><div class="cr-bar-l" style="width:53%"><span>34</span></div></div><div class="cr-record">30 - 34</div></div>
+<div class="class-row"><div class="cr-label">FR</div><div class="cr-bar"><div class="cr-bar-w" style="width:34%"><span>11</span></div><div class="cr-bar-l" style="width:66%"><span>21</span></div></div><div class="cr-record">11 - 21</div></div>
+</div></div>
+<div class="section"><div class="sl">Assessment Completion</div><div class="ov-card" id="assess-completion"></div></div>
+<div class="section"><div class="sl">Battle</div>
+<div class="pa-card ov-toggle"><div class="pa-header" onclick="toggleOV(this)"><div class="pa-icon">⚔️</div><div class="pa-info"><div class="pa-name">BATTLE ASSESSMENT</div><div class="pa-status done">5 of 13 assessed</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div id="battle-overview"></div></div></div>
+</div>
+<div class="section"><div class="sl">Preparation</div>
+<div class="pa-card ov-toggle"><div class="pa-header" onclick="toggleOV(this)"><div class="pa-icon">🤸</div><div class="pa-info"><div class="pa-name">ATHLETIC ASSESSMENT</div><div class="pa-status done">13 of 13 assessed</div></div><div class="pa-arrow">›</div></div><div class="pa-body">
+<div class="ov-title">PHYSICAL LITERACY DIPLOMA</div>
+<div class="sit-row"><div class="sit-label">Super Athlete (10/10 + bonus)</div><div class="sit-bar"><div class="sit-fill good" style="width:23%"></div></div><div class="sit-val good">3</div></div>
+<div class="sit-row"><div class="sit-label">Solid Foundation (8+/10)</div><div class="sit-bar"><div class="sit-fill ok" style="width:46%"></div></div><div class="sit-val ok">6</div></div>
+<div class="sit-row"><div class="sit-label">In Progress (&lt;8/10)</div><div class="sit-bar"><div class="sit-fill weak" style="width:31%"></div></div><div class="sit-val weak">4</div></div>
+</div></div>
+<div class="pa-card ov-toggle"><div class="pa-header" onclick="toggleOV(this)"><div class="pa-icon">🎯</div><div class="pa-info"><div class="pa-name">SKILL ASSESSMENT</div><div class="pa-status done">7 of 13 assessed</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div id="skill-overview"></div></div></div>
+<div class="pa-card ov-toggle"><div class="pa-header" onclick="toggleOV(this)"><div class="pa-icon">💪</div><div class="pa-info"><div class="pa-name">EXERCISE ASSESSMENT</div><div class="pa-status done">6 of 13 completed</div></div><div class="pa-arrow">›</div></div><div class="pa-body">
+<div class="ov-title">GOLD STANDARD CIRCUIT</div>
+<div class="sit-row"><div class="sit-label">Elite (Under 10 min)</div><div class="sit-bar"><div class="sit-fill good" style="width:14%"></div></div><div class="sit-val good">1</div></div>
+<div class="sit-row"><div class="sit-label">Strong (10-12 min)</div><div class="sit-bar"><div class="sit-fill good" style="width:29%"></div></div><div class="sit-val good">2</div></div>
+<div class="sit-row"><div class="sit-label">At Standard (12-15 min)</div><div class="sit-bar"><div class="sit-fill ok" style="width:43%"></div></div><div class="sit-val ok">3</div></div>
+<div class="sit-row"><div class="sit-label">In Progress</div><div class="sit-bar"><div class="sit-fill weak" style="width:54%"></div></div><div class="sit-val weak">7</div></div>
+</div></div>
+</div>
+<div class="pad-bottom"></div>
+</div>
+
+<div class="profile-screen" id="profile-screen">
+<div class="hd"><div class="hd-left"><div class="hd-back" onclick="closeProfile()">←</div><div class="hd-info"><div id="prof-hd-name">ATHLETE</div><div>Wrestler Progress Report</div></div></div></div>
+<div class="prof-scroll" id="prof-body"></div>
+</div>
+<div class="toast" id="toastEl"></div>
+</div>
+<script>
+var R=[
+{name:'Jake Morrison',wt:157,yr:'Sr',star:4,goal:5,w:28,l:3,att:96,
+athletic:{done:true,score:12,tier:'Super Athlete',results:[1,1,1,1,1,1,1,1,1,1,1,1,1,0]},
+exercise:{done:true,completed:true,time:'11:45'},
+skill:{done:true,level:'Advanced'},
+battle:{done:true,mat:{no:'Above',nd:'At',top:'Above',bot:'At'},attacks:{uo:'Above',lo:'Above',ud:'At',ld:'At',to:'Above',bo:'At'},situations:{ub:85,hi:80,ho:72,fa:88,tb:82}},
+activity:{vids:52,sessions:45,content:24},
+attacks:{ub1:'Back Attack',ub1entries:[{pos:'Duck Under',f:'Go Behind'},{pos:'Arm Drag',f:'Go Behind'},{pos:'Throw By',f:'Go Behind'}],ub2:'Front Headlock',ub2entries:[{pos:'Snap Down',f:'Nearside Cradle'},{pos:'Underhook Snap',f:'Go Behind'}],leg1:'Head Inside Single',leg1pos:[{pos:'High',f:'Dump (foot in middle)'},{pos:'Medium',f:'Head to Hip Front Sweep'},{pos:'Side',f:'Backside to Far Ankles'},{pos:'Extended',f:'Backdoor'}],leg2:'Head Outside Single',leg2pos:[{pos:'High',f:'Dump (foot in middle)'},{pos:'Medium',f:'Inside Trip'},{pos:'Crackdown',f:'Crackdown Trip'},{pos:'Extended',f:'Elbow Down Shelf'}],fhl1:'Nearside Cradle',fhl2:'Go Behind',top1:'Upper Body Control',top1pos:[{pos:'#1 Finish',f:'Chicken Wing Run it Over'},{pos:'#2 Finish',f:'Half Nelson Turn'}],top2:'Legs In',top2pos:[{pos:'#1 Finish',f:'Power Half'},{pos:'#2 Finish',f:'Ball and Chain'}],bot1:'Stand Up',bot2:'Switch'}},
+{name:'Tyler Chen',wt:138,yr:'Sr',star:4,goal:5,w:25,l:5,att:94,
+athletic:{done:true,score:11,tier:'Super Athlete',results:[1,1,1,1,1,1,1,0,1,1,1,1,1,0]},
+exercise:{done:true,completed:true,time:'12:20'},
+skill:{done:true,level:'Advanced'},
+battle:{done:true,mat:{no:'At',nd:'Above',top:'At',bot:'Above'},attacks:{uo:'At',lo:'Above',ud:'Above',ld:'At',to:'At',bo:'Above'},situations:{ub:78,hi:82,ho:68,fa:75,tb:80}},
+activity:{vids:44,sessions:42,content:20},
+attacks:{ub1:'Front Headlock',ub1entries:[{pos:'Snap Down',f:'Go Behind'},{pos:'Underhook Snap',f:'Cow Catcher / Snake'}],ub2:'Back Attack',ub2entries:[{pos:'Arm Drag',f:'Go Behind'},{pos:'Slide By',f:'Go Behind'}],leg1:'Head Inside Single',leg1pos:[{pos:'High',f:'Dump (foot outside)'},{pos:'Medium',f:'Backdoor'},{pos:'Side',f:'Backside Shelf'},{pos:'Extended',f:'Elbow Down Backside'}],leg2:'Double Leg',leg2pos:[{pos:'Finish',f:'Run Through'}],fhl1:'Go Behind',fhl2:'Cement Mixer',top1:'Legs In',top1pos:[{pos:'#1 Finish',f:'Power Half'},{pos:'#2 Finish',f:'Twister'}],top2:'Upper Body Control',top2pos:[{pos:'#1 Finish',f:'Near Side Cradle'},{pos:'#2 Finish',f:'Wrist Ride Tilt'}],bot1:'Granby',bot2:'Stand Up'}},
+{name:'Marcus Williams',wt:175,yr:'Sr',star:3,goal:4,w:18,l:10,att:92,
+athletic:{done:true,score:9,tier:'Solid Foundation',results:[1,1,1,1,1,1,1,0,0,1,0,1,1,0]},
+exercise:{done:true,completed:true,time:'13:50'},
+skill:{done:true,level:'Intermediate'},
+battle:{done:true,mat:{no:'At',nd:'At',top:'At',bot:'Below'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:65,hi:60,ho:55,fa:62,tb:68}},
+activity:{vids:28,sessions:38,content:14},
+attacks:{ub1:'Back Attack',ub1entries:[{pos:'Throw By',f:'Go Behind'},{pos:'Shuck',f:'Go Behind'}],ub2:'Front Headlock',ub2entries:[{pos:'Snap Down',f:'Nearside Cradle'}],leg1:'Head Outside Single',leg1pos:[{pos:'High',f:'Dump (foot in middle)'},{pos:'Medium',f:'Dump'},{pos:'Crackdown',f:'Go Behind'},{pos:'Extended',f:'Elbow Down Shelf'}],fhl1:'Cow Catcher / Snake',fhl2:'Nearside Cradle',top1:'Upper Body Control',top1pos:[{pos:'#1 Finish',f:'Wrist Ride Tilt'},{pos:'#2 Finish',f:'Roll Through Tilt'}],bot1:'Stand Up',bot2:'Side Roll'}},
+{name:'Brandon Scott',wt:126,yr:'Jr',star:3,goal:4,w:16,l:8,att:90,
+athletic:{done:true,score:10,tier:'Solid Foundation',results:[1,1,1,1,1,1,1,0,0,1,1,1,1,0]},
+exercise:{done:true,completed:true,time:'14:10'},
+skill:{done:true,level:'Intermediate'},
+battle:{done:true,mat:{no:'At',nd:'At',top:'Below',bot:'At'},attacks:{uo:'At',lo:'At',ud:'At',ld:'Below',to:'Below',bo:'At'},situations:{ub:62,hi:68,ho:58,fa:60,tb:55}},
+activity:{vids:22,sessions:35,content:12},
+attacks:{ub1:'Back Attack',ub1entries:[{pos:'Arm Drag',f:'Go Behind'},{pos:'Duck Under',f:'Go Behind'}],ub2:'Front Headlock',ub2entries:[{pos:'Snap Down',f:'Knee Tap'}],leg1:'Head Inside Single',leg1pos:[{pos:'High',f:'Dump (foot in middle)'},{pos:'Medium',f:'Backside Elbow Down Shelf'},{pos:'Side',f:'Backside Calf Slice'},{pos:'Extended',f:'Backdoor'}],fhl1:'Knee Tap',fhl2:'Go Behind',top1:'Upper Body Control',top1pos:[{pos:'#1 Finish',f:'Half Nelson Turn'},{pos:'#2 Finish',f:'Half Nelson Run it Over'}],bot1:'Stand Up'}},
+{name:'David Park',wt:144,yr:'Jr',star:3,goal:4,w:14,l:9,att:88,
+athletic:{done:true,score:9,tier:'Solid Foundation',results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+exercise:{done:true,completed:true,time:'14:30'},
+skill:{done:true,level:'Intermediate'},
+battle:{done:true,mat:{no:'At',nd:'Below',top:'At',bot:'At'},attacks:{uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'},situations:{ub:60,hi:58,ho:52,fa:55,tb:62}},
+activity:{vids:18,sessions:32,content:10}},
+{name:'Joey Santos',wt:132,yr:'So',star:2,goal:3,w:9,l:7,att:86,
+athletic:{done:true,score:8,tier:'Solid Foundation',results:[1,1,1,1,1,0,0,0,0,1,1,1,1,0]},
+exercise:{done:true,completed:true,time:'14:50'},
+skill:{done:true,level:'Beginner'},battle:{done:false},activity:{vids:14,sessions:28,content:8}},
+{name:'Ryan Kowalski',wt:150,yr:'So',star:2,goal:3,w:8,l:8,att:84,
+athletic:{done:true,score:7,tier:'Solid Foundation',results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0]},
+exercise:{done:true,completed:false,time:'DNF'},
+skill:{done:true,level:'Beginner'},battle:{done:false},activity:{vids:10,sessions:26,content:6}},
+{name:'Derek Patel',wt:113,yr:'So',star:2,goal:3,w:7,l:9,att:82,
+athletic:{done:true,score:6,tier:'In Progress',results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0]},
+exercise:{done:false},skill:{done:false},battle:{done:false},activity:{vids:8,sessions:22,content:4}},
+{name:'Ethan Brooks',wt:165,yr:'So',star:2,goal:3,w:6,l:10,att:80,
+athletic:{done:true,score:7,tier:'Solid Foundation',results:[1,1,1,1,1,0,0,0,0,0,1,1,1,0]},
+exercise:{done:false},skill:{done:false},battle:{done:false},activity:{vids:6,sessions:20,content:3}},
+{name:'Luke Anderson',wt:106,yr:'Fr',star:1,goal:2,w:3,l:5,att:78,
+athletic:{done:true,score:5,tier:'In Progress',results:[1,1,0,0,1,0,0,0,0,0,1,1,0,0]},
+exercise:{done:false},skill:{done:false},battle:{done:false},activity:{vids:4,sessions:16,content:2}},
+{name:'Noah Garcia',wt:120,yr:'Fr',star:1,goal:2,w:2,l:6,att:76,
+athletic:{done:true,score:6,tier:'In Progress',results:[1,1,0,0,1,0,0,0,0,0,1,1,1,0]},
+exercise:{done:false},skill:{done:false},battle:{done:false},activity:{vids:3,sessions:14,content:1}},
+{name:'Avery Jackson',wt:138,yr:'Fr',star:1,goal:3,w:4,l:4,att:82,
+athletic:{done:true,score:9,tier:'Solid Foundation',results:[1,1,1,1,1,1,0,0,0,1,1,1,1,0]},
+exercise:{done:true,completed:true,time:'14:40'},
+skill:{done:false},battle:{done:false},activity:{vids:12,sessions:18,content:6}},
+{name:'Cody Mitchell',wt:190,yr:'Fr',star:1,goal:2,w:2,l:6,att:72,
+athletic:{done:true,score:4,tier:'In Progress',results:[1,1,0,0,0,0,0,0,0,0,1,1,0,0]},
+exercise:{done:false},skill:{done:false},battle:{done:false},activity:{vids:2,sessions:12,content:1}}
+];
+
+var ATH=['Forward Roll','Backward Extension','Cartwheel Both Hands','Round-Off to a Jump','Round-Off to Backward Extension','Front Handspring','Back Walkover','Walking on Hands (10 ft)','Bridge Kick Over','Bridge Circle Both Ways','Round-Off to Backflip','Round-Off to Back Handspring','Back Handspring (Standing)','Standing Backflip (Backtuck)'];
+var BG=['Upper Body','Head Inside Single','Head Outside Single','Failed Attacks','Top / Bottom'];
+var BK=['ub','hi','ho','fa','tb'];
+
+// Skill data — 3 tier: R=Match Ready, P=Practicing, L=Learning
+var SK_MAT=[{n:'Stance',v:'R'},{n:'Motion',v:'R'},{n:'Body Fakes',v:'R'},{n:'Level Change',v:'R'},{n:'Hand Fighting',v:'R'}];
+var SK_ATK=[{n:'Upper Body Offense',v:'R'},{n:'Leg Attack Offense',v:'R'},{n:'Upper Body Defense',v:'R'},{n:'Leg Attack Defense',v:'R'},{n:'Top Attacks',v:'R'},{n:'Bottom Attacks',v:'P'}];
+var SK_POS={
+  ub:[{n:'Underhook',o:'R',noD:true},{n:'Overhook',o:'R',noD:true},{n:'Over/Under',o:'R',noD:true},{n:'2-on-1',o:'R',d:'P'}],
+  hi:[{n:'High',o:'R',d:'R'},{n:'Medium',o:'R',d:'R'},{n:'Side',o:'R',d:'P'},{n:'Extended',o:'R',d:'R'}],
+  ho:[{n:'High',o:'R',d:'R'},{n:'Medium',o:'R',d:'R'},{n:'Crackdown',o:'R',d:'P'},{n:'Extended',o:'R',d:'P'}],
+  fa:[{n:'Front Headlock',o:'R',d:'R'},{n:'Seatbelt (Offense)',o:'R',noD:true},{n:'Whizzer (Defense)',d:'P',noO:true},{n:'50/50',o:'P',noD:true}],
+  tb:[{n:'UB Control — Flat',o:'R',d:'R'},{n:'UB Control — Base',o:'R',d:'R'},{n:'Legs In — Flat',o:'R',d:'P'},{n:'Legs In — Base',o:'R',d:'R'}]
+};
+
+// Battle position detail (demo)
+var BP={
+  ub:[{n:'Underhook',o:'At',noD:true},{n:'Overhook',o:'At',noD:true},{n:'Over/Under',o:'Below',noD:true},{n:'2-on-1',o:'At',d:'Below'}],
+  hi:[{n:'High',o:'At',d:'At'},{n:'Medium',o:'Above',d:'At'},{n:'Side',o:'Below',d:'At'},{n:'Extended',o:'At',d:'Below'}],
+  ho:[{n:'High',o:'At',d:'Below'},{n:'Medium',o:'At',d:'At'},{n:'Crackdown',o:'Below',d:'At'},{n:'Extended',o:'At',d:'At'}],
+  fa:[{n:'Front Headlock',o:'Above',d:'At'},{n:'Seatbelt (Offense)',o:'At',noD:true},{n:'Whizzer (Defense)',d:'Below',noO:true},{n:'50/50',o:'Below',noD:true}],
+  tb:[{n:'UB Control — Flat',o:'At',d:'At'},{n:'UB Control — Base',o:'At',d:'Above'},{n:'Legs In — Flat',o:'Below',d:'At'},{n:'Legs In — Base',o:'At',d:'At'}]
+};
+
+function sBadge(v){return v==='R'?'<span class="pa-detail-val pass">Match Ready</span>':v==='P'?'<span class="pa-detail-val at-rank">Practicing</span>':'<span class="pa-detail-val fail">Learning</span>';}
+function rCls(v){return v==='Above'?'pass':v==='At'?'at-rank':'fail'}
+function tColor(v){return v==='R'?'var(--gn)':v==='P'?'var(--gd)':'var(--rd)'}
+function tLabel(v){return v==='R'?'Ready':v==='P'?'Practicing':'Learning'}
+function tBg(v){return v==='R'?'var(--gng)':v==='P'?'var(--gdg)':'var(--rdg)'}
+
+// ═══ ASSESSMENT COMPLETION ═══
+function buildAC(){
+  var a=[{i:'⚔️',n:'Battle',k:'battle'},{i:'🤸',n:'Athletic',k:'athletic'},{i:'🎯',n:'Skill',k:'skill'},{i:'💪',n:'Exercise',k:'exercise'}];
+  var h='';
+  a.forEach(function(x,idx){
+    var done=0,miss=[];
+    R.forEach(function(r){var d=r[x.k];if(d&&d.done)done++;else miss.push(r.name);});
+    var pct=Math.round(done/R.length*100);var cls=pct>=80?'good':pct>=50?'ok':'weak';
+    h+='<div class="ac-row" data-ac="'+idx+'" onclick="toggleAC(this)"><div class="ac-icon">'+x.i+'</div><div class="ac-info"><div class="ac-name">'+x.n+'</div><div class="ac-bar-wrap"><div class="ac-bar-fill '+cls+'" style="width:'+pct+'%"></div></div></div><div class="ac-val">'+done+'/'+R.length+'</div><div class="ac-arrow">›</div></div>';
+    h+='<div class="ac-dropdown" data-acd="'+idx+'" style="display:none;padding:6px 0 4px 36px">';
+    if(miss.length>0){
+      h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px"><div style="font-size:10px;color:var(--rd);text-transform:uppercase;letter-spacing:1px;font-weight:700">Not Completed ('+miss.length+')</div><div style="padding:5px 12px;border-radius:6px;background:var(--gdg);border:1px solid var(--gdd);font-family:Bebas Neue;font-size:10px;letter-spacing:1.5px;color:var(--gd);cursor:pointer" onclick="event.stopPropagation();toast(\'Nudge sent ✓\')">NUDGE ALL</div></div>';
+      miss.forEach(function(n){h+='<div class="ac-missing"><div class="ac-missing-dot"></div><span style="color:var(--lt)">'+n+'</span></div>';});
+    } else h+='<div style="font-size:12px;color:var(--gn);padding:4px 0">✓ All completed</div>';
+    h+='</div>';
+  });
+  document.getElementById('assess-completion').innerHTML=h;
+}
+function toggleAC(el){var i=el.getAttribute('data-ac'),w=el.classList.contains('open');document.querySelectorAll('.ac-row').forEach(function(r){r.classList.remove('open')});document.querySelectorAll('.ac-dropdown').forEach(function(d){d.style.display='none'});if(!w){el.classList.add('open');document.querySelector('.ac-dropdown[data-acd="'+i+'"]').style.display='block';}}
+
+// ═══ BATTLE OVERVIEW — TEAM ONLY ═══
+function buildBO(){
+  // Team averages for mat/attacks use majority vote from assessed athletes
+  var matAvg={no:'At',nd:'At',top:'At',bot:'Below'};
+  var atkAvg={uo:'At',lo:'At',ud:'Below',ld:'At',to:'At',bo:'Below'};
+  var sitAvg={ub:65,hi:60,ho:52,fa:58,tb:62};
+  // Team position detail (aggregated from assessed athletes)
+  var TPB={
+    ub:[{n:'Underhook',o:'At',noD:true},{n:'Overhook',o:'Below',noD:true},{n:'Over/Under',o:'At',noD:true},{n:'2-on-1',o:'At',d:'At'}],
+    hi:[{n:'High',o:'At',d:'Below'},{n:'Medium',o:'At',d:'At'},{n:'Side',o:'Below',d:'At'},{n:'Extended',o:'At',d:'At'}],
+    ho:[{n:'High',o:'At',d:'Below'},{n:'Medium',o:'Below',d:'At'},{n:'Crackdown',o:'Below',d:'At'},{n:'Extended',o:'At',d:'At'}],
+    fa:[{n:'Front Headlock',o:'At',d:'At'},{n:'Seatbelt (Off)',o:'At',noD:true},{n:'Whizzer (Def)',d:'Below',noO:true},{n:'50/50',o:'Below',noD:true}],
+    tb:[{n:'UB Control — Flat',o:'At',d:'At'},{n:'UB Control — Base',o:'At',d:'At'},{n:'Legs In — Flat',o:'Below',d:'At'},{n:'Legs In — Base',o:'At',d:'Below'}]
+  };
+  var h='<div class="ov-title">TEAM BATTLE OVERVIEW (5 assessed)</div>';
+  h+='<div class="pa-sub">Controlling the Mat</div>';
+  var ml={no:'Neutral Offense',nd:'Neutral Defense',top:'Top Position',bot:'Bottom Position'};
+  for(var k in ml){var v=matAvg[k];h+='<div class="pa-detail-row"><div class="pa-detail-name">'+ml[k]+'</div><div class="pa-detail-val '+rCls(v)+'">'+v+'</div></div>';}
+  h+='<div class="pa-sub">Controlling the Attacks</div>';
+  var al={uo:'Upper Body Offense',lo:'Leg Attack Offense',ud:'Upper Body Defense',ld:'Leg Attack Defense',to:'Top Attacks',bo:'Bottom Attacks'};
+  for(var k in al){var v=atkAvg[k];h+='<div class="pa-detail-row"><div class="pa-detail-name">'+al[k]+'</div><div class="pa-detail-val '+rCls(v)+'">'+v+'</div></div>';}
+  h+='<div class="pa-sub">Controlling the Situation</div>';
+  for(var i=0;i<5;i++){var v=sitAvg[BK[i]],cls=v>=75?'good':v>=50?'ok':'weak',cc=cls==='good'?'gn':cls==='ok'?'gd':'rd';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)"><div style="font-size:12px;color:var(--lt);flex:1;font-weight:600">'+BG[i]+'</div><div style="flex:2;height:6px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+v+'%;border-radius:3px;background:var(--'+cc+')"></div></div><div style="font-family:Bebas Neue;font-size:12px;width:32px;text-align:right;color:var(--'+cc+')">'+v+'%</div></div>';
+    TPB[BK[i]].forEach(function(p){
+      h+='<div style="display:flex;align-items:center;padding:5px 0 5px 16px;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:11px;color:var(--gr);flex:1">'+p.n+'</div><div style="display:flex;gap:6px">';
+      if(!p.noO)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;width:24px">OFF</div><div class="pa-detail-val '+rCls(p.o)+'" style="font-size:11px;min-width:40px;text-align:center">'+p.o+'</div>';
+      if(!p.noD)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;width:24px;margin-left:8px">DEF</div><div class="pa-detail-val '+rCls(p.d)+'" style="font-size:11px;min-width:40px;text-align:center">'+p.d+'</div>';
+      h+='</div></div>';
+    });
+  }
+  document.getElementById('battle-overview').innerHTML=h;
+}
+
+// ═══ SKILL OVERVIEW — TEAM ONLY ═══
+function buildSO(){
+  // Team skill averages as percentages (% at Match Ready)
+  var skMatAvg={stance:80,motion:50,fakes:40,level:75,hands:45};
+  var skAtkAvg={uo:75,lo:70,ud:45,ld:45,to:70,bo:40};
+  var skSitAvg={ub:68,hi:62,ho:48,fa:60,tb:50};
+  var TSK={
+    ub:[{n:'Underhook',o:'Match Ready',noD:true},{n:'Overhook',o:'Practicing',noD:true},{n:'Over/Under',o:'Practicing',noD:true},{n:'2-on-1',o:'Practicing',d:'Learning'}],
+    hi:[{n:'High',o:'Match Ready',d:'Practicing'},{n:'Medium',o:'Match Ready',d:'Practicing'},{n:'Side',o:'Practicing',d:'Learning'},{n:'Extended',o:'Practicing',d:'Practicing'}],
+    ho:[{n:'High',o:'Practicing',d:'Learning'},{n:'Medium',o:'Practicing',d:'Practicing'},{n:'Crackdown',o:'Learning',d:'Learning'},{n:'Extended',o:'Practicing',d:'Learning'}],
+    fa:[{n:'Front Headlock',o:'Match Ready',d:'Practicing'},{n:'Seatbelt (Off)',o:'Practicing',noD:true},{n:'Whizzer (Def)',d:'Learning',noO:true},{n:'50/50',o:'Learning',noD:true}],
+    tb:[{n:'UB Control — Flat',o:'Match Ready',d:'Practicing'},{n:'UB Control — Base',o:'Practicing',d:'Practicing'},{n:'Legs In — Flat',o:'Learning',d:'Practicing'},{n:'Legs In — Base',o:'Practicing',d:'Learning'}]
+  };
+  function skRCls(v){return v==='Match Ready'?'pass':v==='Practicing'?'at-rank':'fail'}
+  var h='<div class="ov-title">TEAM SKILL OVERVIEW (7 assessed)</div>';
+  h+='<div style="font-size:11px;color:var(--gr);padding:4px 0 6px">Learning (red) · Practicing (gold) · Match Ready (green)</div>';
+  h+='<div class="pa-sub">Controlling the Mat</div>';
+  var sml=[{n:'Stance',v:skMatAvg.stance},{n:'Motion',v:skMatAvg.motion},{n:'Body Fakes',v:skMatAvg.fakes},{n:'Level Change',v:skMatAvg.level},{n:'Hand Fighting',v:skMatAvg.hands}];
+  sml.forEach(function(s){var cls=s.v>=75?'good':s.v>=50?'ok':'weak',cc=cls==='good'?'gn':cls==='ok'?'gd':'rd';
+    h+='<div class="pa-detail-row"><div class="pa-detail-name">'+s.n+'</div><div class="pa-detail-val" style="color:var(--'+cc+')">'+s.v+'%</div></div>';
+  });
+  h+='<div class="pa-sub">Controlling the Attacks</div>';
+  var sal=[{n:'Upper Body Offense',v:skAtkAvg.uo},{n:'Leg Attack Offense',v:skAtkAvg.lo},{n:'Upper Body Defense',v:skAtkAvg.ud},{n:'Leg Attack Defense',v:skAtkAvg.ld},{n:'Top Attacks',v:skAtkAvg.to},{n:'Bottom Attacks',v:skAtkAvg.bo}];
+  sal.forEach(function(s){var cls=s.v>=75?'good':s.v>=50?'ok':'weak',cc=cls==='good'?'gn':cls==='ok'?'gd':'rd';
+    h+='<div class="pa-detail-row"><div class="pa-detail-name">'+s.n+'</div><div class="pa-detail-val" style="color:var(--'+cc+')">'+s.v+'%</div></div>';
+  });
+  h+='<div class="pa-sub">Controlling the Situation</div>';
+  for(var i=0;i<5;i++){var v=skSitAvg[BK[i]],cls=v>=75?'good':v>=50?'ok':'weak',cc=cls==='good'?'gn':cls==='ok'?'gd':'rd';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)"><div style="font-size:12px;color:var(--lt);flex:1;font-weight:600">'+BG[i]+'</div><div style="flex:2;height:6px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+v+'%;border-radius:3px;background:var(--'+cc+')"></div></div><div style="font-family:Bebas Neue;font-size:12px;width:32px;text-align:right;color:var(--'+cc+')">'+v+'%</div></div>';
+    TSK[BK[i]].forEach(function(p){
+      h+='<div style="display:flex;align-items:center;padding:5px 0 5px 16px;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:11px;color:var(--gr);flex:1">'+p.n+'</div><div style="display:flex;gap:6px">';
+      if(!p.noO)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;width:24px">OFF</div><div class="pa-detail-val '+skRCls(p.o)+'" style="font-size:11px;min-width:40px;text-align:center">'+p.o+'</div>';
+      if(!p.noD)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;width:24px;margin-left:8px">DEF</div><div class="pa-detail-val '+skRCls(p.d)+'" style="font-size:11px;min-width:40px;text-align:center">'+p.d+'</div>';
+      h+='</div></div>';
+    });
+  }
+  document.getElementById('skill-overview').innerHTML=h;
+}
+
+function toggleRow(id){var e=document.getElementById(id),w=e.style.display!=='none';document.querySelectorAll('[id^="br-"],[id^="sr-"]').forEach(function(d){d.style.display='none';});if(!w)e.style.display='block';}
+
+// ═══ ROSTER ═══
+function buildRoster(){
+  var h='';
+  [{yr:'Sr',label:'SENIORS'},{yr:'Jr',label:'JUNIORS'},{yr:'So',label:'SOPHOMORES'},{yr:'Fr',label:'FRESHMEN'}].forEach(function(c){
+    var g=R.filter(function(a){return a.yr===c.yr});if(!g.length)return;
+    h+='<div class="yr-hdr"><div class="yr-label">'+c.label+'</div><div class="yr-line"></div><div class="yr-count">'+g.length+'</div></div>';
+    g.forEach(function(a){var i=R.indexOf(a);var stars='';for(var s=0;s<5;s++)stars+=s<a.star?'★':'☆';
+      h+='<div class="ath-row" onclick="openP('+i+')"><div class="ath-yr-box">'+a.yr.toUpperCase()+'</div><div class="ath-info"><div class="ath-name">'+a.name.toUpperCase()+'</div><div class="ath-detail">'+a.wt+' lbs · <span style="color:var(--gd)">'+stars+'</span></div></div><div style="text-align:right"><div class="ath-wl"><span class="w">'+a.w+'</span><span class="d"> - </span><span class="l">'+a.l+'</span></div></div></div>';
+    });
+  });
+  document.getElementById('roster-list').innerHTML=h;
+}
+
+// ═══ PROFILE ═══
+function openP(idx){
+  var a=R[idx];document.getElementById('prof-hd-name').textContent=a.name.split(' ')[1].toUpperCase();
+  var t=a.w+a.l,pct=t>0?Math.round(a.w/t*100):0;
+  var stars='',gStars='';for(var s=0;s<5;s++){stars+=s<a.star?'★':'<span class="ps-dim">☆</span>';gStars+=s<a.goal?'★':'<span class="ps-dim">☆</span>';}
+  var h='<div class="prof-hero"><div class="prof-avatar">🤼</div><div class="prof-name">'+a.name.toUpperCase()+'</div><div class="prof-sub">'+a.yr+' · '+a.wt+' lbs</div><div style="margin-top:6px"><div class="prof-star-row"><div class="ps-label">Rank</div><div class="ps-stars">'+stars+'</div></div><div class="prof-star-row"><div class="ps-label">Goal</div><div class="ps-stars">'+gStars+'</div></div></div></div>';
+  h+='<div class="prof-stats"><div class="ps-box"><div class="ps-val" style="color:var(--gn)">'+a.w+'</div><div class="ps-lbl">Wins</div></div><div class="ps-box"><div class="ps-val" style="color:var(--rd)">'+a.l+'</div><div class="ps-lbl">Losses</div></div><div class="ps-box"><div class="ps-val">'+pct+'%</div><div class="ps-lbl">Win Rate</div></div><div class="ps-box"><div class="ps-val" style="color:var(--blu)">'+a.att+'%</div><div class="ps-lbl">Attend</div></div></div>';
+  h+='<div class="section"><div class="sl">Battle</div></div>';
+
+  // BATTLE
+  h+='<div class="pa-card" data-assess="battle">';
+  if(a.battle&&a.battle.done){
+    var sits=a.battle.situations,avg=Math.round((sits.ub+sits.hi+sits.ho+sits.fa+sits.tb)/5);
+    h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">⚔️</div><div class="pa-info"><div class="pa-name">BATTLE ASSESSMENT</div><div class="pa-status done">Completed · '+avg+'% avg</div></div><div class="pa-arrow">›</div></div><div class="pa-body">';
+    h+='<div class="pa-sub">Controlling the Mat</div>';
+    var ml={no:'Neutral Offense',nd:'Neutral Defense',top:'Top Position',bot:'Bottom Position'};
+    for(var k in ml){var v=a.battle.mat[k];h+='<div class="pa-detail-row"><div class="pa-detail-name">'+ml[k]+'</div><div class="pa-detail-val '+rCls(v)+'">'+v+'</div></div>';}
+    h+='<div class="pa-sub">Controlling the Attacks</div>';
+    var al={uo:'Upper Body Offense',lo:'Leg Attack Offense',ud:'Upper Body Defense',ld:'Leg Attack Defense',to:'Top Attacks',bo:'Bottom Attacks'};
+    for(var k in al){var v=a.battle.attacks[k];h+='<div class="pa-detail-row"><div class="pa-detail-name">'+al[k]+'</div><div class="pa-detail-val '+rCls(v)+'">'+v+'</div></div>';}
+    h+='<div class="pa-sub">Controlling the Situation</div>';
+    for(var i=0;i<5;i++){var v=sits[BK[i]],cls=v>=75?'good':v>=50?'ok':'weak',cc=cls==='good'?'gn':cls==='ok'?'gd':'rd';
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)"><div style="font-size:12px;color:var(--lt);flex:1;font-weight:600">'+BG[i]+'</div><div style="flex:2;height:6px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+v+'%;border-radius:3px;background:var(--'+cc+')"></div></div><div style="font-family:Bebas Neue;font-size:12px;width:32px;text-align:right;color:var(--'+cc+')">'+v+'%</div></div>';
+      BP[BK[i]].forEach(function(p){
+        h+='<div style="display:flex;align-items:center;padding:5px 0 5px 16px;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:11px;color:var(--gr);flex:1">'+p.n+'</div><div style="display:flex;gap:6px">';
+        if(!p.noO)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;width:24px">OFF</div><div class="pa-detail-val '+rCls(p.o)+'" style="font-size:11px;min-width:40px;text-align:center">'+p.o+'</div>';
+        if(!p.noD)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;width:24px;margin-left:8px">DEF</div><div class="pa-detail-val '+rCls(p.d)+'" style="font-size:11px;min-width:40px;text-align:center">'+p.d+'</div>';
+        h+='</div></div>';
+      });
+    }
+    h+='</div>';
+  } else if(a.star<3){h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">⚔️</div><div class="pa-info"><div class="pa-name">BATTLE ASSESSMENT</div><div class="pa-status pending">Unlocks at 3 stars or 10 wins</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div style="padding:8px 0;font-size:12px;color:var(--gr)">1-2 star athletes complete after 10 varsity wins or end of season.</div></div>';}
+  else{h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">⚔️</div><div class="pa-info"><div class="pa-name">BATTLE ASSESSMENT</div><div class="pa-status pending">Not Yet Completed</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div style="padding:8px 0;font-size:12px;color:var(--gr)">Not yet completed.</div></div>';}
+  h+='</div>';
+
+  h+='<div class="section"><div class="sl">Preparation</div></div>';
+
+  // ATHLETIC
+  h+='<div class="pa-card" data-assess="athletic"><div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">🤸</div><div class="pa-info"><div class="pa-name">ATHLETIC ASSESSMENT</div><div class="pa-status done">'+a.athletic.tier+' · '+a.athletic.score+'/14</div></div><div class="pa-arrow">›</div></div><div class="pa-body">';
+  for(var i=0;i<10;i++)h+='<div class="pa-detail-row"><div class="pa-detail-name">'+ATH[i]+'</div><div class="pa-detail-val '+(a.athletic.results[i]?'pass':'ip')+'">'+(a.athletic.results[i]?'✓ Pass':'In Progress')+'</div></div>';
+  h+='<div style="display:flex;align-items:center;gap:10px;margin:12px 0 8px"><div style="flex:1;height:1px;background:var(--gdd)"></div><div style="font-family:Bebas Neue;font-size:11px;letter-spacing:2px;color:var(--gd)">BONUS</div><div style="flex:1;height:1px;background:var(--gdd)"></div></div>';
+  for(var i=10;i<14;i++)h+='<div class="pa-detail-row"><div class="pa-detail-name">'+ATH[i]+'</div><div class="pa-detail-val '+(a.athletic.results[i]?'pass':'ip')+'">'+(a.athletic.results[i]?'✓ Pass':'In Progress')+'</div></div>';
+  h+='</div></div>';
+
+  // SKILL
+  h+='<div class="pa-card" data-assess="skill">';
+  if(a.skill&&a.skill.done){
+    h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">🎯</div><div class="pa-info"><div class="pa-name">SKILL ASSESSMENT</div><div class="pa-status done">'+a.skill.level+'</div></div><div class="pa-arrow">›</div></div><div class="pa-body">';
+    h+='<div style="font-size:11px;color:var(--gr);padding:4px 0 6px">Learning (red) · Practicing (gold) · Match Ready (green, coach verified)</div>';
+    h+='<div class="pa-sub">Controlling the Mat</div>';SK_MAT.forEach(function(s){h+='<div class="pa-detail-row"><div class="pa-detail-name">'+s.n+'</div><div>'+sBadge(s.v)+'</div></div>';});
+    h+='<div class="pa-sub">Controlling the Attacks</div>';SK_ATK.forEach(function(s){h+='<div class="pa-detail-row"><div class="pa-detail-name">'+s.n+'</div><div>'+sBadge(s.v)+'</div></div>';});
+    h+='<div class="pa-sub">Controlling the Situation</div>';
+    for(var i=0;i<5;i++){
+      h+='<div style="font-size:12px;color:var(--lt);font-weight:600;padding:10px 0 4px;border-bottom:1px solid var(--bd)">'+BG[i]+'</div>';
+      SK_POS[BK[i]].forEach(function(p){
+        h+='<div style="padding:5px 0 5px 16px;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:11px;color:var(--gr);margin-bottom:4px;font-weight:600">'+p.n+'</div><div style="display:flex;gap:12px;align-items:center">';
+        if(!p.noO)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px">OFF</div>'+sBadge(p.o);
+        if(!p.noD)h+='<div style="font-size:9px;color:var(--lt);text-transform:uppercase;letter-spacing:1px;margin-left:'+(p.noO?'0':'4')+'px">DEF</div>'+sBadge(p.d);
+        h+='</div></div>';
+      });
+    }
+    h+='<div style="padding-top:10px;border-top:1px solid var(--bd);margin-top:8px;font-size:11px;color:var(--gr)">Standard: 2 offense + 2 defense per area at Match Ready (coach verified)</div></div>';
+  } else{h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">🎯</div><div class="pa-info"><div class="pa-name">SKILL ASSESSMENT</div><div class="pa-status pending">Not Yet Started</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div style="padding:8px 0;font-size:12px;color:var(--gr)">Learning → Practicing → Match Ready (coach verified).</div></div>';}
+  h+='</div>';
+
+  // EXERCISE
+  h+='<div class="pa-card" data-assess="exercise">';
+  if(a.exercise&&a.exercise.done){h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">💪</div><div class="pa-info"><div class="pa-name">EXERCISE ASSESSMENT</div><div class="pa-status done">'+(a.exercise.completed?'Completed · '+a.exercise.time:'Did Not Finish')+'</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div class="pa-detail-row"><div class="pa-detail-name">Gold Standard Circuit</div><div class="pa-detail-val '+(a.exercise.completed?'pass':'fail')+'">'+(a.exercise.completed?'✓ Completed':'✕ DNF')+'</div></div>';if(a.exercise.completed)h+='<div class="pa-detail-row"><div class="pa-detail-name">Time</div><div class="pa-detail-val" style="color:var(--gd)">'+a.exercise.time+'</div></div>';h+='</div>';}
+  else{h+='<div class="pa-header" onclick="toggleA(this)"><div class="pa-icon">💪</div><div class="pa-info"><div class="pa-name">EXERCISE ASSESSMENT</div><div class="pa-status pending">Not Yet Completed</div></div><div class="pa-arrow">›</div></div><div class="pa-body"><div style="padding:8px 0;font-size:12px;color:var(--gr)">Gold Standard Circuit not yet attempted.</div></div>';}
+  h+='</div>';
+
+  // MY ATTACKS
+  h+='<div class="section"><div class="sl">My Attacks</div></div>';
+  if(a.attacks){var atk=a.attacks,aid=0,fo=true;
+    function dd(label,pos){var id='add-'+(aid++),so=fo;if(fo)fo=false;
+      var d='<div style="cursor:pointer;padding:10px 0;border-bottom:1px solid var(--bd)" onclick="toggleAtkDD(\''+id+'\')">';
+      d+='<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:600;color:var(--wh)">'+label+'</div><div style="color:var(--gr);font-size:11px">'+(so?'▾':'▸')+' '+pos.length+'</div></div></div>';
+      d+='<div class="atk-dd" id="'+id+'" style="display:'+(so?'block':'none')+';padding-left:12px;border-left:2px solid var(--gdd);margin:4px 0 4px 8px">';
+      pos.forEach(function(p){d+='<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(42,42,42,.5)"><div style="font-size:12px;color:var(--gr);font-weight:500">'+p.pos+'</div><div style="font-size:12px;font-weight:700;color:var(--gn)">'+p.f+'</div></div>';});
+      d+='</div>';return d;}
+    h+='<div class="pa-card" style="cursor:default"><div style="padding:14px 16px">';
+    h+='<div class="pa-sub">Upper Body Attacks</div>';h+=dd('#1 — '+atk.ub1,atk.ub1entries);h+=dd('#2 — '+atk.ub2,atk.ub2entries);
+    h+='<div class="pa-sub">Leg Attacks</div>';if(atk.leg1)h+=dd('#1 — '+atk.leg1,atk.leg1pos);if(atk.leg2)h+=dd('#2 — '+atk.leg2,atk.leg2pos);
+    h+='<div class="pa-sub">Failed Attack Offense</div><div style="font-size:11px;color:var(--gr);padding:2px 0 6px">Their attack failed — now you score from front headlock</div>';
+    h+='<div class="pa-detail-row"><div class="pa-detail-name">#1 Finish</div><div class="pa-detail-val pass">'+atk.fhl1+'</div></div><div class="pa-detail-row"><div class="pa-detail-name">#2 Finish</div><div class="pa-detail-val pass">'+atk.fhl2+'</div></div>';
+    h+='<div class="pa-sub">Top Attacks</div>';if(atk.top1)h+=dd('#1 — '+atk.top1,atk.top1pos);if(atk.top2)h+=dd('#2 — '+atk.top2,atk.top2pos);
+    h+='<div class="pa-sub">Bottom</div><div class="pa-detail-row"><div class="pa-detail-name">#1</div><div class="pa-detail-val" style="color:var(--gd)">'+atk.bot1+'</div></div>';
+    if(atk.bot2)h+='<div class="pa-detail-row"><div class="pa-detail-name">#2</div><div class="pa-detail-val" style="color:var(--gd)">'+atk.bot2+'</div></div>';
+    h+='</div></div>';
+  } else h+='<div class="pa-card" style="cursor:default"><div style="padding:14px 16px"><div style="font-size:12px;color:var(--gr)">Attack selections not yet completed.</div></div></div>';
+
+  // ACTIVITY
+  h+='<div class="section"><div class="sl">Activity</div></div><div class="pa-card" style="cursor:default"><div style="padding:14px 16px">';
+  h+='<div class="activity-row"><div class="activity-label">Videos Watched</div><div class="activity-val">'+a.activity.vids+'</div></div>';
+  h+='<div class="activity-row"><div class="activity-label">Practice Sessions</div><div class="activity-val">'+a.activity.sessions+'</div></div>';
+  h+='<div class="activity-row"><div class="activity-label">Content Completed</div><div class="activity-val">'+a.activity.content+'</div></div>';
+  h+='<div class="activity-row"><div class="activity-label">Attendance</div><div class="activity-val">'+a.att+'%</div></div>';
+  h+='</div></div><div class="pad-bottom"></div>';
+  document.getElementById('prof-body').innerHTML=h;
+  document.getElementById('profile-screen').classList.add('open');
+}
+
+function toggleA(card){var p=card.closest('.pa-card');if(!p)return;var w=p.classList.contains('open');document.querySelectorAll('.pa-card[data-assess]').forEach(function(c){c.classList.remove('open')});if(!w)p.classList.add('open');}
+function toggleOV(card){var p=card.closest('.pa-card');if(!p)return;var w=p.classList.contains('open');document.querySelectorAll('.ov-toggle').forEach(function(c){c.classList.remove('open')});if(!w)p.classList.add('open');}
+function toggleRow(id,ev){if(ev)ev.stopPropagation();var e=document.getElementById(id),w=e.style.display!=='none';document.querySelectorAll('[id^="br-"],[id^="sr-"]').forEach(function(d){d.style.display='none';});if(!w)e.style.display='block';}
+function toggleAtkDD(id){var e=document.getElementById(id),w=e.style.display!=='none';document.querySelectorAll('.atk-dd').forEach(function(d){d.style.display='none'});if(!w)e.style.display='block';}
+function closeProfile(){document.getElementById('profile-screen').classList.remove('open')}
+function switchTab(id,el){document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});el.classList.add('active');document.getElementById('tab-'+id).classList.add('active');}
+function handleBack(){if(document.getElementById('profile-screen').classList.contains('open'))closeProfile();else toast('← Back to Dashboard');}
+function toast(msg){var t=document.getElementById('toastEl');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
+
+buildRoster();buildAC();buildBO();buildSO();
+
+// ── FIREBASE: Load coach assessment data for team report ──
+(function(){
+  if(typeof firebase==='undefined')return;
+  if(firebase.apps.length===0){
+    firebase.initializeApp({
+      apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+      authDomain:"base-wrestling-app.firebaseapp.com",
+      projectId:"base-wrestling-app",
+      storageBucket:"base-wrestling-app.appspot.com",
+      messagingSenderId:"000000000000",
+      appId:"1:000000000000:web:placeholder"
+    });
+  }
+  var auth=firebase.auth();var db=firebase.firestore();
+  auth.onAuthStateChanged(function(user){
+    if(!user)return;
+    db.collection('users').doc(user.uid).get().then(function(doc){
+      if(!doc.exists)return;
+      var teamId=doc.data().teamId;if(!teamId)return;
+      // Check each assessment lock
+      ['battle','athletic','skill','exercise'].forEach(function(type){
+        db.collection('teams').doc(teamId).collection('assessments').doc('coach-'+type).get().then(function(adoc){
+          if(adoc.exists){
+            // Unlock this section in the report
+            var lockEls=document.querySelectorAll('[data-lock="'+type+'"]');
+            lockEls.forEach(function(el){el.style.display='none'});
+          }
+        });
+      });
+    });
+  });
+})();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</body>
+</html>

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#555;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--org:#e67e22;--orgg:rgba(230,126,34,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;font-size:16px;color:var(--gr)}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-save{padding:8px 16px;border-radius:8px;background:var(--gdg);border:1px solid var(--gdd);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gd);cursor:pointer;transition:all .2s;opacity:.4;pointer-events:none}
+.hd-save.active{opacity:1;pointer-events:all}
+.hd-save.active:hover{background:var(--gd);color:var(--bk)}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:0;padding:0 20px;border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{flex:1;padding:12px 8px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--gr);cursor:pointer;transition:all .2s;text-align:center;border-bottom:2px solid transparent;white-space:nowrap;min-width:0}
+.tab:hover{color:var(--lt)}
+.tab.active{color:var(--gd);border-bottom-color:var(--gd)}
+
+/* ── TAB CONTENT ── */
+.tab-content{display:none;flex:1;overflow-y:auto;padding:0 0 100px}
+.tab-content.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SHARED STYLES ── */
+.section{padding:20px 20px 0}
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.fld{margin-bottom:16px}
+.fl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gr);font-weight:600;margin-bottom:5px}
+.fi{width:100%;padding:13px 15px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--gd)}.fi::placeholder{color:var(--ph)}
+.fi:disabled{opacity:.5;cursor:not-allowed}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fs{width:100%;padding:13px 15px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;outline:none;cursor:pointer;transition:border-color .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.fs:focus{border-color:var(--gd)}.fs option{background:var(--cd)}
+.dv{display:flex;align-items:center;gap:10px;margin:20px 0 16px}.dv-l{flex:1;height:1px;background:var(--bd)}.dv-t{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;white-space:nowrap}
+
+/* ── INFO BOX ── */
+.ib{background:var(--gdg2);border:1px solid rgba(200,168,78,.2);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.ib-e{font-size:16px;flex-shrink:0}.ib-t{font-size:12px;color:var(--lt);line-height:1.5}
+
+/* ── PROFILE CARD ── */
+.profile-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:var(--gdg);border:2px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gd);flex-shrink:0}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh)}
+.profile-email{font-size:12px;color:var(--gr);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-role{display:inline-block;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gd);font-weight:700;background:var(--gdg);padding:3px 8px;border-radius:4px;margin-top:4px}
+
+/* ── DATE INPUTS ── */
+.date-input{width:100%;padding:12px 14px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;outline:none;transition:border-color .2s;cursor:pointer}
+.date-input:focus{border-color:var(--gd)}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5)}
+
+/* ── SEASON STYLE TABS ── */
+.season-tabs{display:flex;gap:0;margin-bottom:16px;background:var(--cd);border-radius:var(--r);border:1px solid var(--bd);overflow:hidden}
+.season-tab{flex:1;padding:10px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gr);cursor:pointer;transition:all .2s;text-align:center;border:none;background:none}
+.season-tab:hover{color:var(--lt)}
+.season-tab.active{background:var(--gdg);color:var(--gd)}
+.season-panel{display:none}
+.season-panel.active{display:block;animation:fadeIn .25s ease}
+
+/* ── TOGGLE ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--bd)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info{flex:1}
+.toggle-name{font-size:14px;font-weight:600;color:var(--wh)}
+.toggle-desc{font-size:11px;color:var(--gr);margin-top:2px;line-height:1.4}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--bd);cursor:pointer;transition:background .2s;position:relative;flex-shrink:0;margin-left:12px}
+.toggle.on{background:var(--gd)}
+.toggle-knob{width:20px;height:20px;border-radius:50%;background:var(--wh);position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle.on .toggle-knob{left:22px}
+
+/* ── BATTLE GROUP CARDS (Preferences) ── */
+.bg-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;transition:all .2s}
+.bg-card:hover{border-color:var(--gdd)}
+.bg-card.open{border-color:var(--gdd)}
+.bg-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+.bg-icon{width:36px;height:36px;border-radius:10px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.bg-info{flex:1}
+.bg-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)}
+.bg-card.open .bg-name{color:var(--gd)}
+.bg-sub-count{font-size:10px;color:var(--gr)}
+.bg-arrow{color:var(--gr);font-size:14px;transition:transform .2s;flex-shrink:0}
+.bg-card.open .bg-arrow{transform:rotate(90deg);color:var(--gd)}
+.bg-body{display:none;padding:0 16px 14px;border-top:1px solid var(--bd)}
+.bg-card.open .bg-body{display:block}
+
+/* ── RANK LIST (for sub-position ranking inside battle groups) ── */
+.rank-list{margin-top:10px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bk);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:5px;cursor:grab;transition:all .2s;user-select:none;-webkit-user-select:none}
+.rank-item:active{cursor:grabbing;border-color:var(--gd);background:var(--gdg);transform:scale(1.02)}
+.rank-num{width:24px;height:24px;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rank-num.r1{background:rgba(200,168,78,.2);color:var(--gd)}
+.rank-num.r2{background:rgba(200,168,78,.12);color:var(--gdd)}
+.rank-num.r3{background:rgba(85,85,85,.2);color:var(--gr)}
+.rank-num.r4{background:rgba(85,85,85,.15);color:var(--gr)}
+.rank-num.r5{background:rgba(85,85,85,.1);color:var(--gr)}
+.rank-num.r6{background:rgba(85,85,85,.08);color:var(--gr)}
+.rank-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--wh);flex:1}
+.rank-item:active .rank-name{color:var(--gd)}
+.rank-grip{color:var(--bd);font-size:12px;flex-shrink:0;letter-spacing:2px}
+
+/* ── PRACTICE LENGTH PICKER ── */
+.len-row{display:flex;gap:8px;margin-bottom:16px}
+.len-opt{flex:1;padding:14px 8px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);text-align:center;cursor:pointer;transition:all .2s}
+.len-opt:hover{border-color:var(--gdd)}
+.len-opt.active{border-color:var(--gd);background:var(--gdg)}
+.len-time{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--wh)}
+.len-opt.active .len-time{color:var(--gd)}
+.len-label{font-size:9px;color:var(--gr);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* ── TEAM CODE CARD ── */
+.code-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.code-left{flex:1}
+.code-role{font-size:9px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:3px}
+.code-role.hc{color:var(--gd)}.code-role.ac{color:var(--blu)}.code-role.ath{color:var(--gn)}.code-role.par{color:var(--org)}
+.code-val{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:var(--wh)}
+.code-copy{padding:8px 14px;border-radius:8px;background:var(--gdg);border:1px solid var(--gdd);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--gd);cursor:pointer;transition:all .2s}
+.code-copy:hover{background:var(--gd);color:var(--bk)}
+
+/* ── TEAM CARD ── */
+.team-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.team-card:hover{border-color:var(--gdd)}
+.team-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.team-card-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)}
+.team-card-badge{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;padding:3px 8px;border-radius:4px}
+.team-card-badge.hc{background:var(--gdg);color:var(--gd)}
+.team-card-badge.ac{background:var(--blug);color:var(--blu)}
+.team-card-meta{font-size:11px;color:var(--gr)}
+.team-card-stats{display:flex;gap:12px;margin-top:8px}
+.team-card-stat{font-size:11px;color:var(--gr)}
+.team-card-stat span{color:var(--gd);font-weight:700}
+
+/* ── DANGER ZONE ── */
+.danger-zone{margin-top:20px;padding:16px;background:rgba(200,16,46,.04);border:1px solid rgba(200,16,46,.15);border-radius:var(--r)}
+.danger-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--rd);margin-bottom:10px}
+.danger-btn{width:100%;padding:12px;background:transparent;border:1px solid rgba(200,16,46,.3);border-radius:var(--r);color:var(--rd);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-bottom:6px}
+.danger-btn:last-child{margin-bottom:0}
+.danger-btn:hover{background:var(--rdg);border-color:var(--rd)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.bottom-pad{height:40px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" onclick="toast('← Back to Dashboard')">←</div>
+      <div class="hd-info">
+        <div>SETTINGS</div>
+        <div>Manage Your Program</div>
+      </div>
+    </div>
+    <div class="hd-save" id="saveBtn" onclick="saveChanges()">SAVE</div>
+  </div>
+
+  <!-- ═══ TABS ═══ -->
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('general',this)">GENERAL</div>
+    <div class="tab" onclick="switchTab('prefs',this)">PREFERENCES</div>
+    <div class="tab" onclick="switchTab('team',this)">TEAM</div>
+    <div class="tab" onclick="switchTab('notifs',this)">NOTIFICATIONS</div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- TAB 1: GENERAL -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="tab-content active" id="tab-general">
+    <div class="section">
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-avatar">AH</div>
+        <div class="profile-info">
+          <div class="profile-name">ANDY HROVAT</div>
+          <div class="profile-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4a2b242e330a382b242d2f387e7d3d382f393e2623242d64292527">[email&#160;protected]</a></div>
+          <div class="profile-role">HEAD COACH</div>
+        </div>
+      </div>
+
+      <div class="sl">Account</div>
+      <div class="fr" style="margin-bottom:16px">
+        <div class="fld" style="margin-bottom:0"><div class="fl">First Name</div><input class="fi" value="Andy" onchange="markDirty()"></div>
+        <div class="fld" style="margin-bottom:0"><div class="fl">Last Name</div><input class="fi" value="Hrovat" onchange="markDirty()"></div>
+      </div>
+      <div class="fld"><div class="fl">Email</div><input class="fi" value="andy@ranger47wrestling.com" disabled style="opacity:.5"></div>
+      <div class="fld"><div class="fl">Phone</div><input class="fi" value="(214) 555-0147" placeholder="Optional" onchange="markDirty()"></div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Organization</div><div class="dv-l"></div></div>
+      <div class="fld"><div class="fl">School / Club</div><input class="fi" value="Ranger-47 Wrestling Club" onchange="markDirty()"></div>
+      <div class="fr" style="margin-bottom:16px">
+        <div class="fld" style="margin-bottom:0"><div class="fl">City</div><input class="fi" value="Dallas" onchange="markDirty()"></div>
+        <div class="fld" style="margin-bottom:0"><div class="fl">State</div><select class="fs" onchange="markDirty()"><option selected>TX</option><option>AK</option><option>AL</option><option>AR</option><option>AZ</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>IA</option><option>ID</option><option>IL</option><option>IN</option><option>KS</option><option>KY</option><option>LA</option><option>MA</option><option>MD</option><option>ME</option><option>MI</option><option>MN</option><option>MO</option><option>MS</option><option>MT</option><option>NC</option><option>ND</option><option>NE</option><option>NH</option><option>NJ</option><option>NM</option><option>NV</option><option>NY</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VA</option><option>VT</option><option>WA</option><option>WI</option><option>WV</option><option>WY</option></select></div>
+      </div>
+      <div class="fld"><div class="fl">Coaching Experience</div><select class="fs" onchange="markDirty()"><option>1-2 years</option><option>3-5 years</option><option selected>6-10 years</option><option>10+ years</option></select></div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Season Dates</div><div class="dv-l"></div></div>
+      <div class="ib"><div class="ib-e">📅</div><div class="ib-t">These dates drive your entire season — periodization, weekly schedules, and content pacing all calculate from here.</div></div>
+
+      <!-- Season Style Tabs -->
+      <div class="season-tabs">
+        <div class="season-tab active" onclick="switchSeason('folk',this)">FOLKSTYLE</div>
+        <div class="season-tab" onclick="switchSeason('free',this)">FREESTYLE / GRECO</div>
+      </div>
+
+      <!-- Folkstyle Season -->
+      <div class="season-panel active" id="season-folk">
+        <div class="fld">
+          <div class="fl">First Practice</div>
+          <input type="date" class="date-input" value="2026-10-15" onchange="markDirty()">
+        </div>
+        <div class="fld">
+          <div class="fl">First Competition</div>
+          <input type="date" class="date-input" value="2026-11-12" onchange="markDirty()">
+        </div>
+        <div class="fld">
+          <div class="fl">Last Day of State Tournament</div>
+          <input type="date" class="date-input" value="2027-02-27" onchange="markDirty()">
+        </div>
+      </div>
+
+      <!-- Freestyle/Greco Season -->
+      <div class="season-panel" id="season-free">
+        <div class="fld">
+          <div class="fl">First Practice</div>
+          <input type="date" class="date-input" value="2027-03-15" onchange="markDirty()">
+        </div>
+        <div class="fld">
+          <div class="fl">State Tournament</div>
+          <input type="date" class="date-input" value="2027-05-10" onchange="markDirty()">
+        </div>
+        <div class="fld">
+          <div class="fl">Fargo</div>
+          <input type="date" class="date-input" value="2027-07-15" onchange="markDirty()">
+        </div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Account</div><div class="dv-l"></div></div>
+      <div class="danger-zone">
+        <div class="danger-title">DANGER ZONE</div>
+        <div class="danger-btn" onclick="toast('Change password flow')">CHANGE PASSWORD</div>
+        <div class="danger-btn" onclick="toast('Sign out')">SIGN OUT</div>
+        <div class="danger-btn" onclick="toast('This action is permanent')">DELETE ACCOUNT</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- TAB 2: PREFERENCES -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-prefs">
+    <div class="section">
+
+      <div class="sl">Battle Group Focus</div>
+      <div class="ib"><div class="ib-e">⚡</div><div class="ib-t">All 5 battle groups happen every training day. Tap a group to rank the <strong>sub-positions</strong> within it — #1 gets the most time.</div></div>
+
+      <!-- UPPER BODY -->
+      <div class="bg-card" id="bg-ub">
+        <div class="bg-header" onclick="toggleBG('bg-ub')">
+          <div class="bg-icon">🤼</div>
+          <div class="bg-info"><div class="bg-name">UPPER BODY</div><div class="bg-sub-count">4 sub-positions</div></div>
+          <div class="bg-arrow">›</div>
+        </div>
+        <div class="bg-body">
+          <div class="rank-list" data-group="ub">
+            <div class="rank-item" draggable="true"><div class="rank-num r1">1</div><div class="rank-name">UNDERHOOK</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r2">2</div><div class="rank-name">OVERHOOK</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r3">3</div><div class="rank-name">OVER-UNDER</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r4">4</div><div class="rank-name">2-ON-1</div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HEAD INSIDE SINGLE -->
+      <div class="bg-card" id="bg-his">
+        <div class="bg-header" onclick="toggleBG('bg-his')">
+          <div class="bg-icon">🦵</div>
+          <div class="bg-info"><div class="bg-name">HEAD INSIDE SINGLE</div><div class="bg-sub-count">4 sub-positions</div></div>
+          <div class="bg-arrow">›</div>
+        </div>
+        <div class="bg-body">
+          <div class="rank-list" data-group="his">
+            <div class="rank-item" draggable="true"><div class="rank-num r1">1</div><div class="rank-name">HIGH</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r2">2</div><div class="rank-name">MEDIUM</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r3">3</div><div class="rank-name">SIDE</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r4">4</div><div class="rank-name">EXTENDED</div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HEAD OUTSIDE SINGLE -->
+      <div class="bg-card" id="bg-hos">
+        <div class="bg-header" onclick="toggleBG('bg-hos')">
+          <div class="bg-icon">🦿</div>
+          <div class="bg-info"><div class="bg-name">HEAD OUTSIDE SINGLE</div><div class="bg-sub-count">4 sub-positions</div></div>
+          <div class="bg-arrow">›</div>
+        </div>
+        <div class="bg-body">
+          <div class="rank-list" data-group="hos">
+            <div class="rank-item" draggable="true"><div class="rank-num r1">1</div><div class="rank-name">HIGH</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r2">2</div><div class="rank-name">MEDIUM</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r3">3</div><div class="rank-name">CRACKDOWN</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r4">4</div><div class="rank-name">EXTENDED</div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAILED ATTACKS -->
+      <div class="bg-card" id="bg-fa">
+        <div class="bg-header" onclick="toggleBG('bg-fa')">
+          <div class="bg-icon">🔄</div>
+          <div class="bg-info"><div class="bg-name">FAILED ATTACKS</div><div class="bg-sub-count">3 sub-positions</div></div>
+          <div class="bg-arrow">›</div>
+        </div>
+        <div class="bg-body">
+          <div class="rank-list" data-group="fa">
+            <div class="rank-item" draggable="true"><div class="rank-num r1">1</div><div class="rank-name">FRONT HEADLOCK</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r2">2</div><div class="rank-name">SEATBELT / WHIZZER</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r3">3</div><div class="rank-name">50/50 POSITIONS</div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP / BOTTOM -->
+      <div class="bg-card" id="bg-tb">
+        <div class="bg-header" onclick="toggleBG('bg-tb')">
+          <div class="bg-icon">⬆️</div>
+          <div class="bg-info"><div class="bg-name">TOP / BOTTOM</div><div class="bg-sub-count">4 sub-positions</div></div>
+          <div class="bg-arrow">›</div>
+        </div>
+        <div class="bg-body">
+          <div class="rank-list" data-group="tb">
+            <div class="rank-item" draggable="true"><div class="rank-num r1">1</div><div class="rank-name">UPPER BODY CONTROL — FLAT</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r2">2</div><div class="rank-name">UPPER BODY CONTROL — BASE</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r3">3</div><div class="rank-name">LEGS IN — FLAT</div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true"><div class="rank-num r4">4</div><div class="rank-name">LEGS IN — BASE</div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Practice Defaults</div><div class="dv-l"></div></div>
+
+      <div class="fld">
+        <div class="fl">Training Day Practice Length</div>
+        <div class="len-row">
+          <div class="len-opt" onclick="pickLen(this)"><div class="len-time">90</div><div class="len-label">Minutes</div></div>
+          <div class="len-opt active" onclick="pickLen(this)"><div class="len-time">105</div><div class="len-label">Minutes</div></div>
+          <div class="len-opt" onclick="pickLen(this)"><div class="len-time">120</div><div class="len-label">Minutes</div></div>
+        </div>
+      </div>
+
+      <div class="fld">
+        <div class="fl">Cross-Training Day Practice Length</div>
+        <div class="len-row">
+          <div class="len-opt" onclick="pickLen(this)"><div class="len-time">60</div><div class="len-label">Minutes</div></div>
+          <div class="len-opt" onclick="pickLen(this)"><div class="len-time">75</div><div class="len-label">Minutes</div></div>
+          <div class="len-opt active" onclick="pickLen(this)"><div class="len-time">90</div><div class="len-label">Minutes</div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- TAB 3: TEAM -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-team">
+    <div class="section">
+      <div class="sl">Your Teams</div>
+      <div class="team-card">
+        <div class="team-card-top">
+          <div class="team-card-name">RANGER-47 — HIGH SCHOOL BOYS</div>
+          <div class="team-card-badge hc">HEAD COACH</div>
+        </div>
+        <div class="team-card-meta">Co-Ed Practice · Folkstyle</div>
+        <div class="team-card-stats">
+          <div class="team-card-stat"><span>18</span> Athletes</div>
+          <div class="team-card-stat"><span>3</span> Coaches</div>
+          <div class="team-card-stat"><span>92%</span> Attendance</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-card-top">
+          <div class="team-card-name">RANGER-47 — MIDDLE SCHOOL</div>
+          <div class="team-card-badge hc">HEAD COACH</div>
+        </div>
+        <div class="team-card-meta">Co-Ed Practice · Folkstyle</div>
+        <div class="team-card-stats">
+          <div class="team-card-stat"><span>12</span> Athletes</div>
+          <div class="team-card-stat"><span>1</span> Coach</div>
+          <div class="team-card-stat"><span>88%</span> Attendance</div>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-card-top">
+          <div class="team-card-name">ROCKWALL HEATH — HIGH SCHOOL</div>
+          <div class="team-card-badge ac">ASSISTANT</div>
+        </div>
+        <div class="team-card-meta">Separate Boys/Girls · Folkstyle + Freestyle</div>
+        <div class="team-card-stats">
+          <div class="team-card-stat"><span>32</span> Athletes</div>
+          <div class="team-card-stat"><span>5</span> Coaches</div>
+          <div class="team-card-stat"><span>95%</span> Attendance</div>
+        </div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Invite Codes</div><div class="dv-l"></div></div>
+      <div class="ib"><div class="ib-e">🔑</div><div class="ib-t">Share these codes with your staff, athletes, and parents. Each code assigns the correct role automatically.</div></div>
+
+      <div class="fl" style="margin-bottom:8px">Ranger-47 — High School Boys</div>
+      <div class="code-card">
+        <div class="code-left"><div class="code-role ac">ASSISTANT COACH</div><div class="code-val">R47-AC-7X2M</div></div>
+        <div class="code-copy" onclick="copyCode(this)">COPY</div>
+      </div>
+      <div class="code-card">
+        <div class="code-left"><div class="code-role ath">ATHLETE</div><div class="code-val">R47-ATH-4K9N</div></div>
+        <div class="code-copy" onclick="copyCode(this)">COPY</div>
+      </div>
+      <div class="code-card">
+        <div class="code-left"><div class="code-role par">PARENT</div><div class="code-val">R47-PAR-8B3J</div></div>
+        <div class="code-copy" onclick="copyCode(this)">COPY</div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Staff</div><div class="dv-l"></div></div>
+      <div class="code-card" style="cursor:pointer" onclick="toast('Staff profile → Mike Torres')">
+        <div class="code-left"><div class="code-role ac">ASSISTANT COACH</div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)">MIKE TORRES</div><div style="font-size:11px;color:var(--gr);margin-top:2px">Joined Oct 2025</div></div>
+        <div style="color:var(--gr);font-size:16px">›</div>
+      </div>
+      <div class="code-card" style="cursor:pointer" onclick="toast('Staff profile → Sarah Kim')">
+        <div class="code-left"><div class="code-role ac">ASSISTANT COACH</div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)">SARAH KIM</div><div style="font-size:11px;color:var(--gr);margin-top:2px">Joined Nov 2025</div></div>
+        <div style="color:var(--gr);font-size:16px">›</div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Roster Management</div><div class="dv-l"></div></div>
+      <div class="danger-zone" style="border-color:var(--bd);background:var(--cd)">
+        <div class="danger-title" style="color:var(--gd)">IMPORT OPTIONS</div>
+        <div class="danger-btn" style="border-color:var(--bd);color:var(--gd)" onclick="toast('CSV upload coming soon')">IMPORT FROM CSV</div>
+        <div class="danger-btn" style="border-color:var(--bd);color:var(--gd)" onclick="toast('Copy-paste coming soon')">PASTE FROM SPREADSHEET</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <!-- TAB 4: NOTIFICATIONS -->
+  <!-- ═════════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-notifs">
+    <div class="section">
+      <div class="sl">Practice Reminders</div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Daily Practice Reminder</div><div class="toggle-desc">Get a push notification 1 hour before practice starts</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Practice Plan Ready</div><div class="toggle-desc">Notification when tomorrow's auto-generated plan is ready to review</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Team Activity</div><div class="dv-l"></div></div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Athlete Assessment Complete</div><div class="toggle-desc">When an athlete finishes a Battle, Athletic, or Exercise assessment</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Athlete Content Complete</div><div class="toggle-desc">When an athlete finishes assigned technique videos or drills</div></div>
+        <div class="toggle" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">XP Verification Requests</div><div class="toggle-desc">When athletes request coach verification for technique mastery XP</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Competition</div><div class="dv-l"></div></div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Competition Day Prep</div><div class="toggle-desc">Morning-of reminder with weigh-in time, venue, and game plan</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Match Stat Reminders</div><div class="toggle-desc">Prompt 3+ star athletes to upload match stats after competition</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">Season Milestones</div><div class="dv-l"></div></div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Phase Change Alerts</div><div class="toggle-desc">Notification when periodization phase shifts (Low → Med → High)</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-name">Athlete Level-Ups</div><div class="toggle-desc">When one of your athletes levels up their character</div></div>
+        <div class="toggle" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row" style="border-bottom:none">
+        <div class="toggle-info"><div class="toggle-name">Weekly Summary</div><div class="toggle-desc">Sunday night recap — attendance %, content completion, team XP earned</div></div>
+        <div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── TAB SWITCHING ──
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+// ── SEASON STYLE TABS ──
+function switchSeason(id, el) {
+  document.querySelectorAll('.season-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.season-panel').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  document.getElementById('season-' + id).classList.add('active');
+}
+
+// ── SAVE STATE ──
+var dirty = false;
+function markDirty() {
+  dirty = true;
+  document.getElementById('saveBtn').classList.add('active');
+}
+function saveChanges() {
+  if (!dirty) return;
+  dirty = false;
+  document.getElementById('saveBtn').classList.remove('active');
+
+  // Gather all settings data and save to Firebase
+  if (fbReady && fbTeamId) {
+    // Profile data
+    var profileData = {};
+    var fnEl = document.querySelector('.section .fi[value]');
+    // Collect all input values from General tab
+    var inputs = document.querySelectorAll('#tab-general .fi');
+    if (inputs[0]) profileData.firstName = inputs[0].value;
+    if (inputs[1]) profileData.lastName = inputs[1].value;
+    if (inputs[3]) profileData.phone = inputs[3].value;
+    var orgInput = document.querySelector('#tab-general .fi[value*="Wrestling"], #tab-general .fi[value*="Ranger"]');
+
+    fbDb.collection('users').doc(fbUserId).set(profileData, {merge:true});
+
+    // Season dates
+    var dateInputs = document.querySelectorAll('#season-folk .date-input');
+    if (dateInputs.length >= 3) {
+      fbDb.collection('teams').doc(fbTeamId).set({
+        season: {
+          firstPractice: dateInputs[0].value,
+          firstCompetition: dateInputs[1].value,
+          lastDayState: dateInputs[2].value
+        }
+      }, {merge:true});
+    }
+
+    // Preferences — battle group sub-position rankings
+    var prefs = {};
+    document.querySelectorAll('.rank-list[data-group]').forEach(function(list) {
+      var group = list.getAttribute('data-group');
+      var order = [];
+      list.querySelectorAll('.rank-item').forEach(function(item) {
+        order.push(item.querySelector('.rank-name').textContent.trim());
+      });
+      prefs[group] = order;
+    });
+
+    // Practice lengths
+    var trainLen = document.querySelector('#tab-prefs .len-row:first-of-type .len-opt.active .len-time');
+    var crossLen = document.querySelector('#tab-prefs .len-row:last-of-type .len-opt.active .len-time');
+    if (trainLen) prefs.trainingMinutes = parseInt(trainLen.textContent);
+    if (crossLen) prefs.crossTrainingMinutes = parseInt(crossLen.textContent);
+
+    fbDb.collection('teams').doc(fbTeamId).set({settingsPrefs: prefs}, {merge:true});
+  }
+
+  toast('Settings saved ✓');
+}
+
+// ── FIREBASE INIT ──
+var fbDb=null,fbAuth=null,fbReady=false,fbUserId=null,fbTeamId=null;
+function initSettingsFirebase(){
+  if(typeof firebase==='undefined')return;
+  if(firebase.apps.length===0){
+    firebase.initializeApp({
+      apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+      authDomain:"base-wrestling-app.firebaseapp.com",
+      projectId:"base-wrestling-app",
+      storageBucket:"base-wrestling-app.appspot.com",
+      messagingSenderId:"000000000000",
+      appId:"1:000000000000:web:placeholder"
+    });
+  }
+  fbAuth=firebase.auth();fbDb=firebase.firestore();
+  fbAuth.onAuthStateChanged(function(user){
+    if(!user)return;
+    fbUserId=user.uid;
+    fbDb.collection('users').doc(user.uid).get().then(function(doc){
+      if(!doc.exists)return;
+      var d=doc.data();
+      fbTeamId=d.teamId;
+      fbReady=true;
+      // Pre-fill profile fields from Firebase
+      var inputs=document.querySelectorAll('#tab-general .fi');
+      if(d.firstName&&inputs[0])inputs[0].value=d.firstName;
+      if(d.lastName&&inputs[1])inputs[1].value=d.lastName;
+      // Load season dates
+      if(fbTeamId){
+        fbDb.collection('teams').doc(fbTeamId).get().then(function(tdoc){
+          if(!tdoc.exists)return;
+          var td=tdoc.data();
+          if(td.season){
+            var dateInputs=document.querySelectorAll('#season-folk .date-input');
+            if(td.season.firstPractice&&dateInputs[0])dateInputs[0].value=td.season.firstPractice;
+            if(td.season.firstCompetition&&dateInputs[1])dateInputs[1].value=td.season.firstCompetition;
+            if(td.season.lastDayState&&dateInputs[2])dateInputs[2].value=td.season.lastDayState;
+          }
+        });
+      }
+    });
+  });
+}
+
+// ── BATTLE GROUP EXPAND/COLLAPSE ──
+function toggleBG(id) {
+  var card = document.getElementById(id);
+  var wasOpen = card.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.bg-card').forEach(function(c){c.classList.remove('open')});
+  // Toggle clicked
+  if (!wasOpen) card.classList.add('open');
+}
+
+// ── PRACTICE LENGTH ──
+function pickLen(el) {
+  el.parentElement.querySelectorAll('.len-opt').forEach(function(o){o.classList.remove('active')});
+  el.classList.add('active');
+  markDirty();
+}
+
+// ── TOGGLE ──
+function toggleSwitch(el) {
+  el.classList.toggle('on');
+  markDirty();
+}
+
+// ── CODE COPY ──
+function copyCode(el) {
+  var code = el.parentElement.querySelector('.code-val').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(code).then(function(){el.textContent='COPIED!';setTimeout(function(){el.textContent='COPY'},1500)});
+  } else {
+    el.textContent = 'COPIED!';
+    setTimeout(function(){el.textContent='COPY'},1500);
+  }
+  toast('Code copied: ' + code);
+}
+
+// ── DRAG & DROP FOR SUB-POSITION RANKING ──
+var dragEl = null;
+function initDrag() {
+  document.querySelectorAll('.rank-item').forEach(function(item) {
+    item.addEventListener('dragstart', function(e) {
+      dragEl = this;
+      this.style.opacity = '0.5';
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', function() {
+      this.style.opacity = '1';
+      dragEl = null;
+      updateAllRankNumbers();
+      markDirty();
+    });
+    item.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (!dragEl || dragEl.parentElement !== this.parentElement) return;
+      var rect = this.getBoundingClientRect();
+      var mid = rect.top + rect.height / 2;
+      if (e.clientY < mid) {
+        this.parentElement.insertBefore(dragEl, this);
+      } else {
+        this.parentElement.insertBefore(dragEl, this.nextSibling);
+      }
+    });
+
+    // Touch support
+    item.addEventListener('touchstart', function(e) {
+      dragEl = this;
+      this.style.borderColor = 'var(--gd)';
+      this.style.background = 'rgba(200,168,78,.12)';
+    }, {passive:true});
+    item.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      var touch = e.touches[0];
+      var target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (target) {
+        var ri = target.closest('.rank-item');
+        if (ri && ri !== dragEl && ri.parentElement === dragEl.parentElement) {
+          var rect = ri.getBoundingClientRect();
+          var mid = rect.top + rect.height / 2;
+          if (touch.clientY < mid) {
+            ri.parentElement.insertBefore(dragEl, ri);
+          } else {
+            ri.parentElement.insertBefore(dragEl, ri.nextSibling);
+          }
+        }
+      }
+    }, {passive:false});
+    item.addEventListener('touchend', function() {
+      this.style.borderColor = '';
+      this.style.background = '';
+      dragEl = null;
+      updateAllRankNumbers();
+      markDirty();
+    });
+  });
+}
+
+function updateAllRankNumbers() {
+  document.querySelectorAll('.rank-list').forEach(function(list) {
+    list.querySelectorAll('.rank-item').forEach(function(item, i) {
+      var num = item.querySelector('.rank-num');
+      num.textContent = (i + 1);
+      num.className = 'rank-num r' + Math.min(i + 1, 6);
+    });
+  });
+}
+
+initDrag();
+initSettingsFirebase();
+
+// ── TOAST ──
+function toast(msg) {
+  var t = document.getElementById('toastEl');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')}, 2000);
+}
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.

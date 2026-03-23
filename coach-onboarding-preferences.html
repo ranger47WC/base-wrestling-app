@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Coach Preferences (Onboarding Step)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#999;--grd:#999;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+.hd{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.hd-brand{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--gd)}
+.hd-sub{font-size:11px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-back{width:34px;height:34px;border-radius:9px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--grd);font-size:18px;transition:all .2s;flex-shrink:0}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+
+/* ── PROGRESS ── */
+.pg{padding:14px 20px 0;flex-shrink:0}
+.pg-steps{display:flex;gap:6px}
+.pg-dot{flex:1;height:3px;border-radius:2px;background:var(--bd);transition:background .4s}
+.pg-dot.on{background:var(--gd)}.pg-dot.done{background:var(--gn)}
+.pg-sub{display:flex;gap:4px;margin-top:10px;padding:0 4px}
+.pg-sub-dot{flex:1;height:2px;border-radius:1px;background:var(--bd);transition:background .3s}
+.pg-sub-dot.on{background:var(--gd)}.pg-sub-dot.done{background:var(--gn)}
+
+/* ── SCREENS ── */
+.scr{display:none;flex-direction:column;flex:1}
+.scr.active{display:flex;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+.sc{flex:1;overflow-y:auto;padding:24px 20px 0}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:4px 0 24px}
+.hero-ic{width:64px;height:64px;border-radius:16px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;box-shadow:0 0 32px rgba(200,168,78,.12)}
+.hero-tag{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--gdd);font-weight:600;margin-bottom:6px}
+.hero-t{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:4px;color:var(--wh);line-height:1;margin-bottom:8px}
+.hero-s{font-size:13px;color:var(--grd);line-height:1.6;max-width:300px;margin:0 auto}
+
+/* ── SECTION LABEL ── */
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ── INFO BOX ── */
+.ib{background:var(--gdg2);border:1px solid rgba(200,168,78,.2);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.ib-e{font-size:16px;flex-shrink:0}
+.ib-t{font-size:12px;color:var(--lt);line-height:1.5}
+.ib-t strong{color:var(--gd)}
+
+/* ── RANK LIST ── */
+.rank-list{margin-bottom:16px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px;cursor:grab;transition:all .15s;user-select:none;-webkit-user-select:none}
+.rank-item:active{cursor:grabbing;border-color:var(--gd);background:var(--gdg);transform:scale(1.02)}
+.rank-item.dragging{opacity:.4;transform:scale(.98)}
+.rank-item.over{border-color:var(--gd);background:var(--gdg2)}
+.rank-num{width:28px;height:28px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:1px}
+.rank-num.r1{background:rgba(200,168,78,.25);color:var(--gd)}
+.rank-num.r2{background:rgba(200,168,78,.12);color:var(--gdd)}
+.rank-num.r3{background:rgba(85,85,85,.2);color:var(--grd)}
+.rank-num.r4{background:rgba(85,85,85,.15);color:var(--grd)}
+.rank-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh);flex:1}
+.rank-desc{font-size:11px;color:var(--grd);margin-top:2px;font-family:'Barlow',sans-serif;letter-spacing:0;font-weight:400}
+.rank-item:active .rank-name{color:var(--gd)}
+.rank-grip{color:var(--bd);font-size:14px;flex-shrink:0;letter-spacing:2px}
+
+/* ── LOCKED DISPLAY (failed attacks) ── */
+.locked-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px;opacity:.7}
+.locked-item .rank-num{background:rgba(39,174,96,.15);color:var(--gn)}
+.locked-item .rank-name{color:var(--grd)}
+.lock-badge{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gn);font-weight:700;background:rgba(39,174,96,.12);padding:3px 8px;border-radius:4px}
+
+/* ── PICK ONE (bottom: escapes vs reversals) ── */
+.pick-row{display:flex;gap:10px;margin-bottom:16px}
+.pick-btn{flex:1;padding:20px 12px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--grd);cursor:pointer;text-align:center;transition:all .2s}
+.pick-btn:hover{border-color:var(--gdd)}
+.pick-btn.on{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.pick-btn-ic{font-size:28px;display:block;margin-bottom:8px}
+.pick-btn-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;display:block;margin-bottom:4px}
+.pick-btn-desc{font-size:11px;color:var(--grd);line-height:1.4;display:block}
+.pick-btn.on .pick-btn-desc{color:var(--lt)}
+
+/* ── BOTTOM ACTION ── */
+.ab{padding:14px 20px 28px;border-top:1px solid var(--bd);flex-shrink:0}
+.bp{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;display:block}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.25)}
+.bp.off{opacity:.35;pointer-events:none;transform:none;box-shadow:none}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:99;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div><div class="hd-brand">BASE Wrestling</div><div class="hd-sub">Your Preferences</div></div>
+    <div class="hd-back" id="bk" onclick="back()">←</div>
+  </div>
+
+  <!-- ═══ MAIN PROGRESS (shows this is step 5 of 6 in full onboarding) ═══ -->
+  <div class="pg">
+    <div class="pg-steps">
+      <div class="pg-dot done"></div>
+      <div class="pg-dot done"></div>
+      <div class="pg-dot done"></div>
+      <div class="pg-dot done"></div>
+      <div class="pg-dot on"></div>
+      <div class="pg-dot"></div>
+    </div>
+    <!-- Sub-progress within preferences -->
+    <div class="pg-sub">
+      <div class="pg-sub-dot on" id="sd0"></div>
+      <div class="pg-sub-dot" id="sd1"></div>
+      <div class="pg-sub-dot" id="sd2"></div>
+      <div class="pg-sub-dot" id="sd3"></div>
+      <div class="pg-sub-dot" id="sd4"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 0: UPPER BODY — Rank 4 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="scr active" id="s0">
+    <div class="sc">
+      <div class="hero">
+        <div class="hero-ic">🤼</div>
+        <div class="hero-tag">Preferences 1 of 5</div>
+        <div class="hero-t">Upper Body</div>
+        <div class="hero-s">Rank these positions in the order you want to teach them. #1 gets the most training time.</div>
+      </div>
+      <div class="sl">Drag to Rank</div>
+      <div class="rank-list" id="rank-ub">
+        <div class="rank-item" draggable="true" data-id="underhook">
+          <div class="rank-num r1">1</div>
+          <div style="flex:1"><div class="rank-name">UNDERHOOK</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="overhook">
+          <div class="rank-num r2">2</div>
+          <div style="flex:1"><div class="rank-name">OVERHOOK</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="overunder">
+          <div class="rank-num r3">3</div>
+          <div style="flex:1"><div class="rank-name">OVER / UNDER</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="twoonone">
+          <div class="rank-num r4">4</div>
+          <div style="flex:1"><div class="rank-name">2-ON-1</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+      </div>
+      <div class="ib"><div class="ib-e">💡</div><div class="ib-t"><strong>Front Headlock</strong> is always included — it connects to every upper body position and is the #1 failed attack destination.</div></div>
+    </div>
+    <div class="ab"><button class="bp" onclick="next()">NEXT — LEG ATTACKS</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 1: LEG ATTACKS — Rank 4 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="scr" id="s1">
+    <div class="sc">
+      <div class="hero">
+        <div class="hero-ic">🦵</div>
+        <div class="hero-tag">Preferences 2 of 5</div>
+        <div class="hero-t">Leg Attacks</div>
+        <div class="hero-s">Rank in the order you want to introduce these to your team.</div>
+      </div>
+      <div class="sl">Drag to Rank</div>
+      <div class="rank-list" id="rank-legs">
+        <div class="rank-item" draggable="true" data-id="his">
+          <div class="rank-num r1">1</div>
+          <div style="flex:1"><div class="rank-name">HEAD INSIDE SINGLE</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="hos">
+          <div class="rank-num r2">2</div>
+          <div style="flex:1"><div class="rank-name">HEAD OUTSIDE SINGLE</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="double">
+          <div class="rank-num r3">3</div>
+          <div style="flex:1"><div class="rank-name">DOUBLE LEG</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="fireman">
+          <div class="rank-num r4">4</div>
+          <div style="flex:1"><div class="rank-name">FIREMAN'S CARRY</div></div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+      </div>
+      <div class="ib"><div class="ib-e">💡</div><div class="ib-t">The sub-positions within each attack (high, medium, extended, side) are handled automatically — we front-load high and extended early, then add side and medium as the season progresses.</div></div>
+    </div>
+    <div class="ab"><button class="bp" onclick="next()">NEXT — FAILED ATTACKS</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 2: FAILED ATTACKS — Display only, no choice -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="scr" id="s2">
+    <div class="sc">
+      <div class="hero">
+        <div class="hero-ic">🔄</div>
+        <div class="hero-tag">Preferences 3 of 5</div>
+        <div class="hero-t">Failed Attacks</div>
+        <div class="hero-s">Every wrestler needs to know what to do when an attack fails. Here's the priority order we use.</div>
+      </div>
+      <div class="sl">Priority Order — Set by BASE</div>
+      <div class="rank-list" id="rank-fa">
+        <div class="locked-item">
+          <div class="rank-num" style="background:rgba(200,168,78,.25);color:var(--gd)">1</div>
+          <div style="flex:1"><div class="rank-name" style="color:var(--wh)">FRONT HEADLOCK</div><div class="rank-desc">The most connected position in wrestling — every failed leg attack ends here.</div></div>
+          <div class="lock-badge">LOCKED</div>
+        </div>
+        <div class="locked-item">
+          <div class="rank-num" style="background:rgba(200,168,78,.12);color:var(--gdd)">2</div>
+          <div style="flex:1"><div class="rank-name" style="color:var(--lt)">SEATBELT / WHIZZER</div><div class="rank-desc">Defending failed attacks from the side position.</div></div>
+        </div>
+        <div class="locked-item">
+          <div class="rank-num" style="background:rgba(85,85,85,.2);color:var(--grd)">3</div>
+          <div style="flex:1"><div class="rank-name" style="color:var(--lt)">50/50 POSITIONS</div><div class="rank-desc">Scramble positions where neither wrestler has clear advantage.</div></div>
+        </div>
+      </div>
+      <div class="ib"><div class="ib-e">⚡</div><div class="ib-t">This isn't even close — <strong>Front Headlock is #1</strong> for failed attacks. Your team will train it from day one.</div></div>
+    </div>
+    <div class="ab"><button class="bp" onclick="next()">NEXT — TOP POSITION</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 3: TOP — Rank 3 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="scr" id="s3">
+    <div class="sc">
+      <div class="hero">
+        <div class="hero-ic">⬆️</div>
+        <div class="hero-tag">Preferences 4 of 5</div>
+        <div class="hero-t">Top Position</div>
+        <div class="hero-s">Rank your top position coaching preference — #1 gets the most emphasis.</div>
+      </div>
+      <div class="sl">Drag to Rank</div>
+      <div class="rank-list" id="rank-top">
+        <div class="rank-item" draggable="true" data-id="ub-control">
+          <div class="rank-num r1">1</div>
+          <div style="flex:1">
+            <div class="rank-name">UPPER BODY CONTROL</div>
+            <div class="rank-desc">Wrist ride, chicken wing, arm bar, half nelson</div>
+          </div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="leg-riding">
+          <div class="rank-num r2">2</div>
+          <div style="flex:1">
+            <div class="rank-name">LEG RIDING</div>
+            <div class="rank-desc">Legs in on base and flat</div>
+          </div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+        <div class="rank-item" draggable="true" data-id="tilts">
+          <div class="rank-num r3">3</div>
+          <div style="flex:1">
+            <div class="rank-name">TILTS</div>
+            <div class="rank-desc">Near-fall turns and exposure</div>
+          </div>
+          <div class="rank-grip">⋮⋮</div>
+        </div>
+      </div>
+    </div>
+    <div class="ab"><button class="bp" onclick="next()">NEXT — BOTTOM POSITION</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 4: BOTTOM — Pick one -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="scr" id="s4">
+    <div class="sc">
+      <div class="hero">
+        <div class="hero-ic">⬇️</div>
+        <div class="hero-tag">Preferences 5 of 5</div>
+        <div class="hero-t">Bottom Position</div>
+        <div class="hero-s">What's your main coaching focus from bottom?</div>
+      </div>
+      <div class="sl">Pick Your Priority</div>
+      <div class="pick-row">
+        <div class="pick-btn" id="pick-esc" onclick="pickBottom('esc')">
+          <span class="pick-btn-ic">🏃</span>
+          <span class="pick-btn-name">ESCAPES</span>
+          <span class="pick-btn-desc">Get off bottom and back to feet — stand-ups, sit-outs, switches</span>
+        </div>
+        <div class="pick-btn" id="pick-rev" onclick="pickBottom('rev')">
+          <span class="pick-btn-ic">🔄</span>
+          <span class="pick-btn-name">REVERSALS</span>
+          <span class="pick-btn-desc">Turn the tables — go from bottom to top control</span>
+        </div>
+      </div>
+      <div class="ib" id="bottom-note" style="display:none"><div class="ib-e">💡</div><div class="ib-t" id="bottom-note-text"></div></div>
+    </div>
+    <div class="ab"><button class="bp off" id="btn-finish" onclick="finish()">FINISH PREFERENCES</button></div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+</div>
+
+<script>
+var S = 0;
+var bottomPick = null;
+
+// ── NAVIGATION ──
+function next() {
+  S++;
+  show(S);
+}
+function back() {
+  if (S > 0) { S--; show(S); }
+}
+function show(s) {
+  document.querySelectorAll('.scr').forEach(function(x) { x.classList.remove('active'); x.style.display = 'none'; });
+  var el = document.getElementById('s' + s);
+  if (el) { el.style.display = 'flex'; el.classList.add('active'); }
+  // Update sub-progress
+  for (var i = 0; i < 5; i++) {
+    var d = document.getElementById('sd' + i);
+    d.className = 'pg-sub-dot';
+    if (i < s) d.classList.add('done');
+    else if (i === s) d.classList.add('on');
+  }
+  window.scrollTo(0, 0);
+}
+
+// ── DRAG TO RANK ──
+function initDrag(listId) {
+  var list = document.getElementById(listId);
+  if (!list) return;
+  var items = list.querySelectorAll('.rank-item');
+  var dragItem = null;
+
+  items.forEach(function(item) {
+    item.addEventListener('dragstart', function(e) {
+      dragItem = this;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', function() {
+      this.classList.remove('dragging');
+      list.querySelectorAll('.rank-item').forEach(function(x) { x.classList.remove('over'); });
+      updateNums(list);
+      dragItem = null;
+    });
+    item.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (this !== dragItem && dragItem) {
+        this.classList.add('over');
+      }
+    });
+    item.addEventListener('dragleave', function() {
+      this.classList.remove('over');
+    });
+    item.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('over');
+      if (this !== dragItem && dragItem) {
+        var allItems = Array.from(list.querySelectorAll('.rank-item'));
+        var fromIdx = allItems.indexOf(dragItem);
+        var toIdx = allItems.indexOf(this);
+        if (fromIdx < toIdx) {
+          list.insertBefore(dragItem, this.nextSibling);
+        } else {
+          list.insertBefore(dragItem, this);
+        }
+        updateNums(list);
+      }
+    });
+
+    // Touch support for mobile
+    var touchY = 0;
+    var touchItem = null;
+    var placeholder = null;
+
+    item.addEventListener('touchstart', function(e) {
+      touchItem = this;
+      touchY = e.touches[0].clientY;
+      this.classList.add('dragging');
+      e.preventDefault();
+    }, { passive: false });
+
+    item.addEventListener('touchmove', function(e) {
+      if (!touchItem) return;
+      e.preventDefault();
+      var touch = e.touches[0];
+      var dy = touch.clientY - touchY;
+      touchItem.style.transform = 'translateY(' + dy + 'px) scale(1.02)';
+      touchItem.style.zIndex = '10';
+      touchItem.style.position = 'relative';
+
+      // Find item under finger
+      var elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+      list.querySelectorAll('.rank-item').forEach(function(x) { x.classList.remove('over'); });
+      for (var i = 0; i < elements.length; i++) {
+        if (elements[i].classList && elements[i].classList.contains('rank-item') && elements[i] !== touchItem) {
+          elements[i].classList.add('over');
+          break;
+        }
+      }
+    }, { passive: false });
+
+    item.addEventListener('touchend', function(e) {
+      if (!touchItem) return;
+      touchItem.style.transform = '';
+      touchItem.style.zIndex = '';
+      touchItem.style.position = '';
+      touchItem.classList.remove('dragging');
+
+      var overItem = list.querySelector('.rank-item.over');
+      if (overItem && overItem !== touchItem) {
+        var allItems = Array.from(list.querySelectorAll('.rank-item'));
+        var fromIdx = allItems.indexOf(touchItem);
+        var toIdx = allItems.indexOf(overItem);
+        if (fromIdx < toIdx) {
+          list.insertBefore(touchItem, overItem.nextSibling);
+        } else {
+          list.insertBefore(touchItem, overItem);
+        }
+      }
+      list.querySelectorAll('.rank-item').forEach(function(x) { x.classList.remove('over'); });
+      updateNums(list);
+      touchItem = null;
+    });
+  });
+}
+
+function updateNums(list) {
+  var ranks = ['r1', 'r2', 'r3', 'r4'];
+  var items = list.querySelectorAll('.rank-item');
+  items.forEach(function(item, i) {
+    var num = item.querySelector('.rank-num');
+    num.textContent = i + 1;
+    num.className = 'rank-num ' + (ranks[i] || 'r4');
+  });
+}
+
+// ── BOTTOM PICK ──
+function pickBottom(choice) {
+  bottomPick = choice;
+  document.getElementById('pick-esc').classList.toggle('on', choice === 'esc');
+  document.getElementById('pick-rev').classList.toggle('on', choice === 'rev');
+  document.getElementById('btn-finish').classList.remove('off');
+
+  var note = document.getElementById('bottom-note');
+  var noteText = document.getElementById('bottom-note-text');
+  note.style.display = 'flex';
+  if (choice === 'esc') {
+    noteText.innerHTML = 'Your team will focus on <strong>getting back to their feet</strong> from bottom. Stand-ups, sit-outs, and switches will be the priority. Reversals will still be taught but with less emphasis.';
+  } else {
+    noteText.innerHTML = 'Your team will focus on <strong>turning the tables</strong> from bottom. Reversals to top control will be the priority. Escapes will still be taught but with less emphasis.';
+  }
+}
+
+// ── FINISH ──
+function finish() {
+  // Gather all preferences
+  var prefs = {
+    upperBody: getRank('rank-ub'),
+    legAttacks: getRank('rank-legs'),
+    failedAttacks: ['front-headlock', 'seatbelt-whizzer', '50-50'],
+    top: getRank('rank-top'),
+    bottom: bottomPick
+  };
+  console.log('Preferences:', prefs);
+  toast('Preferences saved — generating your codes...');
+  // In full onboarding, this would advance to the Codes screen (s4 in onboarding-v4)
+  setTimeout(function() { toast('→ Next: Your team codes'); }, 2600);
+}
+
+function getRank(listId) {
+  var items = document.getElementById(listId).querySelectorAll('.rank-item');
+  return Array.from(items).map(function(x) { return x.getAttribute('data-id'); });
+}
+
+// ── TOAST ──
+function toast(m) {
+  var t = document.getElementById('toastEl');
+  t.textContent = m;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2400);
+}
+
+// ── INIT ──
+initDrag('rank-ub');
+initDrag('rank-legs');
+initDrag('rank-top');
+</script>
+</body>
+</html>

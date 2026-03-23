@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Coach Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#999;--grd:#999;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column}
+.hd{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.hd-brand{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--gd)}
+.hd-sub{font-size:11px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-back{width:34px;height:34px;border-radius:9px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--grd);font-size:18px;transition:all .2s;flex-shrink:0}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-back.hidden{opacity:0;pointer-events:none}
+.pg{padding:14px 20px 0;flex-shrink:0}
+.pg-steps{display:flex;gap:6px}
+.pg-dot{flex:1;height:3px;border-radius:2px;background:var(--bd);transition:background .4s}
+.pg-dot.on{background:var(--gd)}.pg-dot.done{background:var(--gn)}
+.pg-lbls{display:flex;justify-content:space-between;padding:6px 0 0}
+.pg-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--bd);font-weight:700;transition:color .3s}
+.pg-lbl.on{color:var(--gd)}.pg-lbl.done{color:var(--gn)}
+.scr{display:none;flex-direction:column;flex:1}
+.scr.active{display:flex;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+.sc{flex:1;overflow-y:auto;padding:24px 20px 0}
+.hero{text-align:center;padding:4px 0 24px}
+.hero-ic{width:64px;height:64px;border-radius:16px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;box-shadow:0 0 32px rgba(200,168,78,.12)}
+.hero-tag{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--gdd);font-weight:600;margin-bottom:6px}
+.hero-t{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--wh);line-height:1;margin-bottom:8px}
+.hero-s{font-size:13px;color:var(--grd);line-height:1.6;max-width:300px;margin:0 auto}
+.sl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.fld{margin-bottom:14px}
+.fl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--grd);font-weight:600;margin-bottom:5px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fi{width:100%;padding:13px 15px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--gd)}.fi::placeholder{color:var(--ph)}
+.fs{width:100%;padding:13px 15px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;outline:none;cursor:pointer;transition:border-color .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.fs:focus{border-color:var(--gd)}.fs option{background:var(--cd)}
+.rr{display:flex;gap:8px;margin-bottom:14px}
+.rb{flex:1;padding:12px 8px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--grd);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;cursor:pointer;text-align:center;transition:all .2s;line-height:1.3}
+.rb:hover{border-color:var(--gdd)}
+.rb.on{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.ri{font-size:20px;display:block;margin-bottom:3px}
+.gr{display:flex;gap:8px;margin-bottom:14px}
+.gb{flex:1;padding:10px 6px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--grd);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;text-align:center;transition:all .2s}
+.gb:hover{border-color:var(--gdd)}
+.gb.on{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.sr{display:flex;gap:8px;margin-bottom:14px}
+.sb{flex:1;padding:11px 6px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--grd);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;text-align:center;transition:all .2s}
+.sb:hover{border-color:var(--gdd)}
+.sb.on{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.sb.lk{border-color:var(--gdd);background:var(--gdg);color:var(--gd);opacity:.6;cursor:default}
+.sn{font-size:10px;color:var(--grd);margin-top:-8px;margin-bottom:14px;padding-left:2px}
+.ib{background:var(--gdg2);border:1px solid rgba(200,168,78,.2);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.ib-e{font-size:16px;flex-shrink:0}
+.ib-t{font-size:12px;color:var(--lt);line-height:1.5}
+.ib-t strong{color:var(--gd)}
+.cc{background:var(--cd);border:2px solid var(--gd);border-radius:var(--rl);padding:0;margin-bottom:10px;overflow:hidden;box-shadow:0 0 40px rgba(200,168,78,.08)}
+.cs{padding:20px 24px}
+.ct{font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--gdd);font-weight:600;margin-bottom:6px}
+.cv{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:8px;color:var(--gd);text-shadow:0 0 24px rgba(200,168,78,.25);margin-bottom:4px}
+.cd{font-size:11px;color:var(--grd);line-height:1.4;margin-bottom:4px}
+.cr{display:flex;gap:8px;margin-top:12px}
+.cb{flex:1;padding:11px;background:var(--gdg);border:1px solid var(--gdd);border-radius:var(--r);color:var(--gd);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.cb:hover{border-color:var(--gd)}
+.cb.sm{background:transparent;border-color:var(--bd);color:var(--grd)}
+.cb.sm:hover{border-color:var(--gdd);color:var(--lt)}
+.cc.big{border-color:var(--gd);background:var(--gdg2)}
+.cc.big .cv{font-size:48px}
+.ts{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:14px}
+.tr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)}
+.tr:last-child{border-bottom:none}
+.tk{font-size:11px;color:var(--grd);font-weight:500}
+.tv{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--wh)}
+.tv.gd{color:var(--gd)}
+.ab{padding:14px 20px 28px;border-top:1px solid var(--bd);flex-shrink:0}
+.bp{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;display:block}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,78,.25)}
+.bp.off{opacity:.35;pointer-events:none;transform:none;box-shadow:none}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:99;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.dv{display:flex;align-items:center;gap:10px;margin:16px 0}
+.dv-l{flex:1;height:1px;background:var(--bd)}
+.dv-t{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--grd);font-weight:600;white-space:nowrap}
+.js{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:14px;animation:fiu .3s ease}
+@keyframes fiu{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.jt{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd);margin-bottom:10px}
+.jr{display:flex;gap:8px}
+.ji{flex:1;padding:12px 14px;background:var(--bk);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;outline:none;text-align:center;transition:border-color .2s;text-transform:uppercase}
+.ji:focus{border-color:var(--gd)}.ji::placeholder{color:var(--ph);font-size:14px;letter-spacing:1px;font-family:'Barlow',sans-serif;font-weight:500}
+.jb{padding:12px 18px;background:var(--gd);border:none;border-radius:var(--r);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.jb:hover{background:var(--gdd)}
+
+/* ── RANK LIST (Preferences) ── */
+.rank-list{margin-bottom:16px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px;cursor:grab;transition:all .15s;user-select:none;-webkit-user-select:none}
+.rank-item:active{cursor:grabbing;border-color:var(--gd);background:var(--gdg);transform:scale(1.02)}
+.rank-item.dragging{opacity:.4;transform:scale(.98)}
+.rank-item.over{border-color:var(--gd);background:var(--gdg2)}
+.rank-num{width:28px;height:28px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:1px}
+.rank-num.r1{background:rgba(200,168,78,.25);color:var(--gd)}
+.rank-num.r2{background:rgba(200,168,78,.12);color:var(--gdd)}
+.rank-num.r3{background:rgba(85,85,85,.2);color:var(--grd)}
+.rank-num.r4{background:rgba(85,85,85,.15);color:var(--grd)}
+.rank-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh);flex:1}
+.rank-desc{font-size:11px;color:var(--grd);margin-top:2px;font-family:'Barlow',sans-serif;letter-spacing:0;font-weight:400}
+.rank-item:active .rank-name{color:var(--gd)}
+.rank-grip{color:var(--bd);font-size:14px;flex-shrink:0;letter-spacing:2px}
+.locked-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px;opacity:.7}
+.locked-item .rank-name{color:var(--grd)}
+.lock-badge{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gn);font-weight:700;background:rgba(39,174,96,.12);padding:3px 8px;border-radius:4px}
+.pick-row{display:flex;gap:10px;margin-bottom:16px}
+.pick-btn{flex:1;padding:20px 12px;border-radius:var(--r);border:2px solid var(--bd);background:var(--cd);color:var(--grd);cursor:pointer;text-align:center;transition:all .2s}
+.pick-btn:hover{border-color:var(--gdd)}
+.pick-btn.on{border-color:var(--gd);background:var(--gdg);color:var(--gd)}
+.pick-btn-ic{font-size:28px;display:block;margin-bottom:8px}
+.pick-btn-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;display:block;margin-bottom:4px}
+.pick-btn-desc{font-size:11px;color:var(--grd);line-height:1.4;display:block}
+.pick-btn.on .pick-btn-desc{color:var(--lt)}
+
+/* ── SAVING INDICATOR ── */
+.saving{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--gn);color:var(--bk);padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:0;transition:opacity .3s;z-index:100}
+.saving.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <div><div class="hd-brand">BASE Wrestling</div><div class="hd-sub">Coach Setup</div></div>
+    <div class="hd-back hidden" id="bk" onclick="goBack()">←</div>
+  </div>
+  <div class="pg" id="pg">
+    <div class="pg-steps"><div class="pg-dot on" id="d0"></div><div class="pg-dot" id="d1"></div><div class="pg-dot" id="d2"></div><div class="pg-dot" id="d3"></div><div class="pg-dot" id="d4"></div><div class="pg-dot" id="d5"></div></div>
+    <div class="pg-lbls"><span class="pg-lbl on" id="l0">Profile</span><span class="pg-lbl" id="l1">Team</span><span class="pg-lbl" id="l2">Role</span><span class="pg-lbl" id="l3">Setup</span><span class="pg-lbl" id="l4">Prefs</span><span class="pg-lbl" id="l5">Codes</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- S0: PROFILE -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="scr active" id="s0">
+    <div class="sc">
+      <div class="hero"><div class="hero-ic">🏆</div><div class="hero-tag">Step 1 of 6</div><div class="hero-t">Your Profile</div><div class="hero-s">Tell us who you are so your staff and athletes can find you</div></div>
+      <div class="sl">Your Info</div>
+      <div class="fr" style="margin-bottom:14px">
+        <div class="fld"><div class="fl">First Name</div><input class="fi" placeholder="Andy" id="fname"></div>
+        <div class="fld"><div class="fl">Last Name</div><input class="fi" placeholder="Hrovat" id="lname"></div>
+      </div>
+      <div class="dv"><div class="dv-l"></div><div class="dv-t">School or Organization</div><div class="dv-l"></div></div>
+      <div class="fld"><div class="fl">School / Club / Organization</div><input class="fi" placeholder="Ranger 47 Wrestling Club" id="school"></div>
+      <div class="fr" style="margin-bottom:14px">
+        <div class="fld"><div class="fl">City</div><input class="fi" placeholder="Dallas" id="city"></div>
+        <div class="fld"><div class="fl">State</div><select class="fs" id="state"><option value="">State</option><option>AK</option><option>AL</option><option>AR</option><option>AZ</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>IA</option><option>ID</option><option>IL</option><option>IN</option><option>KS</option><option>KY</option><option>LA</option><option>MA</option><option>MD</option><option>ME</option><option>MI</option><option>MN</option><option>MO</option><option>MS</option><option>MT</option><option>NC</option><option>ND</option><option>NE</option><option>NH</option><option>NJ</option><option>NM</option><option>NV</option><option>NY</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option selected>TX</option><option>UT</option><option>VA</option><option>VT</option><option>WA</option><option>WI</option><option>WV</option><option>WY</option></select></div>
+      </div>
+      <div class="fld" style="margin-bottom:28px"><div class="fl">Coaching Experience</div><select class="fs" id="exp"><option value="">Select experience</option><option>1-2 years</option><option>3-4 years</option><option>5+ years</option></select></div>
+    </div>
+    <div class="ab"><button class="bp" onclick="goNext(0)">NEXT</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- S1: TEAM -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="scr" id="s1">
+    <div class="sc">
+      <div class="hero"><div class="hero-ic">🏟️</div><div class="hero-tag">Step 2 of 6</div><div class="hero-t" id="s1t">Your Team</div><div class="hero-s" id="s1s">Let's get you connected</div></div>
+      <div id="found-box" style="display:none">
+        <div style="background:var(--cd);border:2px solid var(--gd);border-radius:var(--rl);padding:20px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="font-size:24px">✅</div>
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gd)" id="found-name">—</div>
+              <div style="font-size:11px;color:var(--grd)" id="found-loc">—</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--bd);padding-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--grd);font-weight:600">Set up by</div><div style="font-size:13px;color:var(--wh);font-weight:600" id="found-by">—</div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--grd);font-weight:600">Created</div><div style="font-size:13px;color:var(--lt)" id="found-date">—</div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--grd);font-weight:600">Status</div><div style="font-size:12px;font-weight:600" id="found-status">—</div></div>
+          </div>
+        </div>
+        <div id="active-join">
+          <div class="js"><div class="jt">ENTER YOUR TEAM CODE</div><div style="font-size:11px;color:var(--grd);margin-bottom:8px">Get the code from <span id="code-from">the person who set it up</span>. Demo: BASE47</div><div class="jr"><input class="ji" placeholder="Code" id="jc" maxlength="10"><button class="jb" onclick="doJoin()">JOIN</button></div></div>
+        </div>
+        <div id="inactive-claim" style="display:none">
+          <div class="ib" style="border-color:rgba(231,76,60,.3);background:rgba(231,76,60,.06)"><div class="ib-e">⚠️</div><div class="ib-t" style="color:#e0d4c0">This team has <strong style="color:#e74c3c">no active users</strong>. The previous setup was never completed or has been abandoned.</div></div>
+          <button style="width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer" onclick="claimTeam()">CLAIM THIS TEAM</button>
+          <div style="text-align:center;font-size:10px;color:var(--grd);margin:8px 0 14px">This will make you the new owner.</div>
+        </div>
+        <div class="dv"><div class="dv-l"></div><div class="dv-t">Not your team?</div><div class="dv-l"></div></div>
+        <button style="width:100%;padding:13px;background:transparent;color:var(--grd);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer" onclick="forceCreate()">CREATE A DIFFERENT TEAM</button>
+      </div>
+      <div id="create-box" style="display:none">
+        <div class="ib"><div class="ib-e">🔨</div><div class="ib-t">No team found for <strong id="create-org">—</strong> in <strong id="create-loc">—</strong>. Let's create it.</div></div>
+        <div class="fld"><div class="fl">Confirm Team Name</div><input class="fi" id="team-name" style="background:var(--bk)" oninput="checkCreate()"></div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+    <div class="ab"><button class="bp off" id="btn1" onclick="goNext(1)">NEXT — PICK YOUR ROLE</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- S2: ROLE -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="scr" id="s2">
+    <div class="sc">
+      <div class="hero"><div class="hero-ic">👤</div><div class="hero-tag">Step 3 of 6</div><div class="hero-t">Your Role</div><div class="hero-s" id="s2s">What's your role at <span id="role-team" style="color:var(--gd)">—</span>?</div></div>
+      <div class="sl">Pick One</div>
+      <div class="rr" style="flex-wrap:wrap" id="role-row">
+        <div class="rb" onclick="pickRole('head',this)" style="min-width:calc(50% - 4px)"><span class="ri">👑</span>HEAD COACH</div>
+        <div class="rb" onclick="pickRole('asst',this)" style="min-width:calc(50% - 4px)"><span class="ri">🤝</span>ASSISTANT COACH</div>
+        <div class="rb" onclick="pickRole('parent',this)" style="min-width:calc(50% - 4px)"><span class="ri">👪</span>PARENT / SUPPORTER</div>
+      </div>
+      <div id="role-info" style="display:none"></div>
+    </div>
+    <div class="ab"><button class="bp off" id="btn2" onclick="goNext(2)">NEXT</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- S3: COMMUNITY BUILDER (head coach only) -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="scr" id="s3">
+    <div class="sc">
+      <div class="hero"><div class="hero-ic">⚙️</div><div class="hero-tag">Step 4 of 6</div><div class="hero-t">Build Your Community</div><div class="hero-s">Set up your program so athletes and coaches can join</div></div>
+      <div class="sl">Program Type</div>
+      <div class="fld">
+        <div class="fl">What type of program is this?</div>
+        <div class="rr" id="ptype-row">
+          <div class="rb" onclick="pickType('school',this)"><span class="ri">🏫</span>SCHOOL</div>
+          <div class="rb" onclick="pickType('club',this)"><span class="ri">🌟</span>OUTSIDE CLUB</div>
+        </div>
+      </div>
+      <div id="school-setup" style="display:none">
+        <div class="sl">Your Level</div>
+        <div class="fld"><div class="fl">What level are you the head coach of?</div><div class="gr" id="school-lvl-row"><div class="gb" onclick="pickSchoolLvl('youth',this)">YOUTH</div><div class="gb" onclick="pickSchoolLvl('middle',this)">MIDDLE SCHOOL</div><div class="gb" onclick="pickSchoolLvl('high',this)">HIGH SCHOOL</div></div></div>
+        <div class="fld" id="school-coed-f" style="display:none"><div class="fl">Practice setup — <span id="school-coed-label" style="color:var(--gd)">Your Level</span></div><div class="rr" id="school-coed-row"><div class="rb" onclick="setSchoolCoed('coed',this)" style="font-size:13px;padding:10px"><span class="ri">👥</span>Co-Ed</div><div class="rb" onclick="setSchoolCoed('sep',this)" style="font-size:13px;padding:10px"><span class="ri">↔️</span>Separate</div></div></div>
+        <div class="fld" id="feeder-f" style="display:none"><div class="fl">Feeder programs to oversee</div><div style="font-size:11px;color:var(--grd);margin-bottom:8px">Select the levels in your pipeline.</div><div class="gr" id="feeder-row"></div></div>
+        <div id="feeder-coed-area"></div>
+      </div>
+      <div id="club-setup" style="display:none">
+        <div class="sl">Community Levels</div>
+        <div class="fld"><div class="fl">What age groups does your club cover?</div><div style="font-size:11px;color:var(--grd);margin-bottom:8px">Select all that train under your program.</div><div class="gr" id="lvl-grid"><div class="gb" onclick="tLvl('youth',this)">YOUTH</div><div class="gb" onclick="tLvl('middle',this)">MIDDLE SCHOOL</div><div class="gb" onclick="tLvl('high',this)">HIGH SCHOOL</div></div></div>
+        <div class="fld" id="ml-f" style="display:none"><div class="fl">Which levels do you personally coach?</div><div class="gr" id="ml-r"></div></div>
+        <div class="fld" id="co-f" style="display:none"><div class="fl">Practice setup per level</div><div id="co-r"></div></div>
+      </div>
+      <div class="fld" id="sty-f" style="display:none">
+        <div class="sl">Wrestling Styles</div>
+        <div class="sr"><div class="sb lk">FOLKSTYLE</div><div class="sb" id="sf" onclick="this.classList.toggle('on')">FREESTYLE</div><div class="sb" id="sg" onclick="this.classList.toggle('on')">GRECO</div></div>
+        <div class="sn">Folkstyle always included. Add styles for off-season.</div>
+      </div>
+    </div>
+    <div class="ab"><button class="bp off" id="btn3" onclick="goNext(3)">NEXT — SET PREFERENCES</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- S4: PREFERENCES — Sub-screens 4a-4e -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="scr" id="s4">
+    <div class="sc">
+      <!-- Sub-screen container — JS swaps content -->
+      <div id="pref-container">
+        <!-- 4a: UPPER BODY RANK -->
+        <div class="pref-sub active" id="pref-ub">
+          <div class="hero"><div class="hero-ic">🤼</div><div class="hero-tag">Preferences 1 of 5</div><div class="hero-t">Upper Body</div><div class="hero-s">Rank these in the order you want to teach them. #1 gets the most training time.</div></div>
+          <div class="sl">Drag to Rank</div>
+          <div class="rank-list" id="rank-ub">
+            <div class="rank-item" draggable="true" data-id="underhook"><div class="rank-num r1">1</div><div style="flex:1"><div class="rank-name">UNDERHOOK</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="overhook"><div class="rank-num r2">2</div><div style="flex:1"><div class="rank-name">OVERHOOK</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="overunder"><div class="rank-num r3">3</div><div style="flex:1"><div class="rank-name">OVER / UNDER</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="twoonone"><div class="rank-num r4">4</div><div style="flex:1"><div class="rank-name">2-ON-1</div></div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+          <div class="ib"><div class="ib-e">💡</div><div class="ib-t"><strong>Front Headlock</strong> is always included — it connects to every upper body position and is the #1 failed attack destination.</div></div>
+        </div>
+
+        <!-- 4b: LEG ATTACKS RANK -->
+        <div class="pref-sub" id="pref-legs" style="display:none">
+          <div class="hero"><div class="hero-ic">🦵</div><div class="hero-tag">Preferences 2 of 5</div><div class="hero-t">Leg Attacks</div><div class="hero-s">Rank in the order you want to introduce these to your team.</div></div>
+          <div class="sl">Drag to Rank</div>
+          <div class="rank-list" id="rank-legs">
+            <div class="rank-item" draggable="true" data-id="his"><div class="rank-num r1">1</div><div style="flex:1"><div class="rank-name">HEAD INSIDE SINGLE</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="hos"><div class="rank-num r2">2</div><div style="flex:1"><div class="rank-name">HEAD OUTSIDE SINGLE</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="double"><div class="rank-num r3">3</div><div style="flex:1"><div class="rank-name">DOUBLE LEG</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="fireman"><div class="rank-num r4">4</div><div style="flex:1"><div class="rank-name">FIREMAN'S CARRY</div></div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+          <div class="ib"><div class="ib-e">💡</div><div class="ib-t">Sub-positions (high, medium, extended, side) are handled automatically — we front-load high and extended early, then add the rest as the season progresses.</div></div>
+        </div>
+
+        <!-- 4c: FAILED ATTACKS — DISPLAY ONLY -->
+        <div class="pref-sub" id="pref-fa" style="display:none">
+          <div class="hero"><div class="hero-ic">🔄</div><div class="hero-tag">Preferences 3 of 5</div><div class="hero-t">Failed Attacks</div><div class="hero-s">Every wrestler needs to know what to do when an attack fails. Here's the priority order.</div></div>
+          <div class="sl">Priority Order — Set by BASE</div>
+          <div class="rank-list">
+            <div class="locked-item"><div class="rank-num" style="background:rgba(200,168,78,.25);color:var(--gd)">1</div><div style="flex:1"><div class="rank-name" style="color:var(--wh)">FRONT HEADLOCK</div><div class="rank-desc">The most connected position in wrestling.</div></div><div class="lock-badge">LOCKED</div></div>
+            <div class="locked-item"><div class="rank-num" style="background:rgba(200,168,78,.12);color:var(--gdd)">2</div><div style="flex:1"><div class="rank-name" style="color:var(--lt)">SEATBELT / WHIZZER</div><div class="rank-desc">Defending failed attacks from the side.</div></div></div>
+            <div class="locked-item"><div class="rank-num" style="background:rgba(85,85,85,.2);color:var(--grd)">3</div><div style="flex:1"><div class="rank-name" style="color:var(--lt)">50/50 POSITIONS</div><div class="rank-desc">Scramble positions — neither wrestler has clear advantage.</div></div></div>
+          </div>
+          <div class="ib"><div class="ib-e">⚡</div><div class="ib-t">This isn't even close — <strong>Front Headlock is #1</strong>. Your team will train it from day one.</div></div>
+        </div>
+
+        <!-- 4d: TOP RANK -->
+        <div class="pref-sub" id="pref-top" style="display:none">
+          <div class="hero"><div class="hero-ic">⬆️</div><div class="hero-tag">Preferences 4 of 5</div><div class="hero-t">Top Position</div><div class="hero-s">Rank your top position coaching preference.</div></div>
+          <div class="sl">Drag to Rank</div>
+          <div class="rank-list" id="rank-top">
+            <div class="rank-item" draggable="true" data-id="ub-control"><div class="rank-num r1">1</div><div style="flex:1"><div class="rank-name">UPPER BODY CONTROL</div><div class="rank-desc">Wrist ride, chicken wing, arm bar, half nelson</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="leg-riding"><div class="rank-num r2">2</div><div style="flex:1"><div class="rank-name">LEG RIDING</div><div class="rank-desc">Legs in on base and flat</div></div><div class="rank-grip">⋮⋮</div></div>
+            <div class="rank-item" draggable="true" data-id="tilts"><div class="rank-num r3">3</div><div style="flex:1"><div class="rank-name">TILTS</div><div class="rank-desc">Near-fall turns and exposure</div></div><div class="rank-grip">⋮⋮</div></div>
+          </div>
+        </div>
+
+        <!-- 4e: BOTTOM PICK -->
+        <div class="pref-sub" id="pref-bottom" style="display:none">
+          <div class="hero"><div class="hero-ic">⬇️</div><div class="hero-tag">Preferences 5 of 5</div><div class="hero-t">Bottom Position</div><div class="hero-s">What's your main coaching focus from bottom?</div></div>
+          <div class="sl">Pick Your Priority</div>
+          <div class="pick-row">
+            <div class="pick-btn" id="pick-esc" onclick="pickBottom('esc')"><span class="pick-btn-ic">🏃</span><span class="pick-btn-name">ESCAPES</span><span class="pick-btn-desc">Get off bottom and back to feet</span></div>
+            <div class="pick-btn" id="pick-rev" onclick="pickBottom('rev')"><span class="pick-btn-ic">🔄</span><span class="pick-btn-name">REVERSALS</span><span class="pick-btn-desc">Turn the tables — bottom to top control</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ab"><button class="bp" id="btn4" onclick="goNextPref()">NEXT</button></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- S5: CODES -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="scr" id="s5">
+    <div class="sc">
+      <div class="hero"><div class="hero-ic">🔑</div><div class="hero-tag">You're All Set</div><div class="hero-t">Your Codes</div><div class="hero-s">Share these to build your roster</div></div>
+      <div id="codes-out"></div>
+      <div class="ib"><div class="ib-e">💡</div><div class="ib-t">Text your group chat, post in the gym, or paste into Remind or GroupMe. <strong>Everyone needs a code to join.</strong></div></div>
+      <div class="sl">Summary</div>
+      <div class="ts">
+        <div class="tr"><div class="tk">Team</div><div class="tv gd" id="z-team">—</div></div>
+        <div class="tr"><div class="tk">Your Role</div><div class="tv gd" id="z-role">—</div></div>
+        <div class="tr"><div class="tk">Community</div><div class="tv" id="z-com">—</div></div>
+        <div class="tr"><div class="tk">Your Levels</div><div class="tv" id="z-lvl">—</div></div>
+        <div class="tr"><div class="tk">Styles</div><div class="tv gd" id="z-sty">Folkstyle</div></div>
+      </div>
+    </div>
+    <div class="ab"><button class="bp" onclick="finishOnboarding()">GO TO DASHBOARD</button></div>
+  </div>
+
+  <!-- S6: NON-HEAD-COACH DONE -->
+  <div class="scr" id="s6">
+    <div class="sc">
+      <div style="text-align:center;padding:20px 0 30px">
+        <div style="width:90px;height:90px;border-radius:50%;border:2px solid var(--gd);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px;box-shadow:0 0 40px rgba(200,168,78,.2)">✅</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--gd);margin-bottom:6px">TEAM REGISTERED</div>
+        <div style="font-size:13px;color:var(--grd);line-height:1.6;max-width:260px;margin:0 auto" id="done-sub">—</div>
+      </div>
+      <div class="sl">Head Coach Code</div>
+      <div class="cc big" id="hc-card"></div>
+      <div class="ib"><div class="ib-e">👑</div><div class="ib-t">Give this code to the head coach. They'll get <strong>full control</strong> — practice planning, roster management, everything.</div></div>
+    </div>
+    <div class="ab"><button class="bp" onclick="finishOnboarding()">GO TO DASHBOARD</button></div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+  <div class="saving" id="savingEl">✓ Saved</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SCRIPTS -->
+<!-- ══════════════════════════════════════ -->
+<script>
+// ── STATE ──
+var S=0, prefStep=0, teamMode=null, role=null, teamName='', teamId=null, bottomPick=null;
+var cL={youth:false,middle:false,high:false}, mL={}, cP={};
+var LL={youth:'Youth',middle:'Middle School',high:'High School'};
+var RL={head:'Head Coach',asst:'Assistant Coach',parent:'Parent / Supporter'};
+var pType=null, schoolLvl=null, schoolCoed=null, feeders={};
+var FEEDER_MAP={high:['middle','youth'],middle:['youth'],youth:[]};
+var db=null, auth=null, firebaseReady=false;
+var PREF_SUBS=['pref-ub','pref-legs','pref-fa','pref-top','pref-bottom'];
+
+function $(id){return document.getElementById(id)}
+
+// ── FIREBASE SAVE HELPERS ──
+function saveToUser(data){
+  if(!firebaseReady||!auth.currentUser) return Promise.resolve();
+  return db.collection('users').doc(auth.currentUser.uid).set(data,{merge:true}).then(function(){showSaved()});
+}
+function saveToTeam(data){
+  if(!firebaseReady||!teamId) return Promise.resolve();
+  return db.collection('teams').doc(teamId).set(data,{merge:true}).then(function(){showSaved()});
+}
+function showSaved(){
+  var el=$('savingEl');el.classList.add('show');setTimeout(function(){el.classList.remove('show')},1500);
+}
+
+// ── NAVIGATION ──
+function goNext(from){
+  if(from===0){
+    // Save profile
+    var profile={
+      firstName:$('fname').value.trim(),
+      lastName:$('lname').value.trim(),
+      school:$('school').value.trim(),
+      city:$('city').value.trim(),
+      state:$('state').value,
+      experience:$('exp').value,
+      onboardingStep:1
+    };
+    saveToUser(profile);
+    checkTeamExists();
+  }
+  else if(from===1){
+    teamName=teamMode==='join'?$('found-name').textContent:($('team-name').value.trim()||$('school').value);
+    $('role-team').textContent=teamName;
+    // Save team
+    if(teamMode==='create'){
+      teamId=generateId();
+      var teamData={
+        name:teamName,
+        school:$('school').value.trim(),
+        city:$('city').value.trim(),
+        state:$('state').value,
+        createdBy:auth&&auth.currentUser?auth.currentUser.uid:'local',
+        createdAt:new Date()
+      };
+      saveToTeam(teamData);
+    }
+    saveToUser({teamId:teamId,teamName:teamName,onboardingStep:2});
+    S=2;showScreen(2);return;
+  }
+  else if(from===2){
+    saveToUser({role:role,onboardingStep:3});
+    if(teamId){
+      var memberData={};
+      memberData['members.'+(auth&&auth.currentUser?auth.currentUser.uid:'local')]={
+        role:role,
+        name:$('fname').value.trim()+' '+$('lname').value.trim(),
+        joinedAt:new Date()
+      };
+      saveToTeam(memberData);
+    }
+    if(role==='head'){S=3;showScreen(3);return;}
+    else{finishNonHead();return;}
+  }
+  else if(from===3){
+    // Save community settings
+    var fl=getFinalLevels();
+    var sty=['folkstyle'];
+    if($('sf').classList.contains('on'))sty.push('freestyle');
+    if($('sg').classList.contains('on'))sty.push('greco');
+    var communityData={
+      programType:pType,
+      levels:fl.levels,
+      myLevels:fl.myLevels,
+      feeders:fl.feeders,
+      coedMap:fl.coedMap,
+      styles:sty
+    };
+    saveToTeam({settings:communityData});
+    saveToUser({onboardingStep:4});
+    S=4;prefStep=0;showScreen(4);showPref(0);return;
+  }
+  S++;showScreen(S);
+}
+
+function goBack(){
+  if(S===4&&prefStep>0){prefStep--;showPref(prefStep);return;}
+  if(S>0){S--;showScreen(S);}
+}
+
+function showScreen(s){
+  document.querySelectorAll('.scr').forEach(function(x){x.classList.remove('active');x.style.display='none'});
+  var el=$('s'+s);if(el){el.style.display='flex';el.classList.add('active')}
+  var n=Math.min(s,5);
+  [0,1,2,3,4,5].forEach(function(i){
+    var d=$('d'+i),l=$('l'+i);if(!d)return;
+    d.className='pg-dot';l.className='pg-lbl';
+    if(i<n){d.classList.add('done');l.classList.add('done')}
+    else if(i===n){d.classList.add('on');l.classList.add('on')}
+  });
+  $('pg').style.display=s>=5?'none':'block';
+  $('bk').classList.toggle('hidden',s===0||s>=5);
+  window.scrollTo(0,0);
+}
+
+// ── PREFERENCE SUB-NAV ──
+function goNextPref(){
+  if(prefStep===4){
+    // Bottom — require pick
+    if(!bottomPick){toast('Pick your bottom priority');return;}
+    // Save all preferences
+    var prefs={
+      upperBody:getRank('rank-ub'),
+      legAttacks:getRank('rank-legs'),
+      failedAttacks:['front-headlock','seatbelt-whizzer','50-50'],
+      top:getRank('rank-top'),
+      bottom:bottomPick
+    };
+    saveToTeam({preferences:prefs});
+    saveToUser({onboardingStep:5});
+    // Build codes and go to codes screen
+    buildCodes();
+    S=5;showScreen(5);
+    return;
+  }
+  prefStep++;
+  showPref(prefStep);
+}
+
+function showPref(idx){
+  PREF_SUBS.forEach(function(id,i){
+    $(id).style.display=i===idx?'block':'none';
+  });
+  // Update button text
+  var labels=['NEXT — LEG ATTACKS','NEXT — FAILED ATTACKS','NEXT — TOP POSITION','NEXT — BOTTOM POSITION','FINISH PREFERENCES'];
+  $('btn4').textContent=labels[idx]||'NEXT';
+  if(idx===4)$('btn4').classList.toggle('off',!bottomPick);
+  else $('btn4').classList.remove('off');
+  window.scrollTo(0,0);
+}
+
+function getRank(listId){
+  var items=$(listId).querySelectorAll('.rank-item');
+  return Array.from(items).map(function(x){return x.getAttribute('data-id')});
+}
+
+function pickBottom(choice){
+  bottomPick=choice;
+  $('pick-esc').classList.toggle('on',choice==='esc');
+  $('pick-rev').classList.toggle('on',choice==='rev');
+  $('btn4').classList.remove('off');
+}
+
+// ── TEAM CHECK ──
+function checkTeamExists(){
+  var org=$('school').value.trim(),city=$('city').value.trim(),st=$('state').value;
+  var orgL=org.toLowerCase();
+
+  // If Firebase is ready, try to find existing team
+  if(firebaseReady){
+    db.collection('teams').where('school','==',org).where('state','==',st).limit(1).get()
+      .then(function(snap){
+        if(!snap.empty){
+          var doc=snap.docs[0];
+          var d=doc.data();
+          teamId=doc.id;
+          teamMode='join';
+          $('found-box').style.display='block';$('create-box').style.display='none';
+          $('found-name').textContent=d.name||org;
+          $('found-loc').textContent=(d.city||city)+', '+(d.state||st);
+          $('found-by').textContent=d.createdByName||'A coach';
+          $('found-date').textContent=d.createdAt?new Date(d.createdAt.seconds*1000).toLocaleDateString('en-US',{month:'short',year:'numeric'}):'Recently';
+          var memberCount=d.members?Object.keys(d.members).length:0;
+          if(memberCount>0){
+            $('found-status').textContent=memberCount+' member'+(memberCount>1?'s':'')+' active';
+            $('found-status').style.color='#27ae60';
+            $('active-join').style.display='block';$('inactive-claim').style.display='none';
+          }else{
+            $('found-status').textContent='No active users';
+            $('found-status').style.color='#e74c3c';
+            $('active-join').style.display='none';$('inactive-claim').style.display='block';
+          }
+          $('s1t').textContent='Team Found';$('s1s').textContent='Looks like your team is already on BASE.';
+          $('btn1').classList.add('off');$('btn1').style.display='none';
+        }else{
+          showCreateMode(org,city,st);
+        }
+      })
+      .catch(function(){showCreateMode(org,city,st)});
+  }else{
+    // Demo mode — same behavior as before
+    if(orgL.indexOf('ranger')!==-1){
+      teamMode='join';teamId='demo-ranger47';
+      $('found-box').style.display='block';$('create-box').style.display='none';
+      $('found-name').textContent='Ranger-47 Wrestling Club';$('found-loc').textContent='Dallas, TX';
+      $('found-by').textContent='Mike Torres';$('found-date').textContent='Oct 2025';
+      $('found-status').textContent='12 athletes active';$('found-status').style.color='#27ae60';
+      $('code-from').textContent='Mike Torres';
+      $('active-join').style.display='block';$('inactive-claim').style.display='none';
+      $('s1t').textContent='Team Found';$('s1s').textContent='Looks like your team is already on BASE.';
+      $('btn1').classList.add('off');$('btn1').style.display='none';
+    }else{showCreateMode(org,city,st)}
+  }
+  S=1;showScreen(1);
+}
+
+function showCreateMode(org,city,st){
+  teamMode='create';
+  $('found-box').style.display='none';$('create-box').style.display='block';
+  $('create-org').textContent=org||'your team';$('create-loc').textContent=city+(st?', '+st:'');
+  $('team-name').value=org;
+  $('s1t').textContent='Create Your Team';$('s1s').textContent="We'll get it set up for you.";
+  $('btn1').style.display='block';checkCreate();
+}
+
+function claimTeam(){
+  teamMode='create';
+  $('found-box').style.display='none';$('create-box').style.display='block';
+  $('team-name').value=$('found-name').textContent;
+  $('create-org').textContent=$('found-name').textContent;$('create-loc').textContent=$('found-loc').textContent;
+  $('s1t').textContent='Claim Your Team';$('btn1').style.display='block';checkCreate();
+  toast('Team claimed — confirm details');
+}
+function forceCreate(){
+  teamMode='create';teamId=null;
+  $('found-box').style.display='none';$('create-box').style.display='block';
+  $('create-org').textContent='your team';$('create-loc').textContent=$('city').value+', '+$('state').value;
+  $('team-name').value='';$('team-name').focus();
+  $('s1t').textContent='Create Your Team';$('btn1').style.display='block';$('btn1').classList.add('off');
+}
+function checkCreate(){$('btn1').classList.toggle('off',!$('team-name').value.trim())}
+function doJoin(){
+  var c=$('jc').value.trim().toUpperCase();
+  // In live mode, validate code against Firestore
+  if(firebaseReady&&teamId){
+    db.collection('teams').doc(teamId).collection('codes').where('code','==',c).limit(1).get()
+      .then(function(snap){
+        if(!snap.empty){teamMode='join';goNext(1)}
+        else{toast('Invalid code')}
+      });
+  }else{
+    if(c==='BASE47'){teamMode='join';goNext(1)}
+    else{toast('Invalid code — try BASE47')}
+  }
+}
+
+// ── ROLE ──
+function pickRole(r,el){
+  role=r;
+  document.querySelectorAll('#role-row .rb').forEach(function(b){b.classList.remove('on')});el.classList.add('on');
+  var info=$('role-info');
+  if(r==='head'){info.style.display='block';info.innerHTML='<div class="ib"><div class="ib-e">👑</div><div class="ib-t"><strong>Full control.</strong> Practice planning, roster management, community setup, all codes.</div></div>';$('btn2').textContent='NEXT — BUILD YOUR COMMUNITY'}
+  else if(r==='asst'){info.style.display='block';info.innerHTML='<div class="ib"><div class="ib-e">🤝</div><div class="ib-t"><strong>Staff access.</strong> View team data and run practices. Head coach code will be generated.</div></div>';$('btn2').textContent='FINISH SETUP'}
+  else{info.style.display='block';info.innerHTML='<div class="ib"><div class="ib-e">👪</div><div class="ib-t"><strong>Supporter access.</strong> Head coach code will be generated for you to share.</div></div>';$('btn2').textContent='FINISH SETUP'}
+  $('btn2').classList.remove('off');
+}
+
+function finishNonHead(){
+  var tn=teamName||$('team-name').value||$('school').value;
+  $('done-sub').textContent='You registered '+tn+' on BASE Wrestling as '+RL[role]+'. Now get the head coach on board.';
+  var hc=mc('HC');
+  $('hc-card').innerHTML='<div class="cs"><div class="ct">👑 Head Coach Code</div><div class="cv">'+hc+'</div><div class="cd">This unlocks full control for the head coach.</div><div class="cr"><button class="cb" onclick="copyC(\''+hc+'\')">📋 COPY</button><button class="cb sm" onclick="smsC(\''+hc+'\',\'head\')">💬 TEXT</button></div></div>';
+  // Save code to Firestore
+  if(firebaseReady&&teamId){
+    db.collection('teams').doc(teamId).collection('codes').add({code:hc,type:'head-coach',createdAt:new Date(),used:false});
+  }
+  saveToUser({onboardingComplete:true,onboardingStep:6});
+  S=6;showScreen(6);
+}
+
+// ── COMMUNITY BUILDER ──
+function pickType(t,el){
+  pType=t;
+  document.querySelectorAll('#ptype-row .rb').forEach(function(b){b.classList.remove('on')});el.classList.add('on');
+  if(t==='school'){$('school-setup').style.display='block';$('club-setup').style.display='none';schoolLvl=null;schoolCoed=null;feeders={};document.querySelectorAll('#school-lvl-row .gb').forEach(function(b){b.classList.remove('on')});$('school-coed-f').style.display='none';$('feeder-f').style.display='none';$('sty-f').style.display='none'}
+  else{$('school-setup').style.display='none';$('club-setup').style.display='block';cL={youth:false,middle:false,high:false};mL={};cP={};document.querySelectorAll('#lvl-grid .gb').forEach(function(b){b.classList.remove('on')});$('ml-f').style.display='none';$('co-f').style.display='none';$('sty-f').style.display='none'}
+  chkBld();
+}
+function pickSchoolLvl(lvl,el){
+  schoolLvl=lvl;schoolCoed=null;feeders={};
+  document.querySelectorAll('#school-lvl-row .gb').forEach(function(b){b.classList.remove('on')});el.classList.add('on');
+  $('school-coed-label').textContent=LL[lvl];$('school-coed-f').style.display='block';
+  document.querySelectorAll('#school-coed-row .rb').forEach(function(b){b.classList.remove('on')});
+  $('feeder-f').style.display='none';$('sty-f').style.display='none';chkBld();
+}
+function setSchoolCoed(v,el){
+  schoolCoed=v;
+  document.querySelectorAll('#school-coed-row .rb').forEach(function(b){b.classList.remove('on')});el.classList.add('on');
+  var avail=FEEDER_MAP[schoolLvl]||[];
+  if(avail.length){$('feeder-f').style.display='block';$('feeder-row').innerHTML=avail.map(function(x){return'<div class="gb'+(feeders[x]?' on':'')+'" onclick="toggleFeeder(\''+x+'\',this)">'+LL[x].toUpperCase()+'</div>'}).join('')}
+  $('sty-f').style.display='block';chkBld();
+}
+function toggleFeeder(k,el){feeders[k]=!feeders[k];if(!feeders[k])delete feeders[k];el.classList.toggle('on',!!feeders[k]);chkBld()}
+function tLvl(k,el){
+  cL[k]=!cL[k];el.classList.toggle('on',cL[k]);if(!cL[k]){delete mL[k];delete cP[k]}
+  var s=Object.keys(cL).filter(function(x){return cL[x]});
+  if(s.length){$('ml-f').style.display='block';$('ml-r').innerHTML=s.map(function(x){return'<div class="gb'+(mL[x]?' on':'')+'" onclick="tMl(\''+x+'\',this)">'+LL[x].toUpperCase()+'</div>'}).join('');coUI()}
+  else{$('ml-f').style.display='none';mL={};$('co-f').style.display='none';$('sty-f').style.display='none'}
+  chkBld();
+}
+function tMl(k,el){
+  mL[k]=!mL[k];if(!mL[k])delete mL[k];el.classList.toggle('on',!!mL[k]);
+  var any=Object.keys(mL).length>0;$('co-f').style.display=any?'block':'none';$('sty-f').style.display=any?'block':'none';coUI();chkBld();
+}
+function coUI(){
+  var s=Object.keys(cL).filter(function(x){return cL[x]});
+  $('co-r').innerHTML=s.map(function(k){var v=cP[k]||'';return'<div style="margin-bottom:12px"><div style="font-size:12px;color:var(--wh);font-weight:600;margin-bottom:6px">'+LL[k]+'</div><div class="rr"><div class="rb'+(v==='coed'?' on':'')+'" onclick="sCP(\''+k+'\',\'coed\',this)" style="font-size:13px;padding:10px"><span class="ri">👥</span>Co-Ed</div><div class="rb'+(v==='sep'?' on':'')+'" onclick="sCP(\''+k+'\',\'sep\',this)" style="font-size:13px;padding:10px"><span class="ri">↔️</span>Separate</div></div></div>'}).join('');
+}
+function sCP(k,v,el){cP[k]=v;el.parentElement.querySelectorAll('.rb').forEach(function(b){b.classList.remove('on')});el.classList.add('on');chkBld()}
+function chkBld(){
+  var ready=false;
+  if(pType==='school'){ready=schoolLvl&&schoolCoed}
+  else if(pType==='club'){var s=Object.keys(cL).filter(function(x){return cL[x]});var hm=Object.keys(mL).some(function(x){return mL[x]});var ac=s.length>0&&s.every(function(x){return cP[x]});ready=s.length&&hm&&ac}
+  $('btn3').classList.toggle('off',!ready);
+}
+function getFinalLevels(){
+  if(pType==='school'){var cm={};cm[schoolLvl]={coed:schoolCoed};var fSel=Object.keys(feeders).filter(function(k){return feeders[k]});return{levels:[schoolLvl],myLevels:[schoolLvl],feeders:fSel,coedMap:cm}}
+  else{var s=Object.keys(cL).filter(function(x){return cL[x]});var ml=Object.keys(mL).filter(function(x){return mL[x]});var cm={};s.forEach(function(k){cm[k]={coed:cP[k]}});return{levels:s,myLevels:ml,feeders:[],coedMap:cm}}
+}
+
+// ── CODES ──
+function mc(pre){var tn=$('team-name')?$('team-name').value:'';if(!tn)tn=teamName||$('school').value||'R';var c=($('city').value||'D')[0].toUpperCase(),s=($('state').value||'T')[0].toUpperCase(),t=(tn||'R')[0].toUpperCase();return pre+c+s+t+Math.floor(10+Math.random()*90)}
+function buildCodes(){
+  var tn=teamName||($('team-name')?$('team-name').value:'')||$('school').value||'—';
+  var fl=getFinalLevels();var sel=fl.levels;var h='';
+  var sc=mc('CS');
+  h+='<div class="sl">Coaching Staff Code</div>';
+  h+='<div class="cc"><div class="cs"><div class="ct">🤝 Coaching Staff</div><div class="cv">'+sc+'</div><div class="cd">Share with assistant coaches.</div>'+cBtn(sc,'coach')+'</div></div>';
+  h+='<div class="sl">Athlete Codes</div>';
+  var codesToSave=[];
+  codesToSave.push({code:sc,type:'coach',level:'all'});
+  sel.forEach(function(k){
+    var ci=fl.coedMap[k];
+    if(ci&&ci.coed==='coed'){var a=mc('AT');h+='<div class="cc"><div class="cs"><div class="ct">'+LL[k]+' — All Athletes</div><div class="cv">'+a+'</div>'+cBtn(a,'ath')+'</div></div>';codesToSave.push({code:a,type:'athlete',level:k,gender:'coed'})}
+    else{var ab=mc('AT'),ag=mc('AT');h+='<div class="cc"><div class="cs"><div class="ct">'+LL[k]+' — Boys</div><div class="cv">'+ab+'</div>'+cBtn(ab,'ath')+'</div></div>';h+='<div class="cc"><div class="cs"><div class="ct">'+LL[k]+' — Girls</div><div class="cv">'+ag+'</div>'+cBtn(ag,'ath')+'</div></div>';codesToSave.push({code:ab,type:'athlete',level:k,gender:'boys'});codesToSave.push({code:ag,type:'athlete',level:k,gender:'girls'})}
+  });
+  if(fl.feeders&&fl.feeders.length){
+    h+='<div class="sl">Feeder Program Codes</div>';
+    h+='<div class="ib" style="margin-bottom:10px"><div class="ib-e">📋</div><div class="ib-t">Give these to your feeder program coaches.</div></div>';
+    fl.feeders.forEach(function(k){var fc=mc('FD');h+='<div class="cc"><div class="cs"><div class="ct">'+LL[k]+' — Feeder Coach Code</div><div class="cv">'+fc+'</div><div class="cd">Give to the '+LL[k]+' head coach.</div>'+cBtn(fc,'coach')+'</div></div>';codesToSave.push({code:fc,type:'feeder-coach',level:k})});
+  }
+  $('codes-out').innerHTML=h;
+  $('z-team').textContent=tn;$('z-role').textContent='Head Coach';
+  $('z-com').textContent=(pType==='school'?'School':'Club')+' — '+sel.map(function(x){return LL[x]}).join(', ');
+  $('z-lvl').textContent=fl.myLevels.map(function(x){return LL[x]}).join(', ')+(fl.feeders&&fl.feeders.length?' (overseeing '+fl.feeders.map(function(x){return LL[x]}).join(', ')+')':'');
+  var sty=['Folkstyle'];if($('sf').classList.contains('on'))sty.push('Freestyle');if($('sg').classList.contains('on'))sty.push('Greco');
+  $('z-sty').textContent=sty.join(' · ');
+
+  // Save all codes to Firestore
+  if(firebaseReady&&teamId){
+    codesToSave.forEach(function(c){
+      db.collection('teams').doc(teamId).collection('codes').add({code:c.code,type:c.type,level:c.level,gender:c.gender||null,createdAt:new Date(),used:false});
+    });
+  }
+}
+function cBtn(code,type){return'<div class="cr"><button class="cb" onclick="copyC(\''+code+'\')">📋 COPY</button><button class="cb sm" onclick="smsC(\''+code+'\',\''+type+'\')">💬 TEXT</button></div>'}
+function copyC(c){navigator.clipboard.writeText(c).catch(function(){});toast('Code copied!')}
+function smsC(c,t){var m=t==='head'?'Claim your team on BASE Wrestling as Head Coach: '+c:t==='coach'?'Join our coaching staff on BASE Wrestling: '+c:'Join our team on BASE Wrestling: '+c;window.location.href='sms:?body='+encodeURIComponent(m)}
+
+// ── FINISH ──
+function finishOnboarding(){
+  saveToUser({onboardingComplete:true,onboardingStep:6});
+  toast('Opening dashboard...');
+  setTimeout(function(){window.location.href='coach-dashboard.html'},1500);
+}
+
+// ── UTILITIES ──
+function generateId(){return'team_'+Date.now()+'_'+Math.random().toString(36).substr(2,9)}
+function toast(m){var t=$('toastEl');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2400)}
+
+// ── DRAG TO RANK ──
+function initDrag(listId){
+  var list=$(listId);if(!list)return;
+  var items=list.querySelectorAll('.rank-item');var dragItem=null;
+  items.forEach(function(item){
+    item.addEventListener('dragstart',function(e){dragItem=this;this.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
+    item.addEventListener('dragend',function(){this.classList.remove('dragging');list.querySelectorAll('.rank-item').forEach(function(x){x.classList.remove('over')});updateNums(list);dragItem=null});
+    item.addEventListener('dragover',function(e){e.preventDefault();if(this!==dragItem&&dragItem)this.classList.add('over')});
+    item.addEventListener('dragleave',function(){this.classList.remove('over')});
+    item.addEventListener('drop',function(e){e.preventDefault();this.classList.remove('over');if(this!==dragItem&&dragItem){var all=Array.from(list.querySelectorAll('.rank-item'));var fi=all.indexOf(dragItem),ti=all.indexOf(this);if(fi<ti)list.insertBefore(dragItem,this.nextSibling);else list.insertBefore(dragItem,this);updateNums(list)}});
+    // Touch
+    var touchY=0;
+    item.addEventListener('touchstart',function(e){dragItem=this;touchY=e.touches[0].clientY;this.classList.add('dragging');e.preventDefault()},{passive:false});
+    item.addEventListener('touchmove',function(e){if(!dragItem)return;e.preventDefault();var touch=e.touches[0];var dy=touch.clientY-touchY;dragItem.style.transform='translateY('+dy+'px) scale(1.02)';dragItem.style.zIndex='10';dragItem.style.position='relative';var els=document.elementsFromPoint(touch.clientX,touch.clientY);list.querySelectorAll('.rank-item').forEach(function(x){x.classList.remove('over')});for(var i=0;i<els.length;i++){if(els[i].classList&&els[i].classList.contains('rank-item')&&els[i]!==dragItem){els[i].classList.add('over');break}}},{passive:false});
+    item.addEventListener('touchend',function(){if(!dragItem)return;dragItem.style.transform='';dragItem.style.zIndex='';dragItem.style.position='';dragItem.classList.remove('dragging');var over=list.querySelector('.rank-item.over');if(over&&over!==dragItem){var all=Array.from(list.querySelectorAll('.rank-item'));var fi=all.indexOf(dragItem),ti=all.indexOf(over);if(fi<ti)list.insertBefore(dragItem,over.nextSibling);else list.insertBefore(dragItem,over)}list.querySelectorAll('.rank-item').forEach(function(x){x.classList.remove('over')});updateNums(list);dragItem=null});
+  });
+}
+function updateNums(list){
+  var ranks=['r1','r2','r3','r4'];
+  list.querySelectorAll('.rank-item').forEach(function(item,i){var num=item.querySelector('.rank-num');num.textContent=i+1;num.className='rank-num '+(ranks[i]||'r4')});
+}
+
+// ── INIT ──
+initDrag('rank-ub');initDrag('rank-legs');initDrag('rank-top');
+</script>
+
+<!-- ══════════════════════════════════════ -->
+<!-- FIREBASE SDK -->
+<!-- ══════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+if(typeof firebase!=='undefined'){
+  firebase.initializeApp({
+    apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+    authDomain:"base-wrestling-app.firebaseapp.com",
+    projectId:"base-wrestling-app",
+    storageBucket:"base-wrestling-app.appspot.com",
+    messagingSenderId:"000000000000",
+    appId:"1:000000000000:web:placeholder"
+  });
+  auth=firebase.auth();
+  db=firebase.firestore();
+  firebaseReady=true;
+
+  // If user is logged in, pre-fill from their profile
+  auth.onAuthStateChanged(function(user){
+    if(user){
+      db.collection('users').doc(user.uid).get().then(function(doc){
+        if(doc.exists){
+          var d=doc.data();
+          if(d.firstName)$('fname').value=d.firstName;
+          if(d.lastName)$('lname').value=d.lastName;
+          if(d.school)$('school').value=d.school;
+          if(d.city)$('city').value=d.city;
+          if(d.state){var opts=$('state').options;for(var i=0;i<opts.length;i++){if(opts[i].text===d.state||opts[i].value===d.state){$('state').selectedIndex=i;break}}}
+          if(d.teamId)teamId=d.teamId;
+          // Resume from where they left off
+          if(d.onboardingStep&&d.onboardingStep>0&&!d.onboardingComplete){
+            toast('Resuming where you left off...');
+          }
+        }
+      });
+    }
+  });
+}else{
+  console.log('Firebase not available — demo mode active');
+}
+</script>
+</body>
+</html>

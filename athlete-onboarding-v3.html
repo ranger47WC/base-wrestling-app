@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athlete Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#ff4d4d;--rdg:rgba(255,77,77,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr);transition:all .2s;display:none}
+.hd-back.show{display:flex}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-step{font-size:11px;color:var(--grd);font-weight:600}
+.progress-wrap{padding:12px 20px 8px;flex-shrink:0}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.progress-count{font-size:11px;color:var(--gd);font-weight:700}
+.progress-bar{height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gd);border-radius:2px;transition:width .4s ease}
+.content{flex:1;overflow-y:auto;padding:0 20px 120px}
+.video-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:16px 0;overflow:hidden}
+.video-thumb{height:180px;background:var(--bk);display:flex;align-items:center;justify-content:center}
+.video-play{width:56px;height:56px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--bk);cursor:pointer}
+.video-label{padding:12px 16px;font-size:12px;color:var(--gr);font-weight:600}
+.section-intro{padding:24px 0 16px;text-align:center}
+.section-icon{font-size:44px;margin-bottom:12px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--gd);margin-bottom:8px}
+.section-desc{font-size:13px;color:var(--gr);line-height:1.5;max-width:340px;margin:0 auto}
+.field{margin-bottom:16px}
+.field-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--grd);margin-bottom:6px}
+.field-input{width:100%;padding:14px 16px;background:var(--bk);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Barlow',sans-serif;font-size:15px;outline:none;transition:border-color .2s}
+.field-input:focus{border-color:var(--gd)}
+.field-input::placeholder{color:var(--grd)}
+select.field-input{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' fill='none' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+select.field-input option{background:var(--cd);color:var(--wh)}
+.star-card{background:var(--cd);border:2px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px}
+.star-card:hover{border-color:var(--gdd)}
+.star-card.selected{border-color:var(--gd);background:var(--gdg)}
+.star-stars{font-size:16px;white-space:nowrap;flex-shrink:0}
+.star-info{flex:1}
+.star-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh)}
+.star-card.selected .star-name{color:var(--gd)}
+.star-desc{font-size:12px;color:var(--gr);margin-top:2px;line-height:1.3}
+.star-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:transparent;transition:all .2s}
+.star-card.selected .star-check{border-color:var(--gd);background:var(--gd);color:var(--bk)}
+.fam-header{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gd);margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+.fam-header::after{content:'';flex:1;height:1px;background:var(--bd)}
+.fam-item{background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s}
+.fam-item:hover{border-color:var(--gdd)}
+.fam-item.checked{border-color:var(--gn);background:rgba(39,174,96,.06)}
+.fam-item-name{font-size:14px;color:var(--wh);font-weight:500}
+.fam-item.checked .fam-item-name{color:var(--gn)}
+.fam-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:transparent;transition:all .2s}
+.fam-item.checked .fam-check{border-color:var(--gn);background:var(--gn);color:#fff}
+.fam-counter{text-align:center;padding:12px;font-size:13px;color:var(--gr)}
+.fam-counter span{color:var(--gd);font-weight:700}
+.wl-row{display:flex;gap:12px;margin-bottom:16px}
+.wl-box{flex:1;text-align:center}
+.wl-label{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--grd);margin-bottom:6px}
+.wl-input{width:100%;padding:16px;background:var(--bk);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;text-align:center;outline:none;-moz-appearance:textfield}
+.wl-input::-webkit-outer-spin-button,.wl-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.wl-input:focus{border-color:var(--gd)}
+.wl-input.wins{border-color:var(--gn)}
+.wl-input.losses{border-color:var(--rd)}
+.complete-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1;min-height:60vh}
+.complete-icon{font-size:64px;margin-bottom:20px}
+.complete-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gd);margin-bottom:12px}
+.complete-sub{font-size:14px;color:var(--gr);line-height:1.6;max-width:300px;margin-bottom:24px}
+.route-cards{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px}
+.route-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:4px;padding-left:4px}
+.route-label.comp{color:var(--rd)}
+.route-label.prep{color:var(--gd)}
+.route-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
+.route-card:hover{border-color:var(--gdd);transform:translateX(4px)}
+.route-icon{font-size:24px}
+.route-info{flex:1;text-align:left}
+.route-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--wh)}
+.route-desc{font-size:11px;color:var(--gr);margin-top:2px}
+.route-arrow{color:var(--grd);font-size:14px}
+.route-skip{margin-top:12px;padding:14px;border-radius:var(--r);border:1px solid var(--gdd);background:var(--gdg);text-align:center;cursor:pointer;transition:all .2s}
+.route-skip:hover{background:var(--gd)}
+.route-skip-text{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.route-skip:hover .route-skip-text{color:var(--bk)}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px;background:linear-gradient(transparent,var(--dk) 20%);display:flex;gap:10px;z-index:20}
+.btn-back{flex:0 0 auto;padding:14px 20px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gr);cursor:pointer}
+.btn-next{flex:1;padding:14px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;text-align:center;transition:all .3s}
+.btn-next.ready{background:var(--gd);color:var(--bk)}
+.btn-next.disabled{background:var(--bd);color:var(--grd);pointer-events:none}
+.screen{display:none}.screen.active{display:flex;flex-direction:column;flex:1;min-height:0}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="hd">
+ <div class="hd-left">
+  <div class="hd-back" id="backBtn" onclick="goBack()">←</div>
+  <div class="hd-info"><div>BASE WRESTLING</div><div id="hdSub">Athlete Setup</div></div>
+ </div>
+ <div class="hd-step" id="hdStep"></div>
+</div>
+<div class="progress-wrap" id="progWrap">
+ <div class="progress-top"><div class="progress-label" id="progLabel">Getting Started</div><div class="progress-count" id="progCount"></div></div>
+ <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- S1: WELCOME -->
+<div class="screen active" id="s-welcome"><div class="content">
+ <div class="section-intro"><div class="section-icon">🤼</div><div class="section-title">WELCOME TO BASE</div><div class="section-desc">Battle. Athletic. Skill. Exercise.<br>Your journey starts here.</div></div>
+ <div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div><div class="video-label">📹 Introduction to BASE Wrestling — Coach Andy Hrovat</div></div>
+ <div style="text-align:center;font-size:13px;color:var(--gr);line-height:1.5;padding-bottom:16px">Watch this quick intro to understand the BASE system and how it will help you improve — whether you're brand new or a state placer.</div>
+</div></div>
+
+<!-- S2: PROFILE -->
+<div class="screen" id="s-profile"><div class="content">
+ <div class="section-intro"><div class="section-icon">👤</div><div class="section-title">ABOUT YOU</div><div class="section-desc">Tell us a little about yourself so we can personalize your experience.</div></div>
+ <div class="field"><div class="field-label">FIRST NAME</div><input class="field-input" type="text" placeholder="Your first name" id="fname" oninput="checkNav()"></div>
+ <div class="field"><div class="field-label">LAST NAME</div><input class="field-input" type="text" placeholder="Your last name" id="lname" oninput="checkNav()"></div>
+ <div class="field"><div class="field-label">STATE</div><select class="field-input" id="state" onchange="checkNav()"><option value="">Select your state</option><option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option></select></div>
+ <div class="field"><div class="field-label">SCHOOL</div><input class="field-input" type="text" placeholder="Your school name" id="school" oninput="checkNav()"></div>
+ <div class="field"><div class="field-label">YEARS WRESTLING</div><select class="field-input" id="years" onchange="checkNav()"><option value="">How long have you wrestled?</option><option value="0">This is my first year</option><option>1 year</option><option>2 years</option><option>3 years</option><option>4 years</option><option>5 years</option><option>6 years</option><option>7 years</option><option>8+ years</option></select></div>
+ <div class="field"><div class="field-label">WEIGHT (LBS)</div><input class="field-input" type="number" placeholder="Current weight" id="weight" oninput="checkNav()"></div>
+</div></div>
+
+<!-- S3: TEAM CODE -->
+<div class="screen" id="s-team"><div class="content">
+ <div class="section-intro"><div class="section-icon">🏟️</div><div class="section-title">JOIN YOUR TEAM</div><div class="section-desc">Enter the code your coach gave you to join the team.</div></div>
+ <div class="field"><div class="field-label">TEAM CODE</div><input class="field-input" type="text" placeholder="Enter athlete code" id="teamCode" oninput="checkTeam()" style="text-transform:uppercase;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;text-align:center"></div>
+ <div id="teamResult" style="text-align:center;padding:16px 0;font-size:13px;color:var(--gr)">Your coach should have given you a 6-character athlete code.</div>
+</div></div>
+
+<!-- S4: RANK -->
+<div class="screen" id="s-rank"><div class="content">
+ <div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div><div class="video-label">📹 How to Rate Yourself — Understanding Your Level</div></div>
+ <div class="section-intro" style="padding-top:12px"><div class="section-title">WHERE ARE YOU NOW?</div><div class="section-desc">Rate yourself honestly based on your high school varsity record.</div></div>
+ <div id="rankCards"></div>
+</div></div>
+
+<!-- S5: GOAL -->
+<div class="screen" id="s-goal"><div class="content">
+ <div class="section-intro"><div class="section-icon">🎯</div><div class="section-title">SET YOUR GOAL</div><div class="section-desc">Where do you want to be at the end of this season?</div></div>
+ <div id="goalCards"></div>
+</div></div>
+
+<!-- S6: RECORD -->
+<div class="screen" id="s-record"><div class="content">
+ <div class="section-intro"><div class="section-icon">📊</div><div class="section-title">YOUR RECORD</div><div class="section-desc">Enter your current season wins and losses. New? Enter 0 for both.</div></div>
+ <div class="wl-row">
+  <div class="wl-box"><div class="wl-label">WINS</div><input class="wl-input wins" type="number" value="0" min="0" id="wins"></div>
+  <div class="wl-box"><div class="wl-label">LOSSES</div><input class="wl-input losses" type="number" value="0" min="0" id="losses"></div>
+ </div>
+ <div style="text-align:center;font-size:13px;color:var(--gr);line-height:1.5">Every match earns XP — wins AND losses. Your record will be tracked throughout the season.</div>
+</div></div>
+
+<!-- S7: FAMILIARITY -->
+<div class="screen" id="s-familiar"><div class="content">
+ <div class="section-intro"><div class="section-icon">🗺️</div><div class="section-title">WHAT DO YOU KNOW?</div><div class="section-desc">Check off positions and techniques you're familiar with. No pressure — just helps us know where to start.</div></div>
+ <div class="fam-counter">You know <span id="famCount">0</span> of <span>23</span> battle areas</div>
+ <div id="famMap"></div>
+</div></div>
+
+<!-- S8: COMPLETE -->
+<div class="screen" id="s-complete"><div class="complete-screen">
+ <div class="complete-icon">🏆</div>
+ <div class="complete-title" id="compTitle">YOU'RE ALL SET</div>
+ <div class="complete-sub" id="compSub"></div>
+ <div class="route-cards" id="routeCards"></div>
+</div></div>
+
+<div class="bottom-nav" id="bottomNav">
+ <div class="btn-back" id="navBack" style="display:none" onclick="goBack()">← BACK</div>
+ <div class="btn-next disabled" id="navNext" onclick="goNext()">CONTINUE</div>
+</div>
+</div>
+
+<script>
+var RANKS=[
+ {stars:'⭐',name:'Rookie',desc:'First year high school wrestler',val:1},
+ {stars:'⭐⭐',name:'Novice',desc:'HS wrestler without a winning varsity record',val:2},
+ {stars:'⭐⭐⭐',name:'Varsity 500',desc:'Wrestled varsity with a winning record',val:3},
+ {stars:'⭐⭐⭐⭐',name:'State Qualifier',desc:'Qualified for state but didn\'t place',val:4},
+ {stars:'⭐⭐⭐⭐⭐',name:'State Placer',desc:'Placed at the state tournament',val:5},
+ {stars:'⭐⭐⭐⭐⭐',name:'State Champion — Bronze',desc:'One-time state champion',val:5.1},
+ {stars:'⭐⭐⭐⭐⭐',name:'State Champion — Silver',desc:'Two-time state champion',val:5.2},
+ {stars:'⭐⭐⭐⭐⭐',name:'State Champion — Gold',desc:'Three-time state champion',val:5.3}
+];
+var GOALS=[
+ {stars:'⭐',name:'Learning',desc:'No expectations — just getting better every day',val:1},
+ {stars:'⭐⭐',name:'Varsity Starter',desc:'Be in the varsity starting lineup',val:2},
+ {stars:'⭐⭐⭐',name:'Winning Record',desc:'Have a winning record on varsity',val:3},
+ {stars:'⭐⭐⭐⭐',name:'State Qualifier',desc:'Qualify for the state tournament',val:4},
+ {stars:'⭐⭐⭐⭐⭐',name:'State Placer',desc:'Place at the state tournament',val:5},
+ {stars:'👑',name:'State Champion',desc:'Win a state title',val:6}
+];
+var FAM_DATA=[
+ {section:'Controlling the Mat',items:['Stance','Motion','Level Changes','Body Fakes','Hand Fighting']},
+ {section:'Upper Body Attacks',items:['Underhook','Overhook','Over/Under','2-on-1','Front Headlock']},
+ {section:'Leg Attacks',items:['Head Inside Single','Head Outside Single','Double Leg','Fireman\'s Carry']},
+ {section:'Top Position',items:['Wrist Rides','Arm Bars','Chicken Wing','Half Nelson','Leg Riding']},
+ {section:'Bottom Position',items:['Stand Up','Switch','Sit Out','Granby Roll']}
+];
+
+var SCREENS=['s-welcome','s-profile','s-team','s-rank','s-goal','s-record','s-familiar','s-complete'];
+var LABELS=['Welcome','Profile','Join Team','Current Level','Season Goal','Record','Familiarity','Complete'];
+var cur=0,selRank=null,selGoal=null,famSet=new Set();
+
+function init(){
+ var h='';RANKS.forEach(function(r,i){h+='<div class="star-card" onclick="pickRank('+i+')" id="rk-'+i+'"><div class="star-stars">'+r.stars+'</div><div class="star-info"><div class="star-name">'+r.name+'</div><div class="star-desc">'+r.desc+'</div></div><div class="star-check">✓</div></div>';});
+ document.getElementById('rankCards').innerHTML=h;
+ h='';GOALS.forEach(function(g,i){h+='<div class="star-card" onclick="pickGoal('+i+')" id="gl-'+i+'"><div class="star-stars">'+g.stars+'</div><div class="star-info"><div class="star-name">'+g.name+'</div><div class="star-desc">'+g.desc+'</div></div><div class="star-check">✓</div></div>';});
+ document.getElementById('goalCards').innerHTML=h;
+ h='';FAM_DATA.forEach(function(s){h+='<div class="fam-header">'+s.section+'</div>';s.items.forEach(function(it){var k=s.section+'::'+it;h+='<div class="fam-item" onclick="toggleFam(this,\''+k.replace(/'/g,"\\'")+'\')""><div class="fam-item-name">'+it+'</div><div class="fam-check">✓</div></div>';});});
+ document.getElementById('famMap').innerHTML=h;
+ updateUI();
+}
+
+function pickRank(i){selRank=i;document.querySelectorAll('#rankCards .star-card').forEach(function(c,j){c.classList.toggle('selected',j===i)});checkNav();}
+function pickGoal(i){selGoal=i;document.querySelectorAll('#goalCards .star-card').forEach(function(c,j){c.classList.toggle('selected',j===i)});checkNav();}
+function toggleFam(el,k){if(famSet.has(k)){famSet.delete(k);el.classList.remove('checked')}else{famSet.add(k);el.classList.add('checked')}document.getElementById('famCount').textContent=famSet.size;checkNav();}
+function checkTeam(){var c=document.getElementById('teamCode').value.trim();document.getElementById('teamResult').innerHTML=c.length>=6?'<span style="color:var(--gn);font-weight:600">✓ Team found: Rockwall-Heath Hawks</span>':'Your coach should have given you a 6-character athlete code.';checkNav();}
+
+function checkNav(){
+ var ok=false;
+ switch(SCREENS[cur]){
+  case 's-welcome':ok=true;break;
+  case 's-profile':ok=document.getElementById('fname').value.trim()&&document.getElementById('lname').value.trim()&&document.getElementById('state').value&&document.getElementById('school').value.trim()&&document.getElementById('years').value&&document.getElementById('weight').value;break;
+  case 's-team':ok=document.getElementById('teamCode').value.trim().length>=6;break;
+  case 's-rank':ok=selRank!==null;break;
+  case 's-goal':ok=selGoal!==null;break;
+  case 's-record':ok=true;break;
+  case 's-familiar':ok=true;break;
+ }
+ var btn=document.getElementById('navNext');btn.className='btn-next '+(ok?'ready':'disabled');
+ btn.textContent=cur===SCREENS.length-2?'FINISH':'CONTINUE';
+}
+
+function updateUI(){
+ SCREENS.forEach(function(id,i){document.getElementById(id).classList.toggle('active',i===cur)});
+ var pct=Math.round((cur/(SCREENS.length-1))*100);
+ document.getElementById('progFill').style.width=pct+'%';
+ document.getElementById('progLabel').textContent=LABELS[cur];
+ document.getElementById('progCount').textContent=(cur+1)+'/'+SCREENS.length;
+ document.getElementById('hdStep').textContent='Step '+(cur+1)+' of '+SCREENS.length;
+ document.getElementById('hdSub').textContent=LABELS[cur];
+ document.getElementById('backBtn').classList.toggle('show',cur>0);
+ document.getElementById('navBack').style.display=cur>0?'block':'none';
+ if(cur===SCREENS.length-1){document.getElementById('bottomNav').style.display='none';document.getElementById('progWrap').style.display='none';buildComplete();}
+ else{document.getElementById('bottomNav').style.display='flex';document.getElementById('progWrap').style.display='block';}
+ checkNav();
+}
+
+function goNext(){
+  if(document.getElementById('navNext').classList.contains('disabled'))return;
+  // Save data at each step
+  if(SCREENS[cur]==='s-profile'){
+    saveAthleteData({
+      firstName:document.getElementById('fname').value.trim(),
+      lastName:document.getElementById('lname').value.trim(),
+      state:document.getElementById('state').value,
+      school:document.getElementById('school').value.trim(),
+      yearsWrestling:document.getElementById('years').value,
+      weight:parseInt(document.getElementById('weight').value)||0,
+      onboardingStep:1
+    });
+  }
+  if(SCREENS[cur]==='s-team'){
+    var code=document.getElementById('teamCode').value.trim().toUpperCase();
+    // In live mode, validate code against Firestore and join team
+    if(fbReady){
+      fbDb.collectionGroup('codes').where('code','==',code).limit(1).get().then(function(snap){
+        if(!snap.empty){
+          var codeDoc=snap.docs[0];
+          var teamId=codeDoc.ref.parent.parent.id;
+          saveAthleteData({teamId:teamId,teamCode:code,onboardingStep:2});
+          // Add self to team members
+          var memberUpdate={};
+          var fn=document.getElementById('fname').value.trim();
+          var ln=document.getElementById('lname').value.trim();
+          memberUpdate['members.'+fbUserId]={
+            name:fn+' '+ln,
+            role:'athlete',
+            weight:parseInt(document.getElementById('weight').value)||0,
+            year:document.getElementById('years').value,
+            joinedAt:new Date()
+          };
+          fbDb.collection('teams').doc(teamId).set(memberUpdate,{merge:true});
+        }
+      });
+    }else{
+      saveAthleteData({teamCode:code,onboardingStep:2});
+    }
+  }
+  if(SCREENS[cur]==='s-rank'&&selRank!==null){
+    var r=RANKS[selRank];
+    saveAthleteData({starRank:r.val,starName:r.name,onboardingStep:3});
+    // Update team member with star rating
+    if(fbReady&&fbTeamId){
+      var su={};su['members.'+fbUserId+'.star']=r.val;su['members.'+fbUserId+'.starName']=r.name;
+      fbDb.collection('teams').doc(fbTeamId).set(su,{merge:true});
+    }
+  }
+  if(SCREENS[cur]==='s-goal'&&selGoal!==null){
+    var g=GOALS[selGoal];
+    saveAthleteData({goal:g.val,goalName:g.name,onboardingStep:4});
+    if(fbReady&&fbTeamId){
+      var gu={};gu['members.'+fbUserId+'.goal']=g.val;gu['members.'+fbUserId+'.goalName']=g.name;
+      fbDb.collection('teams').doc(fbTeamId).set(gu,{merge:true});
+    }
+  }
+  if(SCREENS[cur]==='s-record'){
+    var w=parseInt(document.getElementById('wins').value)||0;
+    var l=parseInt(document.getElementById('losses').value)||0;
+    saveAthleteData({wins:w,losses:l,onboardingStep:5});
+    if(fbReady&&fbTeamId){
+      var ru={};ru['members.'+fbUserId+'.wins']=w;ru['members.'+fbUserId+'.losses']=l;
+      fbDb.collection('teams').doc(fbTeamId).set(ru,{merge:true});
+    }
+  }
+  if(SCREENS[cur]==='s-familiar'){
+    saveAthleteData({familiarity:Array.from(famSet),familiarityCount:famSet.size,onboardingStep:6,onboardingComplete:true});
+  }
+  if(cur<SCREENS.length-1){cur++;updateUI();window.scrollTo(0,0);}
+}
+function goBack(){if(cur>0){cur--;updateUI();window.scrollTo(0,0);}}
+
+// ── FIREBASE ──
+var fbDb=null,fbAuth=null,fbReady=false,fbUserId=null,fbTeamId=null;
+function saveAthleteData(data){
+  if(!fbReady||!fbUserId)return;
+  fbDb.collection('users').doc(fbUserId).set(data,{merge:true});
+}
+
+function buildComplete(){
+ var r=selRank!==null?RANKS[selRank]:null;var starVal=r?r.val:1;var adv=starVal>=3;
+ document.getElementById('compTitle').textContent=adv?'GREAT — LET\'S ASSESS':'YOU\'RE ALL SET';
+ document.getElementById('compSub').textContent=adv?'Based on your experience, you\'ll start with the full Battle Assessment. Then we\'ll check your athletic ability and strength.':'Your profile is set. Start with the athletic and strength assessments. The Battle Assessment unlocks as you gain experience.';
+ var h='';
+ if(adv){h+='<div class="route-label comp">COMPETITION</div>';
+  h+='<div class="route-card" onclick="window.location.href=\'athlete-battle-assessment.html\'"><div class="route-icon">⚔️</div><div class="route-info"><div class="route-name">Battle Assessment</div><div class="route-desc">Rate yourself across 33 battle positions</div></div><div class="route-arrow">→</div></div>';}
+ h+='<div class="route-label prep" style="margin-top:12px">PREPARATION</div>';
+ h+='<div class="route-card" onclick="window.location.href=\'athlete-athletic-assessment.html\'"><div class="route-icon">🤸</div><div class="route-info"><div class="route-name">Athletic Assessment</div><div class="route-desc">12 core movements + 4 bonus</div></div><div class="route-arrow">→</div></div>';
+ h+='<div class="route-card" onclick="window.location.href=\'athlete-exercise-assessment.html\'"><div class="route-icon">💪</div><div class="route-info"><div class="route-name">Exercise Assessment</div><div class="route-desc">Gold Standard Circuit — your strength baseline</div></div><div class="route-arrow">→</div></div>';
+ h+='<div class="route-skip" onclick="window.location.href=\'athlete-dashboard.html\'"><div class="route-skip-text">SKIP — GO TO DASHBOARD</div></div>';
+ document.getElementById('routeCards').innerHTML=h;
+}
+init();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+if(typeof firebase!=='undefined'){
+  if(firebase.apps.length===0){
+    firebase.initializeApp({
+      apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+      authDomain:"base-wrestling-app.firebaseapp.com",
+      projectId:"base-wrestling-app",
+      storageBucket:"base-wrestling-app.appspot.com",
+      messagingSenderId:"000000000000",
+      appId:"1:000000000000:web:placeholder"
+    });
+  }
+  fbAuth=firebase.auth();fbDb=firebase.firestore();
+  fbAuth.onAuthStateChanged(function(user){
+    if(user){
+      fbUserId=user.uid;fbReady=true;
+      fbDb.collection('users').doc(user.uid).get().then(function(doc){
+        if(doc.exists){
+          var d=doc.data();
+          if(d.teamId)fbTeamId=d.teamId;
+          if(d.firstName)document.getElementById('fname').value=d.firstName;
+          if(d.lastName)document.getElementById('lname').value=d.lastName;
+        }
+      });
+    }
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athletic Assessment (Athlete)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#ff4d4d;--rdg:rgba(255,77,77,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk);z-index:10}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.progress-wrap{padding:12px 20px 8px;flex-shrink:0}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.progress-count{font-size:11px;color:var(--gd);font-weight:700}
+.progress-bar{height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gd);border-radius:2px;transition:width .3s ease}
+.main{flex:1;overflow-y:auto;padding:0 20px 120px}
+.section-intro{padding:24px 0 16px;text-align:center}
+.section-icon{font-size:44px;margin-bottom:12px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--gd);margin-bottom:8px}
+.section-desc{font-size:13px;color:var(--gr);line-height:1.5;max-width:340px;margin:0 auto}
+.video-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:0 0 16px;overflow:hidden}
+.video-thumb{height:160px;background:var(--bk);display:flex;align-items:center;justify-content:center}
+.video-play{width:50px;height:50px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--bk)}
+.video-label{padding:10px 14px;font-size:12px;color:var(--gr);font-weight:600}
+.bonus-header{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:700;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.bonus-header::after{content:'';flex:1;height:1px;background:var(--bd)}
+.move-card{background:var(--cd);border:2px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.move-card:hover{border-color:var(--gdd)}
+.move-card.yes{border-color:var(--gn);background:rgba(39,174,96,.06)}
+.move-card.no{border-color:var(--rd);background:rgba(255,77,77,.06)}
+.move-num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--grd);width:24px;text-align:center;flex-shrink:0}
+.move-card.yes .move-num{color:var(--gn)}
+.move-card.no .move-num{color:var(--rd)}
+.move-info{flex:1}
+.move-name{font-size:14px;color:var(--wh);font-weight:600}
+.move-card.yes .move-name{color:var(--gn)}
+.move-card.no .move-name{color:var(--rd)}
+.move-hint{font-size:11px;color:var(--grd);margin-top:1px}
+.move-btns{display:flex;gap:6px}
+.move-btn{width:42px;height:42px;border-radius:10px;border:2px solid var(--bd);background:var(--bk);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--grd);cursor:pointer;transition:all .2s}
+.move-btn.y-sel{border-color:var(--gn);background:var(--gng);color:var(--gn)}
+.move-btn.n-sel{border-color:var(--rd);background:var(--rdg);color:var(--rd)}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px;background:linear-gradient(transparent,var(--dk) 20%);display:flex;gap:10px;z-index:20}
+.btn-submit{flex:1;padding:14px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;text-align:center;transition:all .2s}
+.btn-submit.ready{background:var(--gd);color:var(--bk)}
+.btn-submit.disabled{background:var(--bd);color:var(--grd);pointer-events:none}
+.complete{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1;min-height:60vh}
+.complete.show{display:flex}
+.comp-icon{font-size:60px;margin-bottom:20px}
+.comp-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gd);margin-bottom:12px}
+.comp-sub{font-size:14px;color:var(--gr);line-height:1.5;max-width:300px;margin-bottom:20px}
+.comp-score{display:flex;gap:24px;margin-bottom:28px}
+.cs-box{text-align:center}
+.cs-num{font-family:'Bebas Neue',sans-serif;font-size:36px}
+.cs-num.pass{color:var(--gn)}
+.cs-num.fail{color:var(--rd)}
+.cs-label{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;margin-top:2px}
+.comp-btn{padding:16px 40px;border-radius:var(--r);border:none;background:var(--gd);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+ <div class="hd-left">
+  <div class="hd-back" onclick="history.back()">←</div>
+  <div class="hd-info"><div>ATHLETIC ASSESSMENT</div><div>Physical Literacy</div></div>
+ </div>
+</div>
+<div class="progress-wrap">
+ <div class="progress-top">
+  <div class="progress-label">16 Movements</div>
+  <div class="progress-count" id="progCount">0 / 16</div>
+ </div>
+ <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="main" id="mainView">
+ <div class="section-intro">
+  <div class="section-icon">🤸</div>
+  <div class="section-title">CAN YOU DO THESE?</div>
+  <div class="section-desc">Check off every movement you can perform safely. Be honest — this helps us build your training plan. You can retake this anytime.</div>
+ </div>
+ <div class="video-card">
+  <div class="video-thumb"><div class="video-play">▶</div></div>
+  <div class="video-label">📹 Why Athletics Matter for Wrestlers</div>
+ </div>
+ <div id="moveList"></div>
+</div>
+
+<div class="complete" id="completeView">
+ <div class="comp-icon">🤸</div>
+ <div class="comp-title">ASSESSMENT COMPLETE</div>
+ <div class="comp-sub">You can retake this anytime as you improve. Your coach can see your results.</div>
+ <div class="comp-score">
+  <div class="cs-box"><div class="cs-num pass" id="passNum">0</div><div class="cs-label">Can Do</div></div>
+  <div class="cs-box"><div class="cs-num fail" id="failNum">0</div><div class="cs-label">Working On</div></div>
+ </div>
+ <div class="comp-btn" onclick="alert('→ Back to Dashboard')">GO TO DASHBOARD</div>
+</div>
+
+<div class="bottom-nav" id="bottomNav">
+ <div class="btn-submit disabled" id="submitBtn" onclick="submitAssessment()">SUBMIT ASSESSMENT</div>
+</div>
+</div>
+
+<script>
+var CORE=[
+ {id:'c1',name:'Forward Roll',hint:'All the way up to your feet.'},
+ {id:'c2',name:'Backward Extension',hint:'All the way up to your feet.'},
+ {id:'c3',name:'Cartwheel Right Hand',hint:'Demonstrate right side.'},
+ {id:'c4',name:'Cartwheel Left Hand',hint:'Demonstrate left side.'},
+ {id:'c5',name:'Round-Off to a Jump',hint:'Round-off landing into a jump.'},
+ {id:'c6',name:'Round-Off to a Backward Extension',hint:'Round-off into a backward extension.'},
+ {id:'c7',name:'Front Handspring',hint:'Run, hurdle, hands on ground, push off and land on feet.'},
+ {id:'c8',name:'Back Walkover',hint:'From standing, arch back through a bridge and over to feet.'},
+ {id:'c9',name:'Walking on Hands',hint:'Roughly 10 feet.'},
+ {id:'c10',name:'Bridge Kick Over',hint:'Push up into a bridge and kick over to feet.'},
+ {id:'c11',name:'Bridge Circle Right',hint:'Rotate in bridge position — right direction.'},
+ {id:'c12',name:'Bridge Circle Left',hint:'Rotate in bridge position — left direction.'}
+];
+
+var BONUS=[
+ {id:'b1',name:'Round-Off to a Backflip',hint:'Round-off into a backflip.'},
+ {id:'b2',name:'Round-Off to a Back Handspring',hint:'Round-off into a back handspring.'},
+ {id:'b3',name:'Back Handspring (Standing)',hint:'From standing, jump backwards through a handspring.'},
+ {id:'b4',name:'Standing Backflip',hint:'Standing backtuck — full rotation landing on feet.'}
+];
+
+var ALL=CORE.concat(BONUS);
+var total=ALL.length;
+var answers={};
+
+function buildList(){
+ var h='';
+ CORE.forEach(function(m,i){
+  h+='<div class="move-card" id="card-'+m.id+'">';
+  h+='<div class="move-num">'+(i+1)+'</div>';
+  h+='<div class="move-info"><div class="move-name">'+m.name+'</div><div class="move-hint">'+m.hint+'</div></div>';
+  h+='<div class="move-btns">';
+  h+='<div class="move-btn" id="'+m.id+'-y" onclick="pick(\''+m.id+'\',true)">✓</div>';
+  h+='<div class="move-btn" id="'+m.id+'-n" onclick="pick(\''+m.id+'\',false)">✕</div>';
+  h+='</div></div>';
+ });
+ h+='<div class="bonus-header">⭐ Bonus Skills</div>';
+ BONUS.forEach(function(m,i){
+  h+='<div class="move-card" id="card-'+m.id+'">';
+  h+='<div class="move-num">'+(CORE.length+i+1)+'</div>';
+  h+='<div class="move-info"><div class="move-name">'+m.name+'</div><div class="move-hint">'+m.hint+'</div></div>';
+  h+='<div class="move-btns">';
+  h+='<div class="move-btn" id="'+m.id+'-y" onclick="pick(\''+m.id+'\',true)">✓</div>';
+  h+='<div class="move-btn" id="'+m.id+'-n" onclick="pick(\''+m.id+'\',false)">✕</div>';
+  h+='</div></div>';
+ });
+ document.getElementById('moveList').innerHTML=h;
+}
+
+function pick(key,val){
+ answers[key]=val;
+ var card=document.getElementById('card-'+key);
+ document.getElementById(key+'-y').className='move-btn'+(val?' y-sel':'');
+ document.getElementById(key+'-n').className='move-btn'+(!val?' n-sel':'');
+ card.className='move-card '+(val?'yes':'no');
+ updateProgress();
+ if(typeof baseFirebase!=='undefined'&&baseFirebase.isReady()){baseFirebase.saveProgress('athletic',answers)}
+}
+
+function updateProgress(){
+ var count=Object.keys(answers).length;
+ var pct=Math.round((count/total)*100);
+ document.getElementById('progCount').textContent=count+' / '+total;
+ document.getElementById('progFill').style.width=pct+'%';
+ document.getElementById('submitBtn').className='btn-submit '+(count===total?'ready':'disabled');
+}
+
+function submitAssessment(){
+ if(Object.keys(answers).length<total)return;
+ if(typeof baseFirebase!=='undefined'&&baseFirebase.isReady()){baseFirebase.submit('athletic',answers,total)}
+ var pass=0,fail=0;
+ Object.values(answers).forEach(function(v){if(v)pass++;else fail++;});
+ document.getElementById('passNum').textContent=pass;
+ document.getElementById('failNum').textContent=fail;
+ document.getElementById('mainView').style.display='none';
+ document.getElementById('completeView').classList.add('show');
+ document.getElementById('bottomNav').style.display='none';
+ document.querySelector('.progress-wrap').style.display='none';
+}
+
+if(typeof baseFirebase!=='undefined'){
+  baseFirebase.init(function(ok){
+    if(ok){baseFirebase.loadProgress('athletic').then(function(saved){if(saved){answers=saved;Object.keys(answers).forEach(function(k){var card=document.getElementById('card-'+k);if(card){card.className='move-card '+(answers[k]?'yes':'no');document.getElementById(k+'-y').className='move-btn'+(answers[k]?' y-sel':'');document.getElementById(k+'-n').className='move-btn'+(!answers[k]?' n-sel':'');}});updateProgress()}})}
+  });
+}
+
+buildList();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="base-firebase-module.js"></script>
+</body>
+</html>

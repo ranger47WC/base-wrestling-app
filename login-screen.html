@@ -287,15 +287,15 @@ function doAuth() {
 function routeUser(role, onboardingComplete) {
   if (role === 'coach') {
     if (onboardingComplete) {
-      window.location.href = 'coach-dashboard.html';
+      window.location.href = 'coach-dashboard-v4.html';
     } else {
-      window.location.href = 'coach-onboarding.html';
+      window.location.href = 'coach-onboarding-v5.html';
     }
   } else if (role === 'athlete') {
     if (onboardingComplete) {
-      window.location.href = 'athlete-dashboard.html';
+      window.location.href = 'athlete-dashboard-v2.html';
     } else {
-      window.location.href = 'athlete-onboarding.html';
+      window.location.href = 'athlete-onboarding-v3.html';
     }
   }
 }
@@ -390,10 +390,9 @@ if (typeof firebase !== 'undefined') {
     apiKey: "AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
     authDomain: "base-wrestling-app.firebaseapp.com",
     projectId: "base-wrestling-app",
-    storageBucket: "base-wrestling-app.firebasestorage.app",
-    messagingSenderId: "368548684923",
-    appId: "1:368548684923:web:0fc54795d1f375b0e6eede",
-    measurementId: "G-BXB5R9YVYF"
+    storageBucket: "base-wrestling-app.appspot.com",
+    messagingSenderId: "000000000000",
+    appId: "1:000000000000:web:placeholder"
   });
 
   auth = firebase.auth();

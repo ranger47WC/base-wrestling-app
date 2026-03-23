@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athlete Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#ff4d4d;--rdg:rgba(255,77,77,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-edit{font-size:12px;color:var(--gd);font-weight:600;cursor:pointer;padding:8px 12px;border:1px solid rgba(200,168,78,.3);border-radius:var(--r);background:var(--gdg)}
+.main{flex:1;overflow-y:auto;padding-bottom:72px}
+.sec-hd{padding:14px 20px 6px;display:flex;align-items:center;gap:8px}
+.sec-hd-text{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;font-weight:700}
+.sec-hd-text.comp{color:var(--rd)}
+.sec-hd-text.prep{color:var(--gd)}
+.sec-hd-text.consist{color:var(--gn)}
+.sec-hd-text.assess{color:var(--gd)}
+.sec-hd-text.activity{color:var(--gd)}
+.sec-hd-text.teams{color:var(--gd)}
+.sec-hd::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ── HERO ── */
+.hero{padding:24px 20px;text-align:center;border-bottom:1px solid var(--bd)}
+.hero-avatar{width:80px;height:80px;border-radius:18px;background:linear-gradient(135deg,rgba(200,168,78,.2),rgba(200,168,78,.05));border:2px solid var(--gdd);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gd);position:relative;letter-spacing:1px}
+.hero-lvl{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;padding:2px 10px;border-radius:7px;white-space:nowrap}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--wh);margin-top:6px}
+.hero-tier{font-size:12px;color:var(--gd);font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+.hero-goal{font-size:12px;color:var(--gr);margin-top:4px}
+.hero-goal span{color:var(--gd);font-weight:600}
+.hero-meta{font-size:11px;color:var(--grd);margin-top:6px}
+
+/* ── XP ── */
+.xp-section{padding:14px 20px;border-bottom:1px solid var(--bd)}
+.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.xp-label{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.xp-nums{font-size:12px;color:var(--gd);font-weight:700}
+.xp-bar{height:7px;background:var(--bk);border-radius:4px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gdd),var(--gd));border-radius:4px}
+.xp-total{text-align:center;margin-top:8px;font-size:11px;color:var(--grd)}
+.xp-total span{color:var(--gd);font-weight:700}
+
+/* ── W/L CARD ── */
+.wl-card{margin:6px 20px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-around}
+.wl-box{text-align:center}
+.wl-num{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1}
+.wl-num.w{color:var(--gn)}
+.wl-num.l{color:var(--rd)}
+.wl-num.pct{color:var(--gd)}
+.wl-lbl{font-size:9px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;margin-top:2px}
+.wl-sep{width:1px;height:34px;background:var(--bd)}
+
+/* ── PREP STATS (tappable) ── */
+.prep-list{padding:6px 20px 0}
+.prep-item{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.prep-item:hover{border-color:var(--gdd)}
+.prep-item.no-tap{cursor:default}
+.prep-item.no-tap:hover{border-color:var(--bd)}
+.pi-icon{font-size:22px;flex-shrink:0}
+.pi-info{flex:1}
+.pi-name{font-size:13px;color:var(--wh);font-weight:600}
+.pi-sub{font-size:11px;color:var(--grd);margin-top:2px}
+.pi-bar{height:4px;background:var(--bk);border-radius:2px;overflow:hidden;margin-top:4px}
+.pi-fill{height:100%;border-radius:2px}
+.pi-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--wh);flex-shrink:0}
+.pi-arrow{color:var(--grd);font-size:14px;flex-shrink:0}
+
+/* ── CONSISTENCY ── */
+.consist-card{margin:6px 20px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px}
+.consist-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.consist-label{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--wh)}
+.consist-pct{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gn)}
+.consist-meta{font-size:11px;color:var(--grd);margin-bottom:0}
+.consist-meta span{color:var(--gn);font-weight:700}
+
+/* ── ASSESSMENTS ── */
+.assess-list{padding:6px 20px 0}
+.assess-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.assess-card:hover{border-color:var(--gdd)}
+.ac-icon{font-size:20px;flex-shrink:0}
+.ac-info{flex:1}
+.ac-name{font-size:13px;color:var(--wh);font-weight:600}
+.ac-status{font-size:11px;margin-top:2px}
+.ac-status.done{color:var(--gn)}
+.ac-status.pending{color:var(--grd)}
+.ac-status.locked{color:var(--grd);font-style:italic}
+.ac-arrow{color:var(--grd);font-size:14px;flex-shrink:0}
+.assess-type-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;font-weight:700;padding:12px 20px 4px}
+.assess-type-label.comp{color:var(--rd)}
+.assess-type-label.prep{color:var(--gd)}
+
+/* ── MY TEAMS ── */
+.team-card{margin:0 20px 8px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px}
+.tc-icon{font-size:20px}
+.tc-info{flex:1}
+.tc-name{font-size:13px;color:var(--wh);font-weight:600}
+.tc-role{font-size:11px;color:var(--grd)}
+.add-team{margin:0 20px 12px;padding:12px 16px;border:2px dashed var(--bd);border-radius:var(--r);text-align:center;cursor:pointer;transition:all .2s}
+.add-team:hover{border-color:var(--gd)}
+.add-team-text{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--grd)}
+.add-team:hover .add-team-text{color:var(--gd)}
+
+/* ── ACTIVITY ── */
+.act-list{padding:6px 20px 16px}
+.act-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.act-item:last-child{border:none}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.act-dot.xp{background:var(--gn)}
+.act-dot.match{background:var(--rd)}
+.act-dot.gen{background:var(--gd)}
+.act-info{flex:1}
+.act-text{font-size:13px;color:var(--wh)}
+.act-time{font-size:11px;color:var(--grd);margin-top:2px}
+.act-xp{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--gd);letter-spacing:1px;flex-shrink:0}
+
+/* ── TAB BAR ── */
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--cd);border-top:1px solid var(--bd);display:flex;z-index:20;padding:6px 0 env(safe-area-inset-bottom,6px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;cursor:pointer}
+.tab-icon{font-size:18px;opacity:.4}
+.tab-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:var(--grd)}
+.tab.active .tab-icon{opacity:1}
+.tab.active .tab-label{color:var(--gd)}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+ <div class="hd-left">
+  <div class="hd-back" onclick="window.location.href='athlete-dashboard.html'">←</div>
+  <div class="hd-info"><div>MY PROFILE</div><div>Athlete</div></div>
+ </div>
+ <div class="hd-edit" onclick="window.location.href='athlete-onboarding.html'">EDIT</div>
+</div>
+
+<div class="main">
+
+ <!-- HERO -->
+ <div class="hero">
+  <div class="hero-avatar">MJ<div class="hero-lvl">LEVEL 18</div></div>
+  <div class="hero-name">MARCUS JOHNSON</div>
+  <div class="hero-tier">🥈 Novice — Level 18</div>
+  <div class="hero-goal">⭐⭐ Novice → Goal: <span>⭐⭐⭐ Winning Record</span></div>
+  <div class="hero-meta">Rockwall-Heath Hawks · 152 lbs · Sophomore · 2 yrs wrestling</div>
+ </div>
+
+ <!-- XP -->
+ <div class="xp-section">
+  <div class="xp-row"><div class="xp-label">XP to Level 19</div><div class="xp-nums">14,250 / 16,000</div></div>
+  <div class="xp-bar"><div class="xp-fill" style="width:89%"></div></div>
+  <div class="xp-total">Total XP Earned: <span>14,250</span></div>
+ </div>
+
+ <!-- COMPETITION -->
+ <div class="sec-hd"><div class="sec-hd-text comp">COMPETITION — BATTLE</div></div>
+ <div class="wl-card">
+  <div class="wl-box"><div class="wl-num w">4</div><div class="wl-lbl">Wins</div></div>
+  <div class="wl-sep"></div>
+  <div class="wl-box"><div class="wl-num l">6</div><div class="wl-lbl">Losses</div></div>
+  <div class="wl-sep"></div>
+  <div class="wl-box"><div class="wl-num pct">40%</div><div class="wl-lbl">Win Rate</div></div>
+ </div>
+
+ <!-- PREPARATION -->
+ <div class="sec-hd"><div class="sec-hd-text prep">PREPARATION — BASE</div></div>
+ <div class="prep-list">
+  <div class="prep-item" onclick="window.location.href='athlete-exercise-assessment.html'">
+   <div class="pi-icon">💪</div>
+   <div class="pi-info">
+    <div class="pi-name">Exercise</div>
+    <div class="pi-sub">Gold Standard Circuit · Best: 14:30</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:50%;background:var(--rd)"></div></div>
+   </div>
+   <div class="pi-val">5</div>
+   <div class="pi-arrow">→</div>
+  </div>
+  <div class="prep-item" onclick="window.location.href='athlete-athletic-assessment.html'">
+   <div class="pi-icon">🤸</div>
+   <div class="pi-info">
+    <div class="pi-name">Athletic</div>
+    <div class="pi-sub">10 of 12 core movements passed</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:70%;background:var(--blu)"></div></div>
+   </div>
+   <div class="pi-val">7</div>
+   <div class="pi-arrow">→</div>
+  </div>
+  <div class="prep-item" onclick="window.location.href='athlete-battle-assessment.html'">
+   <div class="pi-icon">🎯</div>
+   <div class="pi-info">
+    <div class="pi-name">Skill</div>
+    <div class="pi-sub">Technique mastery · Coach-verified reps</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:40%;background:var(--gd)"></div></div>
+   </div>
+   <div class="pi-val">4</div>
+   <div class="pi-arrow">→</div>
+  </div>
+ </div>
+
+ <!-- CONSISTENCY -->
+ <div class="sec-hd"><div class="sec-hd-text consist">CONSISTENCY</div></div>
+ <div class="consist-card">
+  <div class="consist-row"><div class="consist-label">SEASON CONSISTENCY</div><div class="consist-pct">85%</div></div>
+  <div class="consist-meta">Streak: <span>12 weeks</span> · Sessions: <span>42</span> · Hours: <span>63</span></div>
+ </div>
+
+ <!-- ASSESSMENTS -->
+ <div class="sec-hd"><div class="sec-hd-text assess">ASSESSMENTS</div></div>
+ <div class="assess-type-label comp">COMPETITION</div>
+ <div class="assess-list">
+  <div class="assess-card">
+   <div class="ac-icon">⚔️</div>
+   <div class="ac-info"><div class="ac-name">Battle Assessment</div><div class="ac-status locked">🔒 Unlocks at 3-star or 10 wins</div></div>
+   <div class="ac-arrow">→</div>
+  </div>
+ </div>
+ <div class="assess-type-label prep">PREPARATION</div>
+ <div class="assess-list">
+  <div class="assess-card" onclick="window.location.href='athlete-athletic-assessment.html'">
+   <div class="ac-icon">🤸</div>
+   <div class="ac-info"><div class="ac-name">Athletic Assessment</div><div class="ac-status done">✓ Completed · 10 of 12 passed</div></div>
+   <div class="ac-arrow">→</div>
+  </div>
+  <div class="assess-card" onclick="window.location.href='athlete-battle-assessment.html'">
+   <div class="ac-icon">🎯</div>
+   <div class="ac-info"><div class="ac-name">Skill Assessment</div><div class="ac-status pending">Not started</div></div>
+   <div class="ac-arrow">→</div>
+  </div>
+  <div class="assess-card" onclick="window.location.href='athlete-exercise-assessment.html'">
+   <div class="ac-icon">💪</div>
+   <div class="ac-info"><div class="ac-name">Exercise Assessment</div><div class="ac-status done">✓ Completed · 14:30 circuit time</div></div>
+   <div class="ac-arrow">→</div>
+  </div>
+ </div>
+
+ <!-- MY TEAMS -->
+ <div class="sec-hd"><div class="sec-hd-text teams">MY TEAMS</div></div>
+ <div class="team-card">
+  <div class="tc-icon">🏟️</div>
+  <div class="tc-info"><div class="tc-name">Rockwall-Heath Hawks</div><div class="tc-role">Varsity · High School</div></div>
+ </div>
+ <div class="add-team" onclick="window.location.href='athlete-onboarding.html'">
+  <div class="add-team-text">+ ADD TEAM CODE</div>
+ </div>
+
+ <!-- RECENT ACTIVITY -->
+ <div class="sec-hd"><div class="sec-hd-text activity">RECENT ACTIVITY</div></div>
+ <div class="act-list">
+  <div class="act-item"><div class="act-dot xp"></div><div class="act-info"><div class="act-text">Completed training session</div><div class="act-time">Today · 2 hours ago</div></div><div class="act-xp">+75 XP</div></div>
+  <div class="act-item"><div class="act-dot gen"></div><div class="act-info"><div class="act-text">Watched: Underhook Entry video</div><div class="act-time">Today · 3 hours ago</div></div><div class="act-xp">+10 XP</div></div>
+  <div class="act-item"><div class="act-dot match"></div><div class="act-info"><div class="act-text">Match vs Mesquite — Loss by decision</div><div class="act-time">Yesterday</div></div><div class="act-xp">+50 XP</div></div>
+  <div class="act-item"><div class="act-dot xp"></div><div class="act-info"><div class="act-text">Full training week (4 sessions)</div><div class="act-time">Last Sunday</div></div><div class="act-xp">+200 XP</div></div>
+  <div class="act-item"><div class="act-dot gen"></div><div class="act-info"><div class="act-text">Mastered: Forward Roll (coach verified)</div><div class="act-time">3 days ago</div></div><div class="act-xp">+500 XP</div></div>
+ </div>
+
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+ <div class="tab" onclick="window.location.href='athlete-dashboard.html'"><div class="tab-icon">🏠</div><div class="tab-label">HOME</div></div>
+ <div class="tab" onclick="window.location.href='athlete-train.html'"><div class="tab-icon">🎯</div><div class="tab-label">TRAIN</div></div>
+ <div class="tab" onclick="window.location.href='athlete-content-library.html'"><div class="tab-icon">📚</div><div class="tab-label">LIBRARY</div></div>
+ <div class="tab active"><div class="tab-icon">👤</div><div class="tab-label">PROFILE</div></div>
+</div>
+</div>
+
+<script>
+function loadAthleteProfile(){
+  if(typeof firebase==='undefined')return;
+  if(firebase.apps.length===0){
+    firebase.initializeApp({
+      apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+      authDomain:"base-wrestling-app.firebaseapp.com",
+      projectId:"base-wrestling-app",
+      storageBucket:"base-wrestling-app.appspot.com",
+      messagingSenderId:"000000000000",
+      appId:"1:000000000000:web:placeholder"
+    });
+  }
+  var auth=firebase.auth();var db=firebase.firestore();
+  auth.onAuthStateChanged(function(user){
+    if(!user)return;
+    db.collection('users').doc(user.uid).get().then(function(doc){
+      if(!doc.exists)return;
+      var d=doc.data();
+      var fn=d.firstName||'';var ln=d.lastName||'';
+      // Update hero name and avatar
+      var heroName=document.querySelector('.hero-name');
+      if(heroName)heroName.textContent=(fn+' '+ln).toUpperCase();
+      var heroAvatar=document.querySelector('.hero-avatar');
+      if(heroAvatar)heroAvatar.childNodes[0].textContent=(fn[0]||'')+(ln[0]||'');
+      // Update rank stars
+      var heroRank=document.querySelector('.hero-rank');
+      if(heroRank){
+        var stars='';for(var i=0;i<Math.floor(d.starRank||1);i++)stars+='⭐';
+        heroRank.textContent=stars+' '+(d.starName||'Rookie');
+      }
+      // Update goal
+      var heroGoal=document.querySelector('.hero-goal');
+      if(heroGoal)heroGoal.textContent='Goal: '+(d.goalName||'Learning');
+      // Update school/team info
+      var infoSchool=document.querySelector('.hero-school');
+      if(infoSchool)infoSchool.textContent=(d.school||'')+(d.state?' · '+d.state:'');
+    });
+  });
+}
+loadAthleteProfile();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</body>
+</html>

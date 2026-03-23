@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Athlete Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#aaa;--grd:#999;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#ff4d4d;--rdg:rgba(255,77,77,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(200,168,78,.2),rgba(200,168,78,.05));border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);cursor:pointer;position:relative}
+.hd-avatar-lvl{position:absolute;bottom:-4px;right:-4px;background:var(--gd);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:8px;letter-spacing:.5px;padding:1px 4px;border-radius:4px;white-space:nowrap}
+.hd-greeting{display:flex;flex-direction:column}
+.hd-greeting-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh);line-height:1.1}
+.hd-greeting-rank{font-size:11px;color:var(--gd);font-weight:600;margin-top:2px}
+.hd-greeting-sub{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-top:1px}
+.hd-right{display:flex;align-items:center;gap:8px}
+.hd-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr);transition:all .2s}
+.hd-btn:hover{border-color:var(--gd);color:var(--gd)}
+
+/* ── MAIN SCROLL ── */
+.main{flex:1;overflow-y:auto;padding-bottom:76px}
+
+/* ── XP BAR ── */
+.xp-strip{padding:10px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.xp-label{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--grd);white-space:nowrap}
+.xp-track{flex:1;height:5px;background:var(--bk);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gdd),var(--gd));border-radius:3px}
+.xp-nums{font-size:10px;color:var(--gd);font-weight:700;white-space:nowrap}
+
+/* ── SECTION HEADERS ── */
+.sec-hd{padding:14px 20px 6px;display:flex;align-items:center;gap:8px}
+.sec-hd-text{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;font-weight:700}
+.sec-hd-text.comp{color:var(--rd)}
+.sec-hd-text.prep{color:var(--gd)}
+.sec-hd-text.consist{color:var(--gn)}
+.sec-hd-text.goals{color:var(--blu)}
+.sec-hd-text.brief{color:var(--gd)}
+.sec-hd::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ── W/L CARD ── */
+.wl-card{margin:6px 20px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-around}
+.wl-box{text-align:center}
+.wl-num{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1}
+.wl-num.w{color:var(--gn)}
+.wl-num.l{color:var(--rd)}
+.wl-num.pct{color:var(--gd)}
+.wl-lbl{font-size:9px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;margin-top:2px}
+.wl-sep{width:1px;height:34px;background:var(--bd)}
+
+/* ── BATTLE STAR BADGE ── */
+.battle-badge{margin:6px 20px 0;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.battle-badge:hover{border-color:var(--gdd)}
+.bb-stars{font-size:16px;flex-shrink:0}
+.bb-info{flex:1}
+.bb-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.bb-desc{font-size:11px;color:var(--grd);margin-top:1px}
+.bb-arrow{color:var(--grd);font-size:14px}
+
+/* ── PREP STATS ── */
+.prep-list{padding:6px 20px 0}
+.prep-item{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.prep-item:hover{border-color:var(--gdd)}
+.pi-icon{font-size:22px;flex-shrink:0}
+.pi-info{flex:1}
+.pi-name{font-size:13px;color:var(--wh);font-weight:600}
+.pi-sub{font-size:11px;color:var(--grd);margin-top:2px}
+.pi-bar{height:4px;background:var(--bk);border-radius:2px;overflow:hidden;margin-top:4px}
+.pi-fill{height:100%;border-radius:2px}
+.pi-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--wh);flex-shrink:0}
+.pi-arrow{color:var(--grd);font-size:14px;flex-shrink:0}
+
+/* ── CONSISTENCY ── */
+.consist-card{margin:6px 20px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px}
+.consist-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.consist-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh)}
+.consist-pct{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gn)}
+.consist-week{display:flex;gap:5px;margin-bottom:8px}
+.cw-dot{flex:1;height:6px;border-radius:3px;background:var(--bd)}
+.cw-dot.hit{background:var(--gn)}
+.consist-meta{font-size:11px;color:var(--grd)}
+.consist-meta span{color:var(--gn);font-weight:700}
+
+/* ── DAILY GOALS NUDGE ── */
+.goals-card{margin:6px 20px;background:var(--cd);border:2px solid rgba(59,130,246,.3);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:all .2s}
+.goals-card:hover{border-color:var(--blu)}
+.goals-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.goals-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--blu)}
+.goals-count{font-size:11px;color:var(--blu);font-weight:700}
+.goals-list{display:flex;flex-direction:column;gap:6px}
+.goal-row{display:flex;align-items:center;gap:10px}
+.goal-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;flex-shrink:0;transition:all .2s}
+.goal-check.done{border-color:var(--gn);background:var(--gn);color:#fff}
+.goal-text{font-size:13px;color:var(--wh)}
+.goal-text.done{color:var(--grd);text-decoration:line-through}
+
+/* ── DAILY BRIEF ── */
+.brief-scroll{padding:6px 20px;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.brief-scroll::-webkit-scrollbar{display:none}
+.brief-card{min-width:280px;max-width:300px;background:var(--cd);border-radius:var(--rl);padding:16px;flex-shrink:0;cursor:pointer;transition:all .2s}
+.brief-card:hover{transform:translateY(-2px)}
+.brief-card.team{border:2px solid var(--gdd)}
+.brief-card.personal{border:2px solid rgba(59,130,246,.4)}
+.brief-tag{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;display:inline-block;padding:2px 8px;border-radius:4px;margin-bottom:8px}
+.brief-tag.team{background:var(--gdg);color:var(--gd)}
+.brief-tag.personal{background:var(--blug);color:var(--blu)}
+.brief-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--wh);margin-bottom:4px}
+.brief-desc{font-size:12px;color:var(--grd);line-height:1.5;margin-bottom:10px}
+.brief-btn{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;padding:6px 16px;border-radius:8px;cursor:pointer}
+.brief-btn.team{background:var(--gdg);color:var(--gd);border:1px solid rgba(200,168,78,.3)}
+.brief-btn.personal{background:var(--blug);color:var(--blu);border:1px solid rgba(59,130,246,.3)}
+
+/* ── WEEK VIEW ── */
+.week-bar{display:flex;gap:4px;padding:8px 20px;margin-top:6px}
+.week-day{flex:1;text-align:center;padding:6px 2px;border-radius:8px;border:2px solid transparent}
+.wd-name{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:1px;color:var(--grd)}
+.wd-num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--grd);margin:1px 0}
+.wd-type{font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:1px;border-radius:3px;padding:1px 5px;display:inline-block}
+.wd-type.train{background:rgba(200,168,78,.15);color:var(--gd)}
+.wd-type.cross{background:rgba(59,130,246,.15);color:var(--blu)}
+.wd-type.comp{background:rgba(255,77,77,.15);color:var(--rd)}
+.wd-type.off{background:rgba(170,170,170,.1);color:var(--grd)}
+.week-day.today{background:rgba(200,168,78,.08);border-color:var(--gdd)}
+.week-day.today .wd-name,.week-day.today .wd-num{color:var(--gd)}
+
+/* ── TAB BAR ── */
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--cd);border-top:1px solid var(--bd);display:flex;z-index:20;padding:6px 0 env(safe-area-inset-bottom,6px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;cursor:pointer;transition:all .2s}
+.tab-icon{font-size:18px;opacity:.4;transition:opacity .2s}
+.tab-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:var(--grd);transition:color .2s}
+.tab.active .tab-icon{opacity:1}
+.tab.active .tab-label{color:var(--gd)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── HEADER ── -->
+<div class="hd">
+ <div class="hd-left">
+  <div class="hd-avatar" id="hd-avatar" onclick="window.location.href='athlete-profile.html'">MJ<div class="hd-avatar-lvl" id="hd-lvl">18</div></div>
+  <div class="hd-greeting">
+   <div class="hd-greeting-name" id="hd-name">MARCUS JOHNSON</div>
+   <div class="hd-greeting-rank" id="hd-rank">⭐⭐ Novice · Goal: ⭐⭐⭐ .500 Wrestler</div>
+   <div class="hd-greeting-sub" id="hd-sub">Tuesday, March 22 · Training Day</div>
+  </div>
+ </div>
+ <div class="hd-right">
+  <div class="hd-btn" onclick="window.location.href='athlete-profile.html'">🔔</div>
+ </div>
+</div>
+
+<!-- ── XP STRIP ── -->
+<div class="xp-strip">
+ <div class="xp-label" id="xp-label">LVL 18</div>
+ <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:89%"></div></div>
+ <div class="xp-nums" id="xp-nums">14,250 / 16,000</div>
+</div>
+
+<div class="main">
+
+ <!-- ════ WEEK VIEW ════ -->
+ <div class="week-bar">
+  <div class="week-day">
+   <div class="wd-name">MON</div>
+   <div class="wd-num">20</div>
+   <div class="wd-type train">T</div>
+  </div>
+  <div class="week-day today">
+   <div class="wd-name">TUE</div>
+   <div class="wd-num">21</div>
+   <div class="wd-type train">T</div>
+  </div>
+  <div class="week-day">
+   <div class="wd-name">WED</div>
+   <div class="wd-num">22</div>
+   <div class="wd-type cross">X</div>
+  </div>
+  <div class="week-day">
+   <div class="wd-name">THU</div>
+   <div class="wd-num">23</div>
+   <div class="wd-type train">T</div>
+  </div>
+  <div class="week-day">
+   <div class="wd-name">FRI</div>
+   <div class="wd-num">24</div>
+   <div class="wd-type cross">X</div>
+  </div>
+  <div class="week-day">
+   <div class="wd-name">SAT</div>
+   <div class="wd-num">25</div>
+   <div class="wd-type comp">M</div>
+  </div>
+  <div class="week-day">
+   <div class="wd-name">SUN</div>
+   <div class="wd-num">26</div>
+   <div class="wd-type off">—</div>
+  </div>
+ </div>
+
+ <!-- ════ W/L RECORD ════ -->
+ <div class="wl-card">
+  <div class="wl-box"><div class="wl-num w" id="wl-wins">4</div><div class="wl-lbl">Wins</div></div>
+  <div class="wl-sep"></div>
+  <div class="wl-box"><div class="wl-num l" id="wl-losses">6</div><div class="wl-lbl">Losses</div></div>
+  <div class="wl-sep"></div>
+  <div class="wl-box"><div class="wl-num pct" id="wl-pct">40%</div><div class="wl-lbl">Win Rate</div></div>
+ </div>
+
+ <!-- ════ CONSISTENCY ════ -->
+ <div class="sec-hd"><div class="sec-hd-text consist">CONSISTENCY</div></div>
+ <div class="consist-card">
+  <div class="consist-top">
+   <div class="consist-label">THIS WEEK</div>
+   <div class="consist-pct">3 / 4</div>
+  </div>
+  <div class="consist-week">
+   <div class="cw-dot hit"></div>
+   <div class="cw-dot hit"></div>
+   <div class="cw-dot hit"></div>
+   <div class="cw-dot"></div>
+   <div class="cw-dot"></div>
+  </div>
+  <div class="consist-meta">Season Attendance: <span>87%</span> · Current Streak: <span>6 days</span></div>
+ </div>
+
+ <!-- ════ DAILY BRIEF ════ -->
+ <div class="sec-hd"><div class="sec-hd-text brief">DAILY BRIEF</div></div>
+ <div class="brief-scroll">
+  <!-- Team Card -->
+  <div class="brief-card team" onclick="window.location.href='athlete-train.html'">
+   <div class="brief-tag team">TEAM</div>
+   <div class="brief-title">UNDERHOOK OFFENSE</div>
+   <div class="brief-desc">Today's focus: controlling the tie and attacking from the underhook. Watch the breakdown before practice.</div>
+   <div class="brief-btn team">VIEW</div>
+  </div>
+  <!-- Personal Card -->
+  <div class="brief-card personal" onclick="window.location.href='athlete-train.html'">
+   <div class="brief-tag personal">PERSONAL</div>
+   <div class="brief-title">HIS DEFENSE — GAP AREA</div>
+   <div class="brief-desc">Your assessment shows Head Inside Single defense is below level. Here's a drill to close the gap.</div>
+   <div class="brief-btn personal">VIEW</div>
+  </div>
+ </div>
+
+ <!-- ════ DAILY GOALS ════ -->
+ <div class="sec-hd"><div class="sec-hd-text goals">DAILY GOALS</div></div>
+ <div class="goals-card" onclick="window.location.href='athlete-train.html'">
+  <div class="goals-top">
+   <div class="goals-title">TODAY'S GOALS</div>
+   <div class="goals-count">1 of 4</div>
+  </div>
+  <div class="goals-list">
+   <div class="goal-row">
+    <div class="goal-check done">✓</div>
+    <div class="goal-text done">Learn one new thing</div>
+   </div>
+   <div class="goal-row">
+    <div class="goal-check"></div>
+    <div class="goal-text">Get better at something I already know</div>
+   </div>
+   <div class="goal-row">
+    <div class="goal-check"></div>
+    <div class="goal-text">Help a teammate</div>
+   </div>
+   <div class="goal-row">
+    <div class="goal-check"></div>
+    <div class="goal-text">Have fun</div>
+   </div>
+  </div>
+ </div>
+
+ <!-- ════ PREPARATION — BASE ════ -->
+ <div class="sec-hd"><div class="sec-hd-text prep">PREPARATION — BASE</div></div>
+ <div class="prep-list">
+  <!-- Battle -->
+  <div class="prep-item" onclick="window.location.href='athlete-battle-assessment.html'">
+   <div class="pi-icon">⚔️</div>
+   <div class="pi-info">
+    <div class="pi-name">Battle</div>
+    <div class="pi-sub">Self-Assessment · 22 of 33 rated</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:67%;background:var(--gd)"></div></div>
+   </div>
+   <div class="pi-val" style="color:var(--gd)">67%</div>
+   <div class="pi-arrow">›</div>
+  </div>
+  <!-- Athletic -->
+  <div class="prep-item" onclick="window.location.href='athlete-athletic-assessment.html'">
+   <div class="pi-icon">🤸</div>
+   <div class="pi-info">
+    <div class="pi-name">Athletic</div>
+    <div class="pi-sub">Physical Literacy · 8 of 10 passed</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:80%;background:var(--gn)"></div></div>
+   </div>
+   <div class="pi-val" style="color:var(--gn)">8/10</div>
+   <div class="pi-arrow">›</div>
+  </div>
+  <!-- Skill -->
+  <div class="prep-item" onclick="window.location.href='athlete-battle-assessment.html'">
+   <div class="pi-icon">🎯</div>
+   <div class="pi-info">
+    <div class="pi-name">Skill</div>
+    <div class="pi-sub">Technique Readiness · 14 Match Ready</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:42%;background:var(--gd)"></div></div>
+   </div>
+   <div class="pi-val" style="color:var(--gd)">14</div>
+   <div class="pi-arrow">›</div>
+  </div>
+  <!-- Exercise -->
+  <div class="prep-item" onclick="window.location.href='athlete-exercise-assessment.html'">
+   <div class="pi-icon">💪</div>
+   <div class="pi-info">
+    <div class="pi-name">Exercise</div>
+    <div class="pi-sub">Gold Standard Circuit · Best: 14:30</div>
+    <div class="pi-bar"><div class="pi-fill" style="width:50%;background:var(--rd)"></div></div>
+   </div>
+   <div class="pi-val" style="color:var(--rd)">⭐⭐</div>
+   <div class="pi-arrow">›</div>
+  </div>
+ </div>
+
+ <div style="height:20px"></div>
+</div>
+
+<!-- ── TAB BAR ── -->
+<div class="tab-bar">
+ <div class="tab active">
+  <div class="tab-icon">🏠</div>
+  <div class="tab-label">HOME</div>
+ </div>
+ <div class="tab" onclick="window.location.href='athlete-train.html'">
+  <div class="tab-icon">🎯</div>
+  <div class="tab-label">TRAIN</div>
+ </div>
+ <div class="tab" onclick="window.location.href='athlete-content-library.html'">
+  <div class="tab-icon">📚</div>
+  <div class="tab-label">LIBRARY</div>
+ </div>
+ <div class="tab" onclick="window.location.href='athlete-profile.html'">
+  <div class="tab-icon">👤</div>
+  <div class="tab-label">PROFILE</div>
+ </div>
+</div>
+
+</div>
+
+<script>
+// ── Firebase: Load athlete profile data ──
+function loadAthleteDashboard(){
+  if(typeof firebase==='undefined')return;
+  if(firebase.apps.length===0){
+    firebase.initializeApp({
+      apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+      authDomain:"base-wrestling-app.firebaseapp.com",
+      projectId:"base-wrestling-app",
+      storageBucket:"base-wrestling-app.appspot.com",
+      messagingSenderId:"000000000000",
+      appId:"1:000000000000:web:placeholder"
+    });
+  }
+  var auth=firebase.auth();var db=firebase.firestore();
+  auth.onAuthStateChanged(function(user){
+    if(!user)return;
+    db.collection('users').doc(user.uid).get().then(function(doc){
+      if(!doc.exists){window.location.href='athlete-onboarding.html';return}
+      var d=doc.data();
+      if(!d.onboardingComplete){window.location.href='athlete-onboarding.html';return}
+
+      // Populate header
+      var fn=d.firstName||'';var ln=d.lastName||'';
+      var initials=(fn[0]||'')+(ln[0]||'');
+      document.getElementById('hd-avatar').childNodes[0].textContent=initials;
+      document.getElementById('hd-name').textContent=(fn+' '+ln).toUpperCase();
+
+      // Star rank
+      var stars='';for(var i=0;i<Math.floor(d.starRank||1);i++)stars+='⭐';
+      var rankName=d.starName||'Rookie';
+      var goalName=d.goalName||'Learning';
+      document.getElementById('hd-rank').textContent=stars+' '+rankName+' · Goal: '+goalName;
+
+      // Today's date
+      var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var now=new Date();
+      document.getElementById('hd-sub').textContent=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate();
+
+      // W/L
+      var w=d.wins||0;var l=d.losses||0;
+      document.getElementById('wl-wins').textContent=w;
+      document.getElementById('wl-losses').textContent=l;
+      var total=w+l;
+      document.getElementById('wl-pct').textContent=total>0?Math.round((w/total)*100)+'%':'—';
+
+      // Load assessment progress
+      if(d.assessments){
+        // Could update the prep bars here based on real data
+      }
+    });
+  });
+}
+loadAthleteDashboard();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</body>
+</html>

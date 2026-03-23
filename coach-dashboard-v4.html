@@ -1,0 +1,715 @@
+<!--
+  BASE Wrestling — Coach Dashboard v4
+  Firebase-connected version of dashboard v3-toggle
+  
+  WHAT'S WIRED TO FIREBASE:
+  1. Auth state — checks if logged in, redirects to login if not
+  2. User profile — loads coach name, teams from /users/{uid}
+  3. Team data — loads from /teams/{teamId} including roster/members
+  4. Attendance — saves to /teams/{teamId}/attendance/{YYYY-MM-DD}
+  5. Assessment status — reads /teams/{teamId}/assessments/coach/{type}
+  6. Preferences — reads /teams/{teamId}/preferences for practice cards
+  
+  WHAT'S STILL DEMO DATA (until those screens are wired):
+  - Weekly schedule / day types (will come from Season Generator)
+  - Focus cards content (will come from preferences + season engine)
+  - Competition day info (will come from schedule)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Coach Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#999;--grd:#999;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-menu{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
+.hd-menu:hover{border-color:var(--gd)}
+.hd-menu svg{width:18px;height:18px;stroke:var(--grd);stroke-width:2;fill:none;transition:stroke .2s}
+.hd-menu:hover svg{stroke:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-badge{width:36px;height:36px;border-radius:50%;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gd);cursor:pointer}
+
+/* ── TEAM TOGGLE ── */
+.team-toggle{padding:8px 20px;border-bottom:1px solid var(--bd);flex-shrink:0;position:relative;z-index:9}
+.tt-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .2s}
+.tt-bar:hover{border-color:var(--gdd)}
+.tt-bar.open{border-color:var(--gd);border-radius:var(--r) var(--r) 0 0}
+.tt-left{display:flex;align-items:center;gap:8px}
+.tt-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--wh)}
+.tt-meta{font-size:10px;color:var(--grd)}
+.tt-arrow{color:var(--grd);font-size:14px;transition:transform .2s}
+.tt-bar.open .tt-arrow{transform:rotate(90deg);color:var(--gd)}
+.tt-dropdown{display:none;background:var(--cd);border:1px solid var(--gd);border-top:none;border-radius:0 0 var(--r) var(--r);overflow:hidden;position:absolute;left:20px;right:20px;z-index:20}
+.tt-dropdown.open{display:block}
+.tt-option{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;cursor:pointer;transition:all .15s;border-bottom:1px solid var(--bd)}
+.tt-option:last-child{border-bottom:none}
+.tt-option:hover{background:var(--gdg)}
+.tt-option.active{background:var(--gdg)}
+.tt-opt-name{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--wh)}
+.tt-option.active .tt-opt-name{color:var(--gd)}
+.tt-opt-meta{font-size:10px;color:var(--grd)}
+.tt-opt-check{color:var(--gd);font-size:13px;opacity:0}
+.tt-option.active .tt-opt-check{opacity:1}
+
+/* ── DAY TABS ── */
+.day-bar{display:flex;gap:4px;padding:12px 20px 8px;flex-shrink:0}
+.day-tab{flex:1;text-align:center;padding:6px 4px 8px;border-radius:8px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.day-tab .d-name{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--grd);transition:color .2s}
+.day-tab .d-num{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--grd);transition:color .2s;margin:1px 0}
+.day-tab .d-type{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;border-radius:4px;padding:1px 6px;display:inline-block;margin-top:2px;font-weight:600}
+.day-tab .d-type.train{background:rgba(200,168,78,.15);color:var(--gd)}
+.day-tab .d-type.cross{background:rgba(59,130,246,.15);color:var(--blu)}
+.day-tab .d-type.comp{background:rgba(200,16,46,.15);color:var(--rd)}
+.day-tab:hover{background:var(--cd)}
+.day-tab.active.type-train{background:rgba(200,168,78,.08);border-color:var(--gdd)}
+.day-tab.active.type-train .d-name,.day-tab.active.type-train .d-num{color:var(--gd)}
+.day-tab.active.type-cross{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.4)}
+.day-tab.active.type-cross .d-name,.day-tab.active.type-cross .d-num{color:var(--blu)}
+.day-tab.active.type-comp{background:rgba(200,16,46,.08);border-color:rgba(200,16,46,.4)}
+.day-tab.active.type-comp .d-name,.day-tab.active.type-comp .d-num{color:var(--rd)}
+
+/* ── ASSESSMENT PROMPT ── */
+.assess-prompt{margin:8px 20px 0;padding:14px 16px;background:var(--cd);border:2px solid var(--gdd);border-radius:var(--r);display:none}
+.assess-prompt.show{display:block}
+.ap-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ap-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.ap-count{font-size:11px;color:var(--gd);font-weight:700}
+.ap-bar{height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:10px}
+.ap-bar-fill{height:100%;background:var(--gd);border-radius:2px;transition:width .3s}
+.ap-tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ap-tile{padding:10px;border-radius:8px;border:1px solid var(--bd);background:var(--bk);cursor:pointer;display:flex;align-items:center;gap:8px}
+.ap-tile.done{border-color:var(--gn);background:rgba(39,174,96,.08)}
+.ap-tile .ap-icon{font-size:16px}
+.ap-tile .ap-label{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1.5px;color:#aaa;flex:1}
+.ap-tile.done .ap-label{color:var(--gn)}
+.ap-tile .ap-go{font-size:10px;color:var(--grd)}
+.ap-tile.done .ap-go{color:var(--gn)}
+.nudge-prompt{margin:8px 20px 0;padding:12px 16px;background:var(--cd);border:1px solid var(--gdd);border-radius:var(--r);display:none;cursor:pointer;align-items:center;gap:10px}
+.nudge-prompt.show{display:flex}
+.np-icon{font-size:20px}
+.np-text{flex:1;font-size:12px;color:var(--lt);line-height:1.4}
+.np-arrow{color:var(--grd);font-size:16px}
+
+/* ── ATTENDANCE BAR ── */
+.att-bar{margin:10px 20px 0;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s}
+.att-bar:hover{border-color:var(--gdd)}
+.att-bar.submitted{border-color:var(--gn);background:rgba(39,174,96,.06)}
+.att-left{display:flex;align-items:center;gap:10px;flex:1}
+.att-icon{font-size:18px}
+.att-text{flex:1}
+.att-label{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--gd);margin-bottom:2px}
+.att-bar.submitted .att-label{color:var(--gn)}
+.att-count{font-size:11px;color:var(--grd);margin-bottom:4px}
+.att-prog{height:2px;background:var(--bd);border-radius:1px;overflow:hidden}
+.att-prog-fill{height:100%;background:var(--gd);border-radius:1px;transition:width .3s}
+.att-bar.submitted .att-prog-fill{background:var(--gn)}
+.att-arrow{color:var(--grd);font-size:16px}
+
+/* ── PRACTICE LABEL + CARDS ── */
+.prac-label{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 6px}
+.pl-left{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--gd)}
+.pl-right{font-size:10px;color:var(--grd);cursor:pointer}
+.cards-wrap{padding:0 0 8px;position:relative}
+.cards-scroll{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 20px 6px}
+.cards-scroll::-webkit-scrollbar{display:none}
+.card{flex:0 0 calc(100% - 44px);scroll-snap-align:start;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;transition:all .2s}
+.card-tag{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.card-tag.drill{color:var(--gd)}.card-tag.live{color:var(--blu)}.card-tag.strat{color:var(--rd)}.card-tag.str{color:var(--gn)}.card-tag.ath{color:#9b59b6}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--wh);margin-bottom:4px}
+.card-desc{font-size:12px;color:var(--grd);line-height:1.5;margin-bottom:10px}
+.card-meta{display:flex;gap:12px;font-size:10px;color:var(--grd)}
+.card-meta span{display:flex;align-items:center;gap:4px}
+.scroll-dots{display:flex;justify-content:center;gap:6px;padding:4px 0}
+.scroll-dots .dot{width:6px;height:6px;border-radius:50%;background:var(--bd);transition:all .2s}
+.scroll-dots .dot.active{background:var(--gd);transform:scale(1.3)}
+
+/* ── START PRACTICE ZONE ── */
+.start-zone{padding:12px 20px 20px;text-align:center}
+.start-sub{font-size:11px;color:var(--grd);margin-bottom:10px}
+.start-sub em{color:var(--gd);font-style:normal;font-weight:600}
+.btn-start{width:100%;padding:18px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;border:none;border-radius:var(--r);cursor:pointer;position:relative;overflow:hidden;transition:all .3s}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,78,.3)}
+.btn-pulse{position:absolute;inset:0;border-radius:var(--r);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:inset 0 0 20px 0 rgba(255,255,255,.08)}}
+.change-link{margin-top:8px;font-size:11px}
+.change-link a{color:var(--grd);cursor:pointer;text-decoration:underline}
+
+/* ── COMP ZONE ── */
+.comp-zone{display:none;text-align:center;padding:30px 20px}
+.comp-icon{font-size:48px;margin-bottom:12px}
+.comp-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--rd);margin-bottom:8px}
+.comp-detail{font-size:13px;color:var(--grd);line-height:1.6;margin-bottom:16px}
+.comp-info{display:flex;align-items:center;gap:10px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;text-align:left}
+.comp-info-icon{font-size:18px}
+.comp-info-text div:first-child{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--wh)}
+.comp-info-text div:last-child{font-size:11px;color:var(--grd)}
+
+/* ── DRAWER ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;left:-280px;top:0;bottom:0;width:280px;background:var(--dk);border-right:1px solid var(--bd);z-index:60;display:flex;flex-direction:column;transition:left .3s ease}
+.drawer.open{left:0}
+.drawer-hd{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.drawer-hd-brand{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--gd)}
+.drawer-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--grd);font-size:14px}
+.drawer-body{flex:1;overflow-y:auto;padding:8px 0}
+.drawer-section{padding:8px 0}
+.drawer-sl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;padding:8px 20px 4px}
+.drawer-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;transition:background .15s}
+.drawer-item:hover{background:var(--cd)}
+.drawer-item.active{background:var(--gdg);border-left:3px solid var(--gd)}
+.di-icon{font-size:16px;width:24px;text-align:center}
+.di-text{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--lt);flex:1}
+.drawer-item.active .di-text{color:var(--gd)}
+.di-badge{background:var(--gdg);color:var(--gd);font-family:'Bebas Neue',sans-serif;font-size:11px;padding:2px 8px;border-radius:10px;letter-spacing:1px}
+.drawer-foot{padding:16px 20px;border-top:1px solid var(--bd)}
+.df-team{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gd)}
+.df-meta{font-size:10px;color:var(--grd);margin-top:2px}
+
+/* ── ATTENDANCE SCREEN ── */
+.att-screen{position:fixed;top:0;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:var(--dk);z-index:40;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.att-screen.open{transform:translateY(0)}
+.att-hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.att-hd-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.att-hd-count{font-size:13px;color:var(--grd)}
+.att-bulk{display:flex;gap:8px;padding:10px 20px;border-bottom:1px solid var(--bd)}
+.att-bulk-btn{flex:1;padding:8px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;border-radius:8px;cursor:pointer;transition:all .2s}
+.att-bulk-btn.select-all{background:var(--gng);color:var(--gn);border:1px solid rgba(39,174,96,.3)}
+.att-bulk-btn.deselect-all{background:var(--rdg);color:var(--rd);border:1px solid rgba(200,16,46,.3)}
+.att-list{flex:1;overflow-y:auto;padding:8px 20px}
+.att-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:4px;cursor:pointer;transition:all .15s;background:var(--cd);border:1px solid var(--bd)}
+.att-row:hover{border-color:var(--gdd)}
+.att-row.absent{opacity:.5}
+.att-row.absent .att-name{color:var(--grd);text-decoration:line-through;text-decoration-color:var(--bd)}
+.att-row.absent .att-star{opacity:.3}
+.att-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.att-check.checked{border-color:var(--gn);background:var(--gng)}
+.att-check svg{width:12px;height:12px;opacity:0;transition:opacity .15s}
+.att-check.checked svg{opacity:1}
+.att-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--wh);flex:1}
+.att-detail{font-size:10px;color:var(--grd)}
+.att-star{font-size:10px}
+.att-actions{padding:12px 20px 28px;border-top:1px solid var(--bd);display:flex;gap:8px}
+.att-btn-back{flex:1;padding:14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);color:var(--grd);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer}
+.att-btn-start{flex:2;padding:14px;background:linear-gradient(135deg,var(--gd),var(--gdd));border:none;border-radius:var(--r);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer}
+
+/* ── LOADING STATE ── */
+.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--bd);border-top-color:var(--gd);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:var(--grd);letter-spacing:1px}
+
+/* ── SAVING INDICATOR ── */
+.saving{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--gn);color:var(--bk);padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:0;transition:opacity .3s;z-index:100}
+.saving.show{opacity:1}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-menu" onclick="toggleDrawer()"><svg viewBox="0 0 18 18"><path d="M2 4h14M2 9h14M2 14h14" stroke-linecap="round"/></svg></div>
+      <div class="hd-info"><div id="hd-team-name">BASE WRESTLING</div><div>Coach Dashboard</div></div>
+    </div>
+    <div class="hd-badge" id="hd-avatar" onclick="window.location.href='coach-settings.html'">👤</div>
+  </div>
+
+  <div class="team-toggle">
+    <div class="tt-bar" id="tt-bar" onclick="toggleTeamDD()">
+      <div class="tt-left"><div class="tt-name" id="tt-name">Loading...</div><div class="tt-meta" id="tt-meta"></div></div>
+      <div class="tt-arrow" id="tt-arrow">▾</div>
+    </div>
+    <div class="tt-dropdown" id="tt-dropdown"></div>
+  </div>
+
+  <div class="day-bar" id="day-bar"></div>
+
+  <div class="assess-prompt show" id="assess-prompt">
+    <div class="ap-top"><div class="ap-title">COMPLETE YOUR ASSESSMENTS</div><div class="ap-count" id="ap-count">0/4</div></div>
+    <div class="ap-bar"><div class="ap-bar-fill" id="ap-bar-fill" style="width:0%"></div></div>
+    <div class="ap-tiles" id="ap-tiles"></div>
+  </div>
+
+  <div class="nudge-prompt" id="nudge-prompt" onclick="toast('Opening My Assessment comparison...')">
+    <div class="np-icon" id="np-icon">📊</div>
+    <div class="np-text" id="np-text"></div>
+    <div class="np-arrow">›</div>
+  </div>
+
+  <div class="att-bar" id="att-bar" onclick="openAttendance()">
+    <div class="att-left">
+      <div class="att-icon">📋</div>
+      <div class="att-text">
+        <div class="att-label" id="att-bar-label">TODAY'S ATTENDANCE</div>
+        <div class="att-count"><span id="att-num">0</span> of <span id="att-total">0</span> checked in</div>
+        <div class="att-prog"><div class="att-prog-fill" id="att-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="att-arrow" id="att-arrow">›</div>
+  </div>
+
+  <div class="prac-label" id="prac-label"><div class="pl-left" id="pl-left">Today's Focus</div><div class="pl-right" id="pl-right">3 items</div></div>
+
+  <div class="cards-wrap" id="cards-wrap">
+    <div class="cards-scroll" id="cards-scroll"></div>
+    <div class="scroll-dots" id="scroll-dots"></div>
+  </div>
+
+  <div class="start-zone" id="start-zone">
+    <div class="start-sub"><span id="start-label">Wrestling Training · <em>90 min</em></span></div>
+    <button class="btn-start" id="btn-start" onclick="startPractice()"><span class="btn-pulse"></span>▶ START PRACTICE</button>
+    <div class="change-link"><a onclick="toast('Opening practice editor...')">Change Today's Practice</a></div>
+  </div>
+
+  <div class="comp-zone" id="comp-zone">
+    <div class="comp-icon">🏆</div>
+    <div class="comp-title">COMPETITION DAY</div>
+    <div class="comp-detail">No practice scheduled.<br>Good luck today.</div>
+    <div class="comp-info"><div class="comp-info-icon">📍</div><div class="comp-info-text"><div>COMPETITION</div><div>Details will sync from schedule</div></div></div>
+  </div>
+
+  <!-- DRAWER -->
+  <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-hd"><div class="drawer-hd-brand">BASE</div><div class="drawer-close" onclick="toggleDrawer()">✕</div></div>
+    <div class="drawer-body">
+      <div class="drawer-section"><div class="drawer-sl">Practice</div>
+        <div class="drawer-item active" onclick="drawerNav('dashboard')"><div class="di-icon">🏠</div><div class="di-text">DASHBOARD</div></div>
+        <div class="drawer-item" onclick="drawerNav('weekly-schedule')"><div class="di-icon">📅</div><div class="di-text">WEEKLY SCHEDULE</div></div>
+      </div>
+      <div class="drawer-section"><div class="drawer-sl">Team</div>
+        <div class="drawer-item" onclick="drawerNav('roster')"><div class="di-icon">👥</div><div class="di-text">ROSTER</div><div class="di-badge" id="roster-count">0</div></div>
+        <div class="drawer-item" onclick="drawerNav('team-stats')"><div class="di-icon">📊</div><div class="di-text">TEAM STATS</div></div>
+        <div class="drawer-item" onclick="drawerNav('assessments')"><div class="di-icon">🎯</div><div class="di-text">ASSESSMENTS</div></div>
+      </div>
+      <div class="drawer-section"><div class="drawer-sl">Content</div>
+        <div class="drawer-item" onclick="drawerNav('content-library')"><div class="di-icon">📚</div><div class="di-text">CONTENT LIBRARY</div></div>
+        <div class="drawer-item" onclick="drawerNav('monthly-focus')"><div class="di-icon">🗓️</div><div class="di-text">MONTHLY FOCUS</div></div>
+      </div>
+      <div class="drawer-section"><div class="drawer-sl">Coach</div>
+        <div class="drawer-item" onclick="drawerNav('coach-assessment')"><div class="di-icon">🏅</div><div class="di-text">MY ASSESSMENT</div></div>
+        <div class="drawer-item" onclick="drawerNav('settings')"><div class="di-icon">⚙️</div><div class="di-text">SETTINGS</div></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><div class="df-team" id="drawer-team">—</div><div class="df-meta" id="drawer-meta">—</div></div>
+  </div>
+
+  <!-- ATTENDANCE SCREEN -->
+  <div class="att-screen" id="att-screen">
+    <div class="att-hd"><div class="att-hd-title">ATTENDANCE</div><div class="att-hd-count"><span id="att-checked">0</span> / <span id="att-total2">0</span> Present</div></div>
+    <div class="att-bulk">
+      <div class="att-bulk-btn select-all" onclick="selectAll()">✓ SELECT ALL</div>
+      <div class="att-bulk-btn deselect-all" onclick="deselectAll()">✕ DESELECT ALL</div>
+    </div>
+    <div class="att-list" id="att-list"></div>
+    <div class="att-actions">
+      <button class="att-btn-back" onclick="closeAttendance()">← DASHBOARD</button>
+      <button class="att-btn-start" onclick="submitAndStart()">▶ START PRACTICE</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+<div class="saving" id="savingEl">✓ Saved</div>
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+var db=null,auth=null,firebaseReady=false;
+var currentUser=null,userProfile=null;
+var TEAM_LIST=[],activeTeamIdx=0,teamDDOpen=false;
+var activeTeamId=null,activeTeamData=null;
+var roster=[],checked=[],attendanceSubmitted=false;
+var coachAssess={battle:false,athletic:false,skill:false,exercise:false};
+var athletesDone=0;
+var WEEK_DATA={
+  1:{type:'train',label:'Wrestling Training',minutes:90,cards:[
+    {tag:'🎯 Drill Focus',cls:'drill',name:'UNDERHOOK SERIES',desc:'Over/Under position — pummeling entries, duck under, shuck by',vids:3,time:'12 min'},
+    {tag:'🎯 Live Focus',cls:'live',name:'HEAD INSIDE SINGLE',desc:'Extended single leg — entry, elevation, finish',vids:4,time:'15 min'},
+    {tag:'📋 Strategy',cls:'strat',name:'FRONT HEADLOCK DEFENSE',desc:'When leg attacks fail — re-shot timing, sit-out counters',vids:0,time:'5 min read'}
+  ]},
+  2:{type:'train',label:'Wrestling Training',minutes:90,cards:[
+    {tag:'🎯 Drill Focus',cls:'drill',name:'DOUBLE LEG SERIES',desc:'Level change entries, head position, driving through',vids:3,time:'10 min'},
+    {tag:'🎯 Live Focus',cls:'live',name:'TOP / BOTTOM',desc:'Legs & base — riding, turns, escapes, reversals',vids:4,time:'14 min'},
+    {tag:'📋 Strategy',cls:'strat',name:'TOP PRESSURE SYSTEM',desc:'Chop series, leg riding entries, tilt setups',vids:0,time:'4 min read'}
+  ]},
+  3:{type:'cross',label:'Cross Training',minutes:60,cards:[
+    {tag:'💪 Strength',cls:'str',name:'GOLD STANDARD CIRCUIT',desc:'Bridge kicks, push-ups, pull-ups, good mornings, v-ups, squats',vids:1,time:'15 min'},
+    {tag:'🤸 Athletics',cls:'ath',name:'TUMBLING & AGILITY',desc:'Forward rolls, cartwheels, handstands, knee sprints',vids:2,time:'12 min'}
+  ]},
+  4:{type:'train',label:'Wrestling Training',minutes:90,cards:[
+    {tag:'🎯 Drill Focus',cls:'drill',name:'HEAD OUTSIDE SINGLE',desc:'Outside finish, far ankle pickup, run the pipe',vids:3,time:'12 min'},
+    {tag:'🎯 Live Focus',cls:'live',name:'UPPER BODY ATTACKS',desc:'Over/under, 2-on-1 — entries and finishes',vids:4,time:'15 min'}
+  ]},
+  5:{type:'comp',label:'Competition',minutes:0,cards:[]}
+};
+var selectedDay=null;
+var ASSESS_LIST=[{id:'battle',icon:'⚔️',label:'BATTLE'},{id:'athletic',icon:'🤸',label:'ATHLETIC'},{id:'skill',icon:'🎯',label:'SKILL'},{id:'exercise',icon:'💪',label:'EXERCISE'}];
+
+function $(id){return document.getElementById(id)}
+
+// ═══════════════════════════════════════════
+// FIREBASE HELPERS
+// ═══════════════════════════════════════════
+function showSaved(){var el=$('savingEl');el.classList.add('show');setTimeout(function(){el.classList.remove('show')},1500)}
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+// ═══════════════════════════════════════════
+// LOAD USER DATA FROM FIREBASE
+// ═══════════════════════════════════════════
+function loadUserData(user){
+  currentUser=user;
+  db.collection('users').doc(user.uid).get().then(function(doc){
+    if(!doc.exists){window.location.href='coach-onboarding.html';return}
+    userProfile=doc.data();
+    if(!userProfile.onboardingComplete){window.location.href='coach-onboarding.html';return}
+
+    // Set avatar initials
+    var fn=userProfile.firstName||'';var ln=userProfile.lastName||'';
+    $('hd-avatar').textContent=(fn[0]||'')+(ln[0]||'');
+    $('drawer-meta').textContent=fn+' '+ln+' · '+(userProfile.role==='head'?'Head Coach':'Assistant');
+
+    // Load teams
+    loadTeams(user.uid);
+  });
+}
+
+function loadTeams(uid){
+  // Query teams where this user is a member
+  db.collection('teams').get().then(function(snap){
+    TEAM_LIST=[];
+    snap.forEach(function(doc){
+      var d=doc.data();
+      if(d.members&&d.members[uid]){
+        var memberCount=0;
+        for(var k in d.members){if(d.members[k].role!=='head'&&d.members[k].role!=='asst')memberCount++}
+        TEAM_LIST.push({id:doc.id,name:(d.name||'Team').toUpperCase(),meta:(d.settings?d.settings.programType:'')+ ' · '+memberCount+' athletes',data:d});
+      }
+    });
+    if(TEAM_LIST.length===0){
+      // Fallback — user's teamId from profile
+      if(userProfile.teamId){
+        TEAM_LIST.push({id:userProfile.teamId,name:(userProfile.teamName||'MY TEAM').toUpperCase(),meta:'Loading...',data:{}});
+      }
+    }
+    renderTeamToggle();
+    if(TEAM_LIST.length>0)selectTeam(0);
+  });
+}
+
+function loadTeamData(teamId){
+  activeTeamId=teamId;
+  // Load roster (members who are athletes)
+  db.collection('teams').doc(teamId).get().then(function(doc){
+    if(!doc.exists)return;
+    activeTeamData=doc.data();
+    $('hd-team-name').textContent=(activeTeamData.name||'BASE WRESTLING').toUpperCase();
+    $('drawer-team').textContent=(activeTeamData.name||'BASE').toUpperCase();
+
+    // Build roster from members
+    roster=[];
+    var members=activeTeamData.members||{};
+    for(var uid in members){
+      var m=members[uid];
+      if(m.role==='athlete'||m.role==='parent')continue; // skip for now — coaches show at bottom
+      // Actually for attendance, we want athletes. Let's include everyone who isn't a coach
+    }
+    // For now, get all members and sort coaches to bottom
+    var athletes=[],coaches=[];
+    for(var uid in members){
+      var m=members[uid];
+      var entry={uid:uid,name:(m.name||'Unknown').toUpperCase(),detail:m.detail||'',star:m.star||'⭐',role:m.role};
+      if(m.role==='head'||m.role==='asst')coaches.push(entry);
+      else athletes.push(entry);
+    }
+    roster=athletes.concat(coaches);
+
+    // If roster is empty (no athletes joined yet), show demo data
+    if(roster.length===0){
+      roster=getDemoRoster();
+    }
+
+    // Check in everyone by default
+    checked=[];for(var i=0;i<roster.length;i++)checked.push(i);
+
+    $('att-total').textContent=roster.length;
+    $('att-total2').textContent=roster.length;
+    $('roster-count').textContent=roster.length;
+    updateAttCount();
+
+    // Check today's attendance from Firebase
+    loadTodayAttendance(teamId);
+
+    // Check assessment status
+    loadAssessmentStatus(teamId);
+  });
+}
+
+function loadTodayAttendance(teamId){
+  var today=todayStr();
+  db.collection('teams').doc(teamId).collection('attendance').doc(today).get().then(function(doc){
+    if(doc.exists){
+      var data=doc.data();
+      attendanceSubmitted=true;
+      checked=[];
+      // Rebuild checked from saved present list
+      if(data.present){
+        data.present.forEach(function(uid){
+          var idx=roster.findIndex(function(r){return r.uid===uid||r.name===uid});
+          if(idx!==-1)checked.push(idx);
+        });
+      }
+      $('att-bar').classList.add('submitted');
+      $('att-bar-label').textContent='ATTENDANCE SUBMITTED';
+      $('att-arrow').textContent='✓';
+      updateAttCount();
+    }
+  }).catch(function(){});
+}
+
+function loadAssessmentStatus(teamId){
+  var types=['battle','athletic','skill','exercise'];
+  types.forEach(function(type){
+    db.collection('teams').doc(teamId).collection('assessments').doc('coach-'+type).get().then(function(doc){
+      coachAssess[type]=doc.exists;
+      renderAssessPrompt();
+    }).catch(function(){});
+  });
+}
+
+function saveAttendance(){
+  if(!firebaseReady||!activeTeamId)return;
+  var today=todayStr();
+  var presentList=checked.map(function(i){return roster[i]?roster[i].uid||roster[i].name:''}).filter(Boolean);
+  var absentList=roster.filter(function(r,i){return checked.indexOf(i)===-1}).map(function(r){return r.uid||r.name});
+
+  db.collection('teams').doc(activeTeamId).collection('attendance').doc(today).set({
+    date:today,
+    present:presentList,
+    absent:absentList,
+    presentCount:presentList.length,
+    totalCount:roster.length,
+    submittedAt:new Date(),
+    submittedBy:currentUser?currentUser.uid:'local'
+  },{merge:true}).then(function(){showSaved()});
+}
+
+// ═══════════════════════════════════════════
+// DEMO ROSTER (used when no athletes have joined yet)
+// ═══════════════════════════════════════════
+function getDemoRoster(){
+  return [
+    {name:'MARCUS JOHNSON',detail:'Sr · 145 lbs',star:'⭐⭐⭐⭐',uid:'demo-1'},
+    {name:'TYLER RODRIGUEZ',detail:'Sr · 152 lbs',star:'⭐⭐⭐⭐⭐',uid:'demo-2'},
+    {name:'JAKE THOMPSON',detail:'Jr · 160 lbs',star:'⭐⭐⭐',uid:'demo-3'},
+    {name:'CHRIS WILLIAMS',detail:'Jr · 138 lbs',star:'⭐⭐⭐',uid:'demo-4'},
+    {name:'DEVON BROOKS',detail:'So · 132 lbs',star:'⭐⭐',uid:'demo-5'},
+    {name:'AIDEN PARK',detail:'Sr · 170 lbs',star:'⭐⭐⭐⭐',uid:'demo-6'},
+    {name:'RYAN MITCHELL',detail:'Jr · 126 lbs',star:'⭐⭐⭐',uid:'demo-7'},
+    {name:'ELIJAH DAVIS',detail:'So · 113 lbs',star:'⭐⭐',uid:'demo-8'},
+    {name:'NOAH GARCIA',detail:'Fr · 106 lbs',star:'⭐',uid:'demo-9'},
+    {name:'LUCAS BROWN',detail:'Jr · 182 lbs',star:'⭐⭐⭐',uid:'demo-10'},
+    {name:'MASON LEE',detail:'Sr · 195 lbs',star:'⭐⭐⭐⭐',uid:'demo-11'},
+    {name:'CALEB WHITE',detail:'So · 120 lbs',star:'⭐⭐',uid:'demo-12'},
+    {name:'ISAIAH HARRIS',detail:'Fr · 113 lbs',star:'⭐',uid:'demo-13'},
+    {name:'JORDAN CLARK',detail:'Jr · 145 lbs',star:'⭐⭐⭐',uid:'demo-14'},
+    {name:'DANIEL LEWIS',detail:'Sr · 220 lbs',star:'⭐⭐⭐',uid:'demo-15'},
+    {name:'ETHAN WALKER',detail:'So · 138 lbs',star:'⭐⭐',uid:'demo-16'},
+    {name:'BRANDON HALL',detail:'Fr · 126 lbs',star:'⭐',uid:'demo-17'},
+    {name:'JAYDEN ALLEN',detail:'Jr · 152 lbs',star:'⭐⭐⭐',uid:'demo-18'},
+    {name:'XAVIER YOUNG',detail:'So · 160 lbs',star:'⭐⭐',uid:'demo-19'},
+    {name:'OMAR KING',detail:'Sr · 285 lbs',star:'⭐⭐⭐',uid:'demo-20'},
+    {name:'PATRICK WRIGHT',detail:'Fr · 120 lbs',star:'⭐',uid:'demo-21'},
+    {name:'SEAN ADAMS',detail:'Jr · 170 lbs',star:'⭐⭐⭐',uid:'demo-22'},
+    {name:'TREVOR SCOTT',detail:'So · 145 lbs',star:'⭐⭐',uid:'demo-23'},
+    {name:'WILL TURNER',detail:'Fr · 132 lbs',star:'⭐',uid:'demo-24'}
+  ];
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function toast(msg){var t=$('toast-el');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show')},1800)}
+
+// ═══════════════════════════════════════════
+// TEAM TOGGLE
+// ═══════════════════════════════════════════
+function renderTeamToggle(){
+  if(TEAM_LIST.length===0){$('tt-name').textContent='NO TEAMS';$('tt-meta').textContent='Complete onboarding';return}
+  var team=TEAM_LIST[activeTeamIdx];
+  $('tt-name').textContent=team.name;$('tt-meta').textContent=team.meta;
+  var h='';TEAM_LIST.forEach(function(t,i){h+='<div class="tt-option'+(i===activeTeamIdx?' active':'')+'" onclick="selectTeam('+i+')"><div><div class="tt-opt-name">'+t.name+'</div><div class="tt-opt-meta">'+t.meta+'</div></div><div class="tt-opt-check">✓</div></div>'});
+  $('tt-dropdown').innerHTML=h;
+}
+function toggleTeamDD(){teamDDOpen=!teamDDOpen;$('tt-bar').classList.toggle('open',teamDDOpen);$('tt-dropdown').classList.toggle('open',teamDDOpen)}
+function selectTeam(idx){
+  activeTeamIdx=idx;teamDDOpen=false;$('tt-bar').classList.remove('open');$('tt-dropdown').classList.remove('open');
+  renderTeamToggle();
+  if(TEAM_LIST[idx]&&firebaseReady){loadTeamData(TEAM_LIST[idx].id)}
+  else{
+    roster=getDemoRoster();checked=[];for(var i=0;i<roster.length;i++)checked.push(i);
+    $('att-total').textContent=roster.length;$('att-total2').textContent=roster.length;$('roster-count').textContent=roster.length;updateAttCount();
+  }
+  toast('Switched to '+(TEAM_LIST[idx]?TEAM_LIST[idx].name:'team'));
+}
+
+// ═══════════════════════════════════════════
+// WEEKLY CALENDAR
+// ═══════════════════════════════════════════
+function buildDays(){
+  var now=new Date(),dow=now.getDay(),mon=new Date(now);
+  mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  var h='',DAYS=['MON','TUE','WED','THU','FRI'];
+  for(var i=0;i<5;i++){
+    var d=new Date(mon);d.setDate(mon.getDate()+i);
+    var day=WEEK_DATA[i+1]||{type:'train'};
+    var isToday=d.toDateString()===now.toDateString();
+    h+='<div class="day-tab'+(isToday?' active type-'+day.type:'')+'" onclick="pickDay('+(i+1)+',this)"><div class="d-name">'+DAYS[i]+'</div><div class="d-num">'+d.getDate()+'</div><div class="d-type '+day.type+'">'+day.type.toUpperCase()+'</div></div>';
+    if(isToday)selectedDay=i+1;
+  }
+  if(!selectedDay)selectedDay=1;
+  $('day-bar').innerHTML=h;
+}
+function pickDay(n,el){
+  selectedDay=n;
+  document.querySelectorAll('.day-tab').forEach(function(t){t.className='day-tab'});
+  var day=WEEK_DATA[n]||{type:'train'};el.className='day-tab active type-'+day.type;
+  renderDay();
+}
+function renderDay(){
+  var day=WEEK_DATA[selectedDay]||{type:'train',cards:[]};
+  var isComp=day.type==='comp';
+  $('start-zone').style.display=isComp?'none':'block';
+  $('comp-zone').style.display=isComp?'block':'none';
+  $('prac-label').style.display=isComp?'none':'flex';
+  $('cards-wrap').style.display=isComp?'none':'block';
+  $('att-bar').style.display=isComp?'none':'flex';
+  if(!isComp){
+    $('start-label').innerHTML=day.label+' · <em>'+day.minutes+' min</em>';
+    $('pl-right').textContent=day.cards.length+' item'+(day.cards.length!==1?'s':'');
+    var h='';day.cards.forEach(function(c){h+='<div class="card"><div class="card-tag '+c.cls+'">'+c.tag+'</div><div class="card-name">'+c.name+'</div><div class="card-desc">'+c.desc+'</div><div class="card-meta"><span>📹 '+c.vids+' videos</span><span>⏱ '+c.time+'</span></div></div>'});
+    $('cards-scroll').innerHTML=h;
+    var dh='';day.cards.forEach(function(c,i){dh+='<div class="dot'+(i===0?' active':'')+'"></div>'});
+    $('scroll-dots').innerHTML=dh;
+  }
+}
+
+// ═══════════════════════════════════════════
+// ATTENDANCE
+// ═══════════════════════════════════════════
+function buildAttList(){
+  var h='';roster.forEach(function(r,i){
+    var c=checked.indexOf(i)!==-1;
+    h+='<div class="att-row'+(c?'':' absent')+'" onclick="toggleCheck('+i+')"><div class="att-check'+(c?' checked':'')+'"><svg viewBox="0 0 14 14"><path d="M2 7l3 3 7-7" stroke="#27ae60" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="att-name">'+r.name+'</div><div class="att-detail">'+r.detail+'</div></div><div class="att-star">'+r.star+'</div></div>';
+  });$('att-list').innerHTML=h;
+}
+function toggleCheck(i){var idx=checked.indexOf(i);if(idx===-1)checked.push(i);else checked.splice(idx,1);updateAttCount();var rows=document.querySelectorAll('.att-row');rows[i].querySelector('.att-check').classList.toggle('checked');rows[i].classList.toggle('absent')}
+function selectAll(){checked=[];for(var i=0;i<roster.length;i++)checked.push(i);updateAttCount();buildAttList()}
+function deselectAll(){checked=[];updateAttCount();buildAttList()}
+function updateAttCount(){
+  var n=checked.length,total=roster.length;
+  $('att-num').textContent=n;$('att-checked').textContent=n;
+  $('att-total').textContent=total;$('att-total2').textContent=total;
+  var pct=total>0?Math.round((n/total)*100):0;
+  $('att-prog-fill').style.width=pct+'%';
+}
+function openAttendance(){buildAttList();$('att-screen').classList.add('open')}
+function closeAttendance(){$('att-screen').classList.remove('open')}
+function submitAttendance(){
+  attendanceSubmitted=true;
+  saveAttendance();
+  $('att-bar').classList.add('submitted');$('att-bar-label').textContent='ATTENDANCE SUBMITTED';$('att-arrow').textContent='✓';
+  toast('Attendance saved — '+checked.length+'/'+roster.length+' present');
+}
+function submitAndStart(){submitAttendance();closeAttendance();setTimeout(function(){toast('Launching Practice Executioner...')},600)}
+function startPractice(){if(!attendanceSubmitted)submitAttendance();toast('Launching Practice Executioner...')}
+
+// ═══════════════════════════════════════════
+// ASSESSMENT PROMPT
+// ═══════════════════════════════════════════
+function assessDoneCount(){var c=0;for(var k in coachAssess)if(coachAssess[k])c++;return c}
+function renderAssessPrompt(){
+  var done=assessDoneCount();var allDone=done===4;
+  var prompt=$('assess-prompt'),nudge=$('nudge-prompt');
+  if(allDone){prompt.classList.remove('show')}
+  else{
+    prompt.classList.add('show');
+    $('ap-count').textContent=done+'/4';
+    $('ap-bar-fill').style.width=Math.round((done/4)*100)+'%';
+    var h='';ASSESS_LIST.forEach(function(a){var isDone=coachAssess[a.id];h+='<div class="ap-tile'+(isDone?' done':'')+'" onclick="'+(isDone?'':'launchAssess(\''+a.id+'\')')+'"><div class="ap-icon">'+a.icon+'</div><div class="ap-label">'+a.label+'</div><div class="ap-go">'+(isDone?'✓':'›')+'</div></div>'});
+    $('ap-tiles').innerHTML=h;
+  }
+  if(allDone&&athletesDone>=10){nudge.classList.add('show');var text=$('np-text');if(athletesDone>=roster.length){$('np-icon').textContent='🏆';text.textContent='Entire team done — full comparison ready'}else if(athletesDone>=20){$('np-icon').textContent='🔥';text.textContent=athletesDone+' athletes done — comparison data is solid'}else{$('np-icon').textContent='📊';text.textContent=athletesDone+' athletes done — see how your perception compares'}}
+  else{nudge.classList.remove('show')}
+}
+function launchAssess(id){toast('Launching '+id.charAt(0).toUpperCase()+id.slice(1)+' Assessment...')}
+
+// ═══════════════════════════════════════════
+// DRAWER + NAV
+// ═══════════════════════════════════════════
+function toggleDrawer(){$('drawer').classList.toggle('open');$('overlay').classList.toggle('open')}
+function drawerNav(page){
+  toggleDrawer();
+  var routes={'dashboard':'coach-dashboard.html','weekly-schedule':'weekly-schedule.html','roster':'coach-roster.html','team-stats':'team-stats.html','assessments':'coach-assessment.html','content-library':'content-library.html','monthly-focus':'monthly-focus.html','coach-assessment':'coach-assessment.html','settings':'coach-settings.html'};
+  if(routes[page])window.location.href=routes[page];
+  else toast('Opening '+page+'...');
+}
+
+// ═══════════════════════════════════════════
+// INIT — runs with or without Firebase
+// ═══════════════════════════════════════════
+function initDashboard(){
+  // Use demo data if Firebase isn't ready
+  if(!firebaseReady){
+    roster=getDemoRoster();checked=[];
+    for(var i=0;i<roster.length;i++)checked.push(i);
+    TEAM_LIST=[{id:'demo',name:'RANGER-47 WC',meta:'Club · 24 athletes'},{id:'demo2',name:'ROCKWALL BOYS',meta:'HS · 24 athletes'}];
+    renderTeamToggle();
+    $('att-total').textContent=roster.length;$('att-total2').textContent=roster.length;$('roster-count').textContent=roster.length;
+    $('hd-avatar').textContent='AH';$('drawer-team').textContent='RANGER-47 WRESTLING';$('drawer-meta').textContent='Andy Hrovat · Head Coach';
+  }
+  buildDays();renderDay();updateAttCount();renderAssessPrompt();
+}
+initDashboard();
+</script>
+
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+if(typeof firebase!=='undefined'){
+  firebase.initializeApp({
+    apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+    authDomain:"base-wrestling-app.firebaseapp.com",
+    projectId:"base-wrestling-app",
+    storageBucket:"base-wrestling-app.appspot.com",
+    messagingSenderId:"000000000000",
+    appId:"1:000000000000:web:placeholder"
+  });
+  auth=firebase.auth();db=firebase.firestore();firebaseReady=true;
+
+  auth.onAuthStateChanged(function(user){
+    if(user){loadUserData(user)}
+    else{
+      // Not logged in — could redirect or show demo
+      console.log('No user — running demo mode');
+    }
+  });
+}
+</script>
+</body>
+</html>
