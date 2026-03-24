@@ -285,7 +285,7 @@ function doAuth() {
 // ROUTING
 // ══════════════════════════════════════
 function routeUser(role, onboardingComplete) {
-  if (role === 'coach') {
+  if (role === 'coach' || role === 'head' || role === 'asst') {
     if (onboardingComplete) {
       window.location.href = 'coach-dashboard-v4.html';
     } else {
@@ -297,6 +297,8 @@ function routeUser(role, onboardingComplete) {
     } else {
       window.location.href = 'athlete-onboarding-v3.html';
     }
+  } else if (role === 'parent') {
+    window.location.href = 'coach-dashboard-v4.html';
   }
 }
 
