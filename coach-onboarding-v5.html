@@ -382,12 +382,14 @@ function $(id){return document.getElementById(id)}
 
 // ── FIREBASE SAVE HELPERS ──
 function saveToUser(data){
-  if(!firebaseReady||!auth.currentUser) return Promise.resolve();
-  return db.collection('users').doc(auth.currentUser.uid).set(data,{merge:true}).then(function(){showSaved()});
+  if(!firebaseReady||!auth||!auth.currentUser){console.log('saveToUser SKIPPED — firebaseReady:',firebaseReady,'auth.currentUser:',auth&&auth.currentUser?auth.currentUser.uid:'null');return Promise.resolve()}
+  console.log('saveToUser →',JSON.stringify(data));
+  return db.collection('users').doc(auth.currentUser.uid).set(data,{merge:true}).then(function(){showSaved();console.log('saveToUser SUCCESS')}).catch(function(e){console.error('saveToUser FAILED:',e)});
 }
 function saveToTeam(data){
-  if(!firebaseReady||!teamId) return Promise.resolve();
-  return db.collection('teams').doc(teamId).set(data,{merge:true}).then(function(){showSaved()});
+  if(!firebaseReady||!teamId){console.log('saveToTeam SKIPPED — firebaseReady:',firebaseReady,'teamId:',teamId);return Promise.resolve()}
+  console.log('saveToTeam →',teamId,JSON.stringify(data));
+  return db.collection('teams').doc(teamId).set(data,{merge:true}).then(function(){showSaved();console.log('saveToTeam SUCCESS')}).catch(function(e){console.error('saveToTeam FAILED:',e)});
 }
 function showSaved(){
   var el=$('savingEl');el.classList.add('show');setTimeout(function(){el.classList.remove('show')},1500);
@@ -782,14 +784,14 @@ initDrag('rank-ub');initDrag('rank-legs');initDrag('rank-top');
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
 if(typeof firebase!=='undefined'){
-  firebase.initializeApp({
+  if(firebase.apps.length===0){firebase.initializeApp({
     apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
     authDomain:"base-wrestling-app.firebaseapp.com",
     projectId:"base-wrestling-app",
-    storageBucket:"base-wrestling-app.appspot.com",
-    messagingSenderId:"000000000000",
-    appId:"1:000000000000:web:placeholder"
-  });
+    storageBucket:"base-wrestling-app.firebasestorage.app",
+    messagingSenderId:"368548684923",
+    appId:"1:368548684923:web:0fc54795d1f375b0e6eede"
+  });}
   auth=firebase.auth();
   db=firebase.firestore();
   firebaseReady=true;
