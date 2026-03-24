@@ -65,7 +65,7 @@ if (typeof firebase !== 'undefined') {
     appId: "1:368548684923:web:0fc54795d1f375b0e6eede"
   });}
   _fb_auth = firebase.auth();
-  _fb_db = firebase.firestore();db.settings({experimentalForceLongPolling:true});
+  _fb_db = firebase.firestore();_fb_db.settings({experimentalForceLongPolling:true});
   _fb_ready = true;
 
   _fb_auth.onAuthStateChanged(function(user) {

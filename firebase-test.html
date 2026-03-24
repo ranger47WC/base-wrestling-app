@@ -157,7 +157,7 @@ try{
 // TEST 4: Firestore
 try{
   db=firebase.firestore();
-  db.settings({experimentalForceLongPolling:true,merge:true});
+  db.settings({experimentalForceLongPolling:true});
   setStatus(4,'pass','PASS — Firestore ready (long polling enabled)');
   document.getElementById('loginBtn').disabled=false;
 }catch(e){

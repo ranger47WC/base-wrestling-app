@@ -209,7 +209,7 @@ var ASSESS_TYPE='exercise';
 var _db=null,_auth=null,_fbOk=false,_teamId=null,_uid=null,_uname='',_saveT=null;
 if(typeof firebase!=='undefined'){
   if(firebase.apps.length===0){firebase.initializeApp({apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",authDomain:"base-wrestling-app.firebaseapp.com",projectId:"base-wrestling-app",storageBucket:"base-wrestling-app.firebasestorage.app",messagingSenderId:"368548684923",appId:"1:368548684923:web:0fc54795d1f375b0e6eede"});}
-  _auth=firebase.auth();_db=firebase.firestore();db.settings({experimentalForceLongPolling:true});_fbOk=true;
+  _auth=firebase.auth();_db=firebase.firestore();_db.settings({experimentalForceLongPolling:true});_fbOk=true;
   _auth.onAuthStateChanged(function(u){if(u){_uid=u.uid;_db.collection('users').doc(u.uid).get().then(function(d){if(d.exists){var p=d.data();_teamId=p.teamId;_uname=(p.firstName||'')+' '+(p.lastName||'');loadSaved()}})}});
 }
 function loadSaved(){if(!_fbOk||!_teamId)return;_db.collection('teams').doc(_teamId).collection('assessments').doc('coach-'+ASSESS_TYPE).get().then(function(d){if(d.exists&&d.data().answers){var a=d.data().answers;for(var k in a)if(typeof answers!=='undefined')answers[k]=a[k];if(typeof render==='function')render()}}).catch(function(){})}

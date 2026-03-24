@@ -725,7 +725,7 @@ if(typeof firebase!=='undefined'){
   });}
   auth=firebase.auth();
   db=firebase.firestore();
-  db.settings({experimentalForceLongPolling:true,merge:true});
+  db.settings({experimentalForceLongPolling:true});
   firebaseReady=true;
 
   auth.onAuthStateChanged(function(user){
