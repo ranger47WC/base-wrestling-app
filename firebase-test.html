@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASE Wrestling — Firebase Test</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a0a;color:#f0f0f0;min-height:100vh;padding:20px}
+.wrap{max-width:500px;margin:0 auto}
+h1{font-size:24px;color:#c8a84e;margin-bottom:20px;text-align:center}
+.test{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:16px;margin-bottom:10px}
+.test-name{font-size:14px;font-weight:600;margin-bottom:6px}
+.test-status{font-size:13px;padding:8px 12px;border-radius:8px;margin-top:6px}
+.waiting{background:#1a1a1a;color:#888}
+.running{background:#2a2a0a;color:#c8a84e}
+.pass{background:#0a2a0a;color:#27ae60;border:1px solid rgba(39,174,96,.3)}
+.fail{background:#2a0a0a;color:#ff4d4d;border:1px solid rgba(255,77,77,.3)}
+.detail{font-size:11px;color:#888;margin-top:6px;word-break:break-all}
+button{width:100%;padding:16px;background:linear-gradient(135deg,#c8a84e,#a08030);color:#0a0a0a;font-size:18px;font-weight:700;border:none;border-radius:12px;cursor:pointer;margin-bottom:20px;letter-spacing:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+input{width:100%;padding:12px;background:#141414;border:2px solid #2a2a2a;border-radius:8px;color:#f0f0f0;font-size:15px;margin-bottom:8px;outline:none}
+input:focus{border-color:#c8a84e}
+.section{font-size:11px;color:#c8a84e;text-transform:uppercase;letter-spacing:2px;margin:20px 0 10px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>BASE WRESTLING<br>Firebase Diagnostic</h1>
+
+<div class="test" id="t1">
+<div class="test-name">1. Firebase SDK Loaded</div>
+<div class="test-status waiting" id="s1">Waiting...</div>
+<div class="detail" id="d1"></div>
+</div>
+
+<div class="test" id="t2">
+<div class="test-name">2. Firebase App Initialized</div>
+<div class="test-status waiting" id="s2">Waiting...</div>
+<div class="detail" id="d2"></div>
+</div>
+
+<div class="test" id="t3">
+<div class="test-name">3. Auth Service Ready</div>
+<div class="test-status waiting" id="s3">Waiting...</div>
+<div class="detail" id="d3"></div>
+</div>
+
+<div class="test" id="t4">
+<div class="test-name">4. Firestore Service Ready</div>
+<div class="test-status waiting" id="s4">Waiting...</div>
+<div class="detail" id="d4"></div>
+</div>
+
+<div class="section">Login Test</div>
+<input type="email" id="email" placeholder="Your email" value="">
+<input type="password" id="pass" placeholder="Your password" value="">
+<button id="loginBtn" onclick="testLogin()" disabled>SIGN IN & TEST</button>
+
+<div class="test" id="t5">
+<div class="test-name">5. Sign In</div>
+<div class="test-status waiting" id="s5">Enter email & password above</div>
+<div class="detail" id="d5"></div>
+</div>
+
+<div class="test" id="t6">
+<div class="test-name">6. Read User Document</div>
+<div class="test-status waiting" id="s6">Waiting for sign in...</div>
+<div class="detail" id="d6"></div>
+</div>
+
+<div class="test" id="t7">
+<div class="test-name">7. Write Test (save timestamp to user doc)</div>
+<div class="test-status waiting" id="s7">Waiting for sign in...</div>
+<div class="detail" id="d7"></div>
+</div>
+
+<div class="test" id="t8">
+<div class="test-name">8. Write to Teams Collection</div>
+<div class="test-status waiting" id="s8">Waiting for sign in...</div>
+<div class="detail" id="d8"></div>
+</div>
+
+<div class="test" id="t9">
+<div class="test-name">9. Write Attendance Sub-Collection</div>
+<div class="test-status waiting" id="s9">Waiting for sign in...</div>
+<div class="detail" id="d9"></div>
+</div>
+
+</div>
+
+<script>
+var auth=null,db=null,currentUid=null,teamId=null;
+
+function setStatus(n,cls,msg){
+  var el=document.getElementById('s'+n);
+  el.className='test-status '+cls;
+  el.textContent=msg;
+}
+function setDetail(n,msg){
+  document.getElementById('d'+n).textContent=msg;
+}
+</script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+// TEST 1: SDK loaded?
+if(typeof firebase!=='undefined'){
+  setStatus(1,'pass','PASS — Firebase SDK loaded');
+  setDetail(1,'Version: '+firebase.SDK_VERSION);
+}else{
+  setStatus(1,'fail','FAIL — Firebase SDK did not load');
+  setDetail(1,'The firebase-*.js scripts failed to download. Check if your browser is blocking third-party scripts.');
+}
+
+// TEST 2: Init app
+try{
+  if(firebase.apps.length===0){
+    firebase.initializeApp({
+      apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+      authDomain:"base-wrestling-app.firebaseapp.com",
+      projectId:"base-wrestling-app",
+      storageBucket:"base-wrestling-app.firebasestorage.app",
+      messagingSenderId:"368548684923",
+      appId:"1:368548684923:web:0fc54795d1f375b0e6eede"
+    });
+  }
+  setStatus(2,'pass','PASS — App initialized');
+  setDetail(2,'Project: '+firebase.app().options.projectId);
+}catch(e){
+  setStatus(2,'fail','FAIL — '+e.message);
+}
+
+// TEST 3: Auth
+try{
+  auth=firebase.auth();
+  setStatus(3,'pass','PASS — Auth service ready');
+  // Check if already signed in
+  auth.onAuthStateChanged(function(user){
+    if(user){
+      setDetail(3,'Already signed in as: '+user.email+' (uid: '+user.uid+')');
+      currentUid=user.uid;
+      document.getElementById('email').value=user.email;
+      runPostLoginTests();
+    }else{
+      setDetail(3,'No user signed in');
+    }
+  });
+}catch(e){
+  setStatus(3,'fail','FAIL — '+e.message);
+}
+
+// TEST 4: Firestore
+try{
+  db=firebase.firestore();
+  db.settings({experimentalForceLongPolling:true,merge:true});
+  setStatus(4,'pass','PASS — Firestore ready (long polling enabled)');
+  document.getElementById('loginBtn').disabled=false;
+}catch(e){
+  setStatus(4,'fail','FAIL — '+e.message);
+}
+
+// LOGIN TEST
+function testLogin(){
+  var email=document.getElementById('email').value.trim();
+  var pass=document.getElementById('pass').value;
+  if(!email||!pass){setStatus(5,'fail','Enter email and password');return}
+  
+  setStatus(5,'running','Signing in...');
+  
+  auth.signInWithEmailAndPassword(email,pass).then(function(cred){
+    currentUid=cred.user.uid;
+    setStatus(5,'pass','PASS — Signed in as '+cred.user.email);
+    setDetail(5,'UID: '+cred.user.uid);
+    runPostLoginTests();
+  }).catch(function(e){
+    setStatus(5,'fail','FAIL — '+e.code+': '+e.message);
+  });
+}
+
+function runPostLoginTests(){
+  // TEST 6: Read user doc
+  setStatus(6,'running','Reading...');
+  db.collection('users').doc(currentUid).get().then(function(doc){
+    if(doc.exists){
+      var d=doc.data();
+      setStatus(6,'pass','PASS — User document found');
+      setDetail(6,'Name: '+(d.firstName||'')+' '+(d.lastName||'')+' | Role: '+(d.role||'none')+' | TeamId: '+(d.teamId||'none'));
+      if(d.teamId)teamId=d.teamId;
+    }else{
+      setStatus(6,'fail','FAIL — User document does not exist');
+    }
+    // TEST 7: Write to user doc
+    testUserWrite();
+  }).catch(function(e){
+    setStatus(6,'fail','FAIL — '+e.code+': '+e.message);
+    testUserWrite();
+  });
+}
+
+function testUserWrite(){
+  setStatus(7,'running','Writing...');
+  db.collection('users').doc(currentUid).set({
+    _diagnosticTest:new Date().toISOString(),
+    _testPassed:true
+  },{merge:true}).then(function(){
+    setStatus(7,'pass','PASS — User document write successful');
+    setDetail(7,'Wrote _diagnosticTest timestamp');
+    testTeamWrite();
+  }).catch(function(e){
+    setStatus(7,'fail','FAIL — '+e.code+': '+e.message);
+    testTeamWrite();
+  });
+}
+
+function testTeamWrite(){
+  if(!teamId){
+    setStatus(8,'fail','SKIP — No teamId found in user profile');
+    testAttendanceWrite();
+    return;
+  }
+  setStatus(8,'running','Writing to teams/'+teamId+'...');
+  db.collection('teams').doc(teamId).set({
+    _diagnosticTest:new Date().toISOString(),
+    _testPassed:true
+  },{merge:true}).then(function(){
+    setStatus(8,'pass','PASS — Teams collection write successful');
+    setDetail(8,'Wrote to teams/'+teamId);
+    testAttendanceWrite();
+  }).catch(function(e){
+    setStatus(8,'fail','FAIL — '+e.code+': '+e.message);
+    setDetail(8,'Tried teams/'+teamId);
+    testAttendanceWrite();
+  });
+}
+
+function testAttendanceWrite(){
+  if(!teamId){
+    setStatus(9,'fail','SKIP — No teamId');
+    return;
+  }
+  var today=new Date().toISOString().slice(0,10);
+  setStatus(9,'running','Writing attendance for '+today+'...');
+  db.collection('teams').doc(teamId).collection('attendance').doc(today).set({
+    _diagnosticTest:true,
+    date:today,
+    present:['test-user'],
+    presentCount:1,
+    totalCount:1,
+    submittedAt:new Date()
+  },{merge:true}).then(function(){
+    setStatus(9,'pass','PASS — Attendance sub-collection write successful');
+    setDetail(9,'Wrote to teams/'+teamId+'/attendance/'+today);
+  }).catch(function(e){
+    setStatus(9,'fail','FAIL — '+e.code+': '+e.message);
+    setDetail(9,'Tried teams/'+teamId+'/attendance/'+today);
+  });
+}
+</script>
+</body>
+</html>
