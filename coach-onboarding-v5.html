@@ -387,18 +387,30 @@ function saveToUser(data){
   return db.collection('users').doc(auth.currentUser.uid).set(data,{merge:true}).then(function(){showSaved();console.log('saveToUser SUCCESS')}).catch(function(e){console.error('saveToUser FAILED:',e)});
 }
 function saveToTeam(data){
-  // Save team data inside the user doc under a 'team' field
-  // This avoids the separate teams collection write that's failing
   if(!firebaseReady||!auth||!auth.currentUser){console.log('saveToTeam SKIPPED');return Promise.resolve()}
+  // Always save to user doc first (this works)
   var wrapped={team:data};
-  console.log('saveToTeam (via user doc) →',JSON.stringify(data));
+  console.log('saveToTeam →',JSON.stringify(data));
   return db.collection('users').doc(auth.currentUser.uid).set(wrapped,{merge:true}).then(function(){
-    showSaved();console.log('saveToTeam SUCCESS');
-    // Also try writing to teams collection — if it works great, if not we have the data in user doc
+    showSaved();console.log('saveToTeam → user doc SUCCESS');
+    // Now write to teams collection
     if(teamId){
-      db.collection('teams').doc(teamId).set(data,{merge:true}).catch(function(e){console.log('teams collection write failed (ok, data saved in user doc):',e)});
+      return db.collection('teams').doc(teamId).set(data,{merge:true}).then(function(){
+        console.log('saveToTeam → teams collection SUCCESS');
+      }).catch(function(e){
+        console.error('saveToTeam → teams collection FAILED:',e.code,e.message);
+        // If custom ID fails, try auto-ID
+        return db.collection('teams').add(data).then(function(ref){
+          teamId=ref.id;
+          console.log('saveToTeam → teams collection SUCCESS with auto-ID:',teamId);
+          // Update user doc with the real teamId
+          db.collection('users').doc(auth.currentUser.uid).set({teamId:teamId},{merge:true});
+        }).catch(function(e2){
+          console.error('saveToTeam → teams collection auto-ID also FAILED:',e2.code,e2.message);
+        });
+      });
     }
-  }).catch(function(e){console.error('saveToTeam FAILED:',e)});
+  }).catch(function(e){console.error('saveToTeam → user doc FAILED:',e)});
 }
 function showSaved(){
   var el=$('savingEl');el.classList.add('show');setTimeout(function(){el.classList.remove('show')},1500);
@@ -738,10 +750,19 @@ function buildCodes(){
   $('z-sty').textContent=sty.join(' · ');
 
   // Save all codes to Firestore
-  if(firebaseReady&&teamId){
-    codesToSave.forEach(function(c){
-      db.collection('teams').doc(teamId).collection('codes').add({code:c.code,type:c.type,level:c.level,gender:c.gender||null,createdAt:new Date(),used:false});
-    });
+  if(firebaseReady&&auth&&auth.currentUser){
+    // Save to user doc (guaranteed to work)
+    saveToUser({codes:codesToSave});
+    // Also try teams collection
+    if(teamId){
+      codesToSave.forEach(function(c){
+        db.collection('teams').doc(teamId).collection('codes').add({code:c.code,type:c.type,level:c.level,gender:c.gender||null,createdAt:new Date(),used:false}).then(function(){
+          console.log('Code saved to teams collection:',c.code);
+        }).catch(function(e){
+          console.log('Code save to teams failed (ok, saved in user doc):',e.message);
+        });
+      });
+    }
   }
 }
 function cBtn(code,type){return'<div class="cr"><button class="cb" onclick="copyC(\''+code+'\')">📋 COPY</button><button class="cb sm" onclick="smsC(\''+code+'\',\''+type+'\')">💬 TEXT</button></div>'}
