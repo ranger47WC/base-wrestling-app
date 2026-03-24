@@ -388,26 +388,31 @@ function loadUserData(user){
 }
 
 function loadTeams(uid){
-  // Query teams where this user is a member
+  // First, always set activeTeamId from user profile (guaranteed to exist)
+  if(userProfile.teamId){
+    activeTeamId=userProfile.teamId;
+    TEAM_LIST.push({id:userProfile.teamId,name:(userProfile.teamName||'MY TEAM').toUpperCase(),meta:'Loading...',data:{}});
+    renderTeamToggle();
+    loadTeamData(userProfile.teamId);
+  }
+  // Also try to query teams collection for additional teams
   db.collection('teams').get().then(function(snap){
-    TEAM_LIST=[];
+    var found=false;
     snap.forEach(function(doc){
       var d=doc.data();
       if(d.members&&d.members[uid]){
-        var memberCount=0;
-        for(var k in d.members){if(d.members[k].role!=='head'&&d.members[k].role!=='asst')memberCount++}
-        TEAM_LIST.push({id:doc.id,name:(d.name||'Team').toUpperCase(),meta:(d.settings?d.settings.programType:'')+ ' · '+memberCount+' athletes',data:d});
+        found=true;
+        // Check if we already have this team
+        var exists=TEAM_LIST.some(function(t){return t.id===doc.id});
+        if(!exists){
+          var memberCount=0;
+          for(var k in d.members){if(d.members[k].role!=='head'&&d.members[k].role!=='asst')memberCount++}
+          TEAM_LIST.push({id:doc.id,name:(d.name||'Team').toUpperCase(),meta:(d.settings?d.settings.programType:'')+' · '+memberCount+' athletes',data:d});
+        }
       }
     });
-    if(TEAM_LIST.length===0){
-      // Fallback — user's teamId from profile
-      if(userProfile.teamId){
-        TEAM_LIST.push({id:userProfile.teamId,name:(userProfile.teamName||'MY TEAM').toUpperCase(),meta:'Loading...',data:{}});
-      }
-    }
-    renderTeamToggle();
-    if(TEAM_LIST.length>0)selectTeam(0);
-  });
+    if(found||TEAM_LIST.length>0)renderTeamToggle();
+  }).catch(function(e){console.log('Teams query failed (using fallback):',e.message)});
 }
 
 function loadTeamData(teamId){
@@ -491,12 +496,12 @@ function loadAssessmentStatus(teamId){
 }
 
 function saveAttendance(){
-  if(!firebaseReady||!activeTeamId)return;
+  if(!firebaseReady)return;
   var today=todayStr();
   var presentList=checked.map(function(i){return roster[i]?roster[i].uid||roster[i].name:''}).filter(Boolean);
   var absentList=roster.filter(function(r,i){return checked.indexOf(i)===-1}).map(function(r){return r.uid||r.name});
 
-  db.collection('teams').doc(activeTeamId).collection('attendance').doc(today).set({
+  var attData={
     date:today,
     present:presentList,
     absent:absentList,
@@ -504,7 +509,25 @@ function saveAttendance(){
     totalCount:roster.length,
     submittedAt:new Date(),
     submittedBy:currentUser?currentUser.uid:'local'
-  },{merge:true}).then(function(){showSaved()});
+  };
+
+  // Save to user doc (always works)
+  if(currentUser){
+    var userAtt={};
+    userAtt['attendance_'+today.replace(/-/g,'')]=attData;
+    db.collection('users').doc(currentUser.uid).set(userAtt,{merge:true}).then(function(){
+      showSaved();console.log('Attendance saved to user doc');
+    }).catch(function(e){console.error('Attendance user save failed:',e)});
+  }
+
+  // Also try teams collection
+  if(activeTeamId){
+    db.collection('teams').doc(activeTeamId).collection('attendance').doc(today).set(attData,{merge:true}).then(function(){
+      console.log('Attendance saved to teams collection');
+    }).catch(function(e){console.log('Attendance teams save failed:',e.message)});
+  }else{
+    console.log('Attendance — no activeTeamId, saved to user doc only');
+  }
 }
 
 // ═══════════════════════════════════════════
