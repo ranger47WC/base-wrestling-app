@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Skill Assessment (Coach)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--gr:#888;--grd:#555;--lt:#ddd;--wh:#f0f0f0;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--rdg:rgba(200,16,46,.12);--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--gr)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-save{font-size:12px;color:var(--gd);font-weight:600;cursor:pointer;padding:8px 12px;border:1px solid rgba(200,168,78,.3);border-radius:var(--r);background:var(--gdg)}
+.progress-wrap{padding:12px 20px 8px;flex-shrink:0}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:11px;color:var(--gr);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.progress-count{font-size:11px;color:var(--gd);font-weight:700}
+.progress-bar{height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gd);border-radius:2px;transition:width .3s ease}
+.section-intro{padding:24px 20px 16px;text-align:center}
+.section-icon{font-size:40px;margin-bottom:12px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--gd);margin-bottom:8px}
+.section-desc{font-size:13px;color:var(--gr);line-height:1.5;max-width:340px;margin:0 auto}
+.q-area{flex:1;overflow-y:auto;padding:0 20px 120px}
+.q-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:12px}
+.q-num{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--grd);font-weight:700;margin-bottom:8px}
+.q-text{font-size:15px;color:var(--wh);font-weight:600;line-height:1.4;margin-bottom:6px}
+.q-hint{font-size:12px;color:var(--gr);line-height:1.4;margin-bottom:16px}
+.sub-header{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gd);font-weight:700;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sub-header::after{content:'';flex:1;height:1px;background:var(--bd)}
+.input-row{display:flex;gap:10px;align-items:center}
+.input-row .num-input{flex:1}
+.num-input{width:100%;padding:16px;background:var(--bk);border:2px solid var(--bd);border-radius:var(--r);color:var(--wh);font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;text-align:center;outline:none;transition:border-color .2s;-moz-appearance:textfield}
+.num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.num-input:focus{border-color:var(--gd)}
+.num-input::placeholder{color:var(--grd);font-size:16px;letter-spacing:1px}
+.done-btn{padding:16px 20px;background:var(--gdg);border:2px solid var(--gdd);border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gd);cursor:pointer;flex-shrink:0;transition:all .2s}
+.done-btn.locked{background:var(--gng);border-color:var(--gn);color:var(--gn)}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px;background:linear-gradient(transparent,var(--dk) 20%);display:flex;gap:10px;z-index:20}
+.btn-back{flex:0 0 auto;padding:14px 20px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gr);cursor:pointer}
+.btn-next{flex:1;padding:14px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;text-align:center;transition:all .2s}
+.btn-next.ready{background:var(--gd);color:var(--bk)}
+.btn-next.disabled{background:var(--bd);color:var(--grd);pointer-events:none}
+.complete-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;flex:1}
+.complete-icon{font-size:60px;margin-bottom:20px}
+.complete-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gd);margin-bottom:12px}
+.complete-sub{font-size:14px;color:var(--gr);line-height:1.5;max-width:300px;margin-bottom:32px}
+.complete-btn{padding:16px 40px;border-radius:var(--r);border:none;background:var(--gd);color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer}
+.video-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin:0 0 16px;overflow:hidden}
+.video-thumb{height:160px;background:var(--bk);display:flex;align-items:center;justify-content:center}
+.video-play{width:50px;height:50px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--bk)}
+.video-label{padding:10px 14px;font-size:12px;color:var(--gr);font-weight:600}
+.roster-note{text-align:center;padding:8px 20px 0;font-size:12px;color:var(--gd);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+// Returning athletes count — comes from onboarding in production
+var TEAM_SIZE=20;
+
+var SECTIONS=[
+  {
+    id:'mat',title:'Controlling the Mat',icon:'🤼',
+    videoLabel:'VIDEO: Controlling the Mat — Skill Overview',
+    desc:'Out of your '+TEAM_SIZE+' returning athletes, how many can use each skill in a match against a 3-star level wrestler?',
+    questions:[
+      {id:'s1',label:'Neutral Offense — Stance, Motion, Level Changes',hint:'How many can control the neutral position on offense in a match against a 3-star level wrestler?'},
+      {id:'s2',label:'Neutral Defense — Stopping Attacks',hint:'How many can effectively defend on the feet in a match against a 3-star level wrestler?'},
+      {id:'s3',label:'Top Position — Riding',hint:'How many can ride and control from top in a match against a 3-star level wrestler?'},
+      {id:'s4',label:'Bottom Position — Base & Escapes',hint:'How many can maintain base and escape from bottom in a match against a 3-star level wrestler?'}
+    ]
+  },
+  {
+    id:'attacks',title:'Controlling the Attacks',icon:'⚔️',
+    videoLabel:'VIDEO: Attacks — Skill Overview',
+    desc:'Out of your '+TEAM_SIZE+' returning athletes, how many can execute these attacks in a match against a 3-star level wrestler?',
+    questions:[
+      {id:'s5',label:'Upper Body Attacks — Offense',hint:'How many can attack the upper body effectively in a match against a 3-star level wrestler?'},
+      {id:'s6',label:'Upper Body Attacks — Defense',hint:'How many can defend upper body attacks in a match against a 3-star level wrestler?'},
+      {id:'s7',label:'Leg Attacks — Offense',hint:'How many can execute leg attacks in a match against a 3-star level wrestler?'},
+      {id:'s8',label:'Leg Attacks — Defense',hint:'How many can defend leg attacks in a match against a 3-star level wrestler?'},
+      {id:'s9',label:'Top Attacks — Upper Body Control',hint:'How many can attack with upper body rides from top in a match against a 3-star level wrestler?'},
+      {id:'s10',label:'Top Attacks — Legs In',hint:'How many can attack with legs in from top in a match against a 3-star level wrestler?'},
+      {id:'s11',label:'Bottom Attacks — Escapes',hint:'How many can execute escapes from bottom in a match against a 3-star level wrestler?'},
+      {id:'s12',label:'Bottom Attacks — Reversals',hint:'How many can execute reversals from bottom in a match against a 3-star level wrestler?'}
+    ]
+  },
+  {
+    id:'sit-ub',title:'Upper Body Situations',icon:'💪',
+    videoLabel:'VIDEO: Upper Body Positions — Skill Overview',
+    desc:'Out of your '+TEAM_SIZE+' returning athletes, how many can control these positions in a match against a 3-star level wrestler?',
+    questions:[
+      {id:'s13',label:'Underhook — Offense Control',hint:'How many can control the underhook on offense in a match against a 3-star level wrestler?'},
+      {id:'s14',label:'Overhook — Offense Control',hint:'How many can control the overhook on offense in a match against a 3-star level wrestler?'},
+      {id:'s15',label:'Over/Under — Offense Control',hint:'How many can control the over/under position in a match against a 3-star level wrestler?'},
+      {id:'s16',label:'2-on-1 — Offense Control',hint:'How many can control the 2-on-1 on offense in a match against a 3-star level wrestler?'},
+      {id:'s17',label:'2-on-1 — Defense Control',hint:'How many can defend the 2-on-1 in a match against a 3-star level wrestler?'}
+    ]
+  },
+  {
+    id:'sit-leg',title:'Leg Attack Situations',icon:'🦵',
+    videoLabel:'VIDEO: Leg Attack Positions — Skill Overview',
+    desc:'Out of your '+TEAM_SIZE+' returning athletes, how many can control these positions in a match against a 3-star level wrestler?',
+    questions:[
+      {id:'s18',label:'Head Inside Single — Offense Control',hint:'How many can control head inside single on offense in a match against a 3-star level wrestler?'},
+      {id:'s19',label:'Head Inside Single — Defense Control',hint:'How many can defend head inside single in a match against a 3-star level wrestler?'},
+      {id:'s20',label:'Head Outside Single — Offense Control',hint:'How many can control head outside single on offense in a match against a 3-star level wrestler?'},
+      {id:'s21',label:'Head Outside Single — Defense Control',hint:'How many can defend head outside single in a match against a 3-star level wrestler?'}
+    ]
+  },
+  {
+    id:'sit-fa',title:'Failed Attack Situations',icon:'🔄',
+    videoLabel:'VIDEO: Failed Attack Positions — Skill Overview',
+    desc:'Out of your '+TEAM_SIZE+' returning athletes, how many can control these positions in a match against a 3-star level wrestler?',
+    questions:[
+      {id:'s22',label:'Front Headlock — Offense Control',hint:'How many can control the front headlock on offense in a match against a 3-star level wrestler?'},
+      {id:'s23',label:'Front Headlock — Defense Control',hint:'How many can defend the front headlock in a match against a 3-star level wrestler?'},
+      {id:'s24',label:'Seatbelt — Offense Control',hint:'How many can control the seatbelt position in a match against a 3-star level wrestler?'},
+      {id:'s25',label:'Whizzer — Offense Control',hint:'How many can control with the whizzer in a match against a 3-star level wrestler?'}
+    ]
+  },
+  {
+    id:'sit-tb',title:'Top / Bottom Situations',icon:'🔒',
+    videoLabel:'VIDEO: Top/Bottom Positions — Skill Overview',
+    desc:'Out of your '+TEAM_SIZE+' returning athletes, how many can control these positions in a match against a 3-star level wrestler?',
+    questions:[
+      {id:'s26',label:'Wrist Rides — Offense Control',hint:'How many can control with wrist rides from top in a match against a 3-star level wrestler?'},
+      {id:'s27',label:'Wrist Rides — Defense Control',hint:'How many can escape wrist rides from bottom in a match against a 3-star level wrestler?'},
+      {id:'s28',label:'Arm Bars — Offense Control',hint:'How many can control with arm bars from top in a match against a 3-star level wrestler?'},
+      {id:'s29',label:'Arm Bars — Defense Control',hint:'How many can escape arm bars from bottom in a match against a 3-star level wrestler?'},
+      {id:'s30',label:'Chicken Wing — Offense Control',hint:'How many can control with a chicken wing from top in a match against a 3-star level wrestler?'},
+      {id:'s31',label:'Chicken Wing — Defense Control',hint:'How many can escape a chicken wing from bottom in a match against a 3-star level wrestler?'},
+      {id:'s32',label:'Leg Riding — Offense Control',hint:'How many can control with legs in from top in a match against a 3-star level wrestler?'},
+      {id:'s33',label:'Leg Riding — Defense Control',hint:'How many can escape legs in from bottom in a match against a 3-star level wrestler?'}
+    ]
+  }
+];
+
+var answers={};
+var currentSection=0;
+var totalQ=33;
+
+function answeredCount(){var c=0;for(var k in answers)if(answers[k]!==undefined&&answers[k]!=='')c++;return c;}
+
+function sectionComplete(idx){
+  var s=SECTIONS[idx];
+  for(var i=0;i<s.questions.length;i++){
+    if(answers[s.questions[i].id]===undefined||answers[s.questions[i].id]==='')return false;
+  }
+  return true;
+}
+
+var skipClick={};
+function commitInput(id){
+  var el=document.getElementById('inp-'+id);
+  if(el){
+    var v=parseInt(el.value);
+    if(isNaN(v)||v<0)v=0;
+    if(v>TEAM_SIZE)v=TEAM_SIZE;
+    answers[id]=v;
+    render();
+    setTimeout(function(){
+      var next=document.querySelector('[data-unlocked="true"]');
+      if(next){skipClick[next.id]=true;next.focus();}
+    },50);
+  }
+}
+
+function tapToEdit(id){
+  if(skipClick[id]){delete skipClick[id];return;}
+  delete answers[id];
+  render();
+  setTimeout(function(){var el=document.getElementById('inp-'+id);if(el)el.focus();},50);
+}
+
+function unlockInput(id){
+  delete answers[id];
+  render();
+}
+
+function render(){
+  var app=document.getElementById('app');
+  if(currentSection>=SECTIONS.length){renderComplete(app);return;}
+  var sec=SECTIONS[currentSection];
+  var answered=answeredCount();
+  var pct=Math.round((answered/totalQ)*100);
+  var h='';
+
+  h+='<div class="hd"><div class="hd-left"><div class="hd-back" onclick="goBack()">←</div>';
+  h+='<div class="hd-info"><div>SKILL ASSESSMENT</div>';
+  h+='<div>Team Evaluation</div></div></div>';
+  h+='<div class="hd-save" onclick="saveAndExit()">SAVE & EXIT</div></div>';
+
+  h+='<div class="progress-wrap"><div class="progress-top">';
+  h+='<div class="progress-label">Section '+(currentSection+1)+' of '+SECTIONS.length+' — '+sec.title+'</div>';
+  h+='<div class="progress-count">'+answered+'/'+totalQ+'</div></div>';
+  h+='<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div></div>';
+
+  h+='<div class="roster-note">Your team: '+TEAM_SIZE+' returning athletes</div>';
+
+  h+='<div class="section-intro"><div class="section-icon">'+sec.icon+'</div>';
+  h+='<div class="section-title">'+sec.title.toUpperCase()+'</div>';
+  h+='<div class="section-desc">'+sec.desc+'</div></div>';
+
+  h+='<div class="q-area">';
+  h+='<div class="video-card"><div class="video-thumb"><div class="video-play">▶</div></div>';
+  h+='<div class="video-label">'+sec.videoLabel+'</div></div>';
+
+  for(var i=0;i<sec.questions.length;i++){
+    var q=sec.questions[i];
+    var val=answers[q.id];
+    var isSet=val!==undefined&&val!=='';
+    h+='<div class="q-card">';
+    h+='<div class="q-num">'+q.id.toUpperCase()+'</div>';
+    h+='<div class="q-text">'+q.label+'</div>';
+    h+='<div class="q-hint">'+q.hint+'</div>';
+    h+='<div class="input-row">';
+    if(!isSet){
+      h+='<input class="num-input" id="inp-'+q.id+'" data-unlocked="true" type="number" min="0" max="'+TEAM_SIZE+'" placeholder="Out of '+TEAM_SIZE+'" inputmode="numeric" onkeydown="if(event.key===\'Enter\'){commitInput(\''+q.id+'\');}">';
+      h+='<div class="done-btn" onclick="commitInput(\''+q.id+'\')">DONE</div>';
+    } else {
+      h+='<input class="num-input" id="inp-'+q.id+'" type="number" min="0" max="'+TEAM_SIZE+'" value="'+val+'" inputmode="numeric" style="border-color:var(--gn)" readonly onclick="tapToEdit(\''+q.id+'\')">';
+      h+='<div class="done-btn locked" onclick="tapToEdit(\''+q.id+'\')">✓ '+val+'</div>';
+    }
+    h+='</div></div>';
+  }
+  h+='</div>';
+
+  var complete=sectionComplete(currentSection);
+  h+='<div class="bottom-nav">';
+  if(currentSection>0)h+='<div class="btn-back" onclick="prevSection()">← BACK</div>';
+  var nl=currentSection===SECTIONS.length-1?'FINISH':'NEXT →';
+  h+='<div class="btn-next '+(complete?'ready':'disabled')+'" onclick="'+(complete?'nextSection()':'')+'">'+nl+'</div>';
+  h+='</div>';
+
+  app.innerHTML=h;
+  var qa=document.querySelector('.q-area');
+  if(qa)qa.scrollTop=0;
+}
+
+function renderComplete(app){
+  var h='';
+  h+='<div class="hd"><div class="hd-left"><div class="hd-info"><div>SKILL ASSESSMENT</div>';
+  h+='<div>Complete</div></div></div></div>';
+  h+='<div class="complete-screen">';
+  h+='<div class="complete-icon">🎯</div>';
+  h+='<div class="complete-title">SKILL ASSESSMENT COMPLETE</div>';
+  h+='<div class="complete-sub">Your team evaluation has been saved. Compare your perception against athlete data in My Assessment.</div>';
+  h+='<div class="complete-btn" onclick="alert(\'Redirecting to results...\')">VIEW RESULTS</div>';
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+function nextSection(){if(!sectionComplete(currentSection))return;currentSection++;render();window.scrollTo(0,0);}
+function prevSection(){if(currentSection>0){currentSection--;render();window.scrollTo(0,0);}}
+function goBack(){if(currentSection>0)prevSection();else if(confirm('Save progress and exit?'))saveAndExit();}
+function saveAndExit(){alert('Progress saved: '+answeredCount()+'/'+totalQ+' questions answered.\nYou can pick up where you left off.');}
+function finishAssessment(){currentSection=SECTIONS.length;render();}
+
+render();
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+var ASSESS_TYPE='skill';
+var _db=null,_auth=null,_fbOk=false,_teamId=null,_uid=null,_uname='',_saveT=null;
+if(typeof firebase!=='undefined'){
+  if(firebase.apps.length===0){firebase.initializeApp({apiKey:"AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",authDomain:"base-wrestling-app.firebaseapp.com",projectId:"base-wrestling-app",storageBucket:"base-wrestling-app.firebasestorage.app",messagingSenderId:"368548684923",appId:"1:368548684923:web:0fc54795d1f375b0e6eede"});}
+  _auth=firebase.auth();_db=firebase.firestore();db.settings({experimentalForceLongPolling:true});_fbOk=true;
+  _auth.onAuthStateChanged(function(u){if(u){_uid=u.uid;_db.collection('users').doc(u.uid).get().then(function(d){if(d.exists){var p=d.data();_teamId=p.teamId;_uname=(p.firstName||'')+' '+(p.lastName||'');loadSaved()}})}});
+}
+function loadSaved(){if(!_fbOk||!_teamId)return;_db.collection('teams').doc(_teamId).collection('assessments').doc('coach-'+ASSESS_TYPE).get().then(function(d){if(d.exists&&d.data().answers){var a=d.data().answers;for(var k in a)if(typeof answers!=='undefined')answers[k]=a[k];if(typeof render==='function')render()}}).catch(function(){})}
+function fbSave(answersObj,total,countFn){if(!_fbOk||!_teamId)return;clearTimeout(_saveT);_saveT=setTimeout(function(){var n=typeof countFn==='function'?countFn():0;_db.collection('teams').doc(_teamId).collection('assessments').doc('coach-'+ASSESS_TYPE).set({answers:answersObj||{},totalQuestions:total||0,answeredCount:n,complete:false,lastSavedAt:new Date(),savedBy:_uid,coachName:_uname.trim()},{merge:true}).then(function(){var el=document.getElementById('fbs');if(!el){el=document.createElement('div');el.id='fbs';el.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#27ae60;color:#0a0a0a;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;opacity:0;transition:opacity .3s;z-index:100';el.textContent='✓ Saved';document.body.appendChild(el)}el.style.opacity='1';setTimeout(function(){el.style.opacity='0'},1200)})},500)}
+function fbFinish(answersObj,total){if(!_fbOk||!_teamId)return Promise.resolve();return _db.collection('teams').doc(_teamId).collection('assessments').doc('coach-'+ASSESS_TYPE).set({answers:answersObj||{},totalQuestions:total||0,answeredCount:total,complete:true,completedAt:new Date(),lastSavedAt:new Date(),savedBy:_uid,coachName:_uname.trim()},{merge:true})}
+</script>
+</body>
+</html>

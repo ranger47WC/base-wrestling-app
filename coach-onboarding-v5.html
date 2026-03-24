@@ -823,7 +823,7 @@ if(typeof firebase!=='undefined'){
     appId:"1:368548684923:web:0fc54795d1f375b0e6eede"
   });}
   auth=firebase.auth();
-  db=firebase.firestore();
+  db=firebase.firestore();db.settings({experimentalForceLongPolling:true});
   firebaseReady=true;
 
   // If user is logged in, pre-fill from their profile

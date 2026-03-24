@@ -1,0 +1,222 @@
+<!--
+  BASE Wrestling — Assessment Firebase Module
+  
+  This is a DROP-IN script block to add to the bottom of any assessment HTML file
+  (battle-assessment-intake-v3, athletic-assessment-coach-intake-v2, 
+   exercise-assessment-coach-intake-v3, skill-assessment-coach-intake)
+  
+  WHAT IT DOES:
+  1. Loads Firebase SDK
+  2. On every answer tap → saves progress to /teams/{teamId}/assessments/coach-{type}
+  3. On completion → marks assessment as complete, sets timestamp
+  4. On load → restores saved answers so coach can pick up where they left off
+  5. On "Save & Exit" → saves current progress
+  
+  HOW TO USE:
+  Add this entire block at the bottom of the assessment HTML, right before </body>.
+  Set ASSESS_TYPE to the assessment type: 'battle', 'athletic', 'exercise', or 'skill'
+  
+  FIREBASE DOCUMENT STRUCTURE:
+  /teams/{teamId}/assessments/coach-battle
+  {
+    answers: { q1: "Below", q2: "At", q3: "Above", ... },
+    totalQuestions: 33,
+    answeredCount: 33,
+    complete: true,
+    completedAt: Timestamp,
+    lastSavedAt: Timestamp,
+    savedBy: "uid",
+    coachName: "Andy Hrovat"
+  }
+-->
+
+<!-- 
+  PASTE THIS INTO EACH ASSESSMENT FILE
+  Change ASSESS_TYPE for each one:
+  - battle-assessment-intake-v3.html → ASSESS_TYPE = 'battle'
+  - athletic-assessment-coach-intake-v2.html → ASSESS_TYPE = 'athletic'  
+  - exercise-assessment-coach-intake-v3.html → ASSESS_TYPE = 'exercise'
+  - skill-assessment-coach-intake.html → ASSESS_TYPE = 'skill'
+-->
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+// ═══════════════════════════════════════════
+// CONFIGURATION — CHANGE THIS PER ASSESSMENT
+// ═══════════════════════════════════════════
+var ASSESS_TYPE = 'battle'; // 'battle' | 'athletic' | 'exercise' | 'skill'
+
+// ═══════════════════════════════════════════
+// FIREBASE INIT
+// ═══════════════════════════════════════════
+var _fb_db = null, _fb_auth = null, _fb_ready = false;
+var _fb_teamId = null, _fb_userId = null, _fb_userName = '';
+var _fb_saveTimeout = null;
+
+if (typeof firebase !== 'undefined') {
+  if(firebase.apps.length===0){firebase.initializeApp({
+    apiKey: "AIzaSyAg2sn35a87F7hRnqOEuVgRdUgY8SZu1fE",
+    authDomain: "base-wrestling-app.firebaseapp.com",
+    projectId: "base-wrestling-app",
+    storageBucket: "base-wrestling-app.firebasestorage.app",
+    messagingSenderId: "368548684923",
+    appId: "1:368548684923:web:0fc54795d1f375b0e6eede"
+  });}
+  _fb_auth = firebase.auth();
+  _fb_db = firebase.firestore();db.settings({experimentalForceLongPolling:true});
+  _fb_ready = true;
+
+  _fb_auth.onAuthStateChanged(function(user) {
+    if (user) {
+      _fb_userId = user.uid;
+      // Get user profile for teamId and name
+      _fb_db.collection('users').doc(user.uid).get().then(function(doc) {
+        if (doc.exists) {
+          var d = doc.data();
+          _fb_teamId = d.teamId;
+          _fb_userName = (d.firstName || '') + ' ' + (d.lastName || '');
+          // Load saved answers
+          loadSavedAnswers();
+        }
+      });
+    }
+  });
+}
+
+// ═══════════════════════════════════════════
+// LOAD SAVED ANSWERS (resume where left off)
+// ═══════════════════════════════════════════
+function loadSavedAnswers() {
+  if (!_fb_ready || !_fb_teamId) return;
+  var docId = 'coach-' + ASSESS_TYPE;
+  _fb_db.collection('teams').doc(_fb_teamId).collection('assessments').doc(docId).get()
+    .then(function(doc) {
+      if (doc.exists) {
+        var data = doc.data();
+        if (data.answers) {
+          // Merge saved answers into the global answers object
+          for (var key in data.answers) {
+            answers[key] = data.answers[key];
+          }
+          // Find which section to resume from
+          if (!data.complete) {
+            for (var i = 0; i < SECTIONS.length; i++) {
+              if (!sectionComplete(i)) { currentSection = i; break; }
+            }
+          }
+          render();
+        }
+      }
+    })
+    .catch(function(err) { console.log('No saved assessment data:', err); });
+}
+
+// ═══════════════════════════════════════════
+// SAVE ANSWERS (debounced — saves 500ms after last tap)
+// ═══════════════════════════════════════════
+function saveAnswersToFirebase() {
+  if (!_fb_ready || !_fb_teamId) return;
+  
+  clearTimeout(_fb_saveTimeout);
+  _fb_saveTimeout = setTimeout(function() {
+    var docId = 'coach-' + ASSESS_TYPE;
+    var answered = answeredCount();
+    var data = {
+      answers: answers,
+      totalQuestions: totalQ,
+      answeredCount: answered,
+      complete: answered >= totalQ,
+      lastSavedAt: new Date(),
+      savedBy: _fb_userId,
+      coachName: _fb_userName.trim()
+    };
+    if (answered >= totalQ) {
+      data.completedAt = new Date();
+    }
+    _fb_db.collection('teams').doc(_fb_teamId).collection('assessments').doc(docId)
+      .set(data, { merge: true })
+      .then(function() {
+        // Show brief save indicator
+        showSaveIndicator();
+      })
+      .catch(function(err) { console.error('Save failed:', err); });
+  }, 500);
+}
+
+// ═══════════════════════════════════════════
+// OVERRIDE EXISTING FUNCTIONS TO ADD FIREBASE
+// ═══════════════════════════════════════════
+
+// Store the original answer function
+var _origAnswer = answer;
+answer = function(qId, val) {
+  _origAnswer(qId, val);
+  saveAnswersToFirebase();
+};
+
+// Override saveAndExit
+saveAndExit = function() {
+  if (_fb_ready && _fb_teamId) {
+    // Force immediate save
+    clearTimeout(_fb_saveTimeout);
+    var docId = 'coach-' + ASSESS_TYPE;
+    var answered = answeredCount();
+    _fb_db.collection('teams').doc(_fb_teamId).collection('assessments').doc(docId)
+      .set({
+        answers: answers,
+        totalQuestions: totalQ,
+        answeredCount: answered,
+        complete: answered >= totalQ,
+        lastSavedAt: new Date(),
+        savedBy: _fb_userId,
+        coachName: _fb_userName.trim()
+      }, { merge: true })
+      .then(function() {
+        window.location.href = 'coach-dashboard.html';
+      });
+  } else {
+    alert('Progress saved: ' + answeredCount() + '/' + totalQ + ' questions answered.');
+  }
+};
+
+// Override finishAssessment  
+finishAssessment = function() {
+  if (_fb_ready && _fb_teamId) {
+    var docId = 'coach-' + ASSESS_TYPE;
+    _fb_db.collection('teams').doc(_fb_teamId).collection('assessments').doc(docId)
+      .set({
+        answers: answers,
+        totalQuestions: totalQ,
+        answeredCount: totalQ,
+        complete: true,
+        completedAt: new Date(),
+        lastSavedAt: new Date(),
+        savedBy: _fb_userId,
+        coachName: _fb_userName.trim()
+      }, { merge: true })
+      .then(function() {
+        window.location.href = 'coach-assessment.html';
+      });
+  } else {
+    alert('Assessment submitted! Redirecting to results...');
+  }
+};
+
+// ═══════════════════════════════════════════
+// SAVE INDICATOR
+// ═══════════════════════════════════════════
+function showSaveIndicator() {
+  var el = document.getElementById('fb-save-indicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fb-save-indicator';
+    el.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#27ae60;color:#0a0a0a;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:0;transition:opacity .3s;z-index:100;pointer-events:none';
+    el.textContent = '✓ Saved';
+    document.body.appendChild(el);
+  }
+  el.style.opacity = '1';
+  setTimeout(function() { el.style.opacity = '0'; }, 1200);
+}
+</script>

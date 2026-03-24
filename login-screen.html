@@ -396,7 +396,7 @@ if (typeof firebase !== 'undefined') {
   });}
 
   auth = firebase.auth();
-  db = firebase.firestore();
+  db = firebase.firestore();db.settings({experimentalForceLongPolling:true});
   firebaseReady = true;
 
   // Check if already logged in

@@ -364,7 +364,7 @@ function loadAthleteDashboard(){
       appId:"1:368548684923:web:0fc54795d1f375b0e6eede"
     });}
   }
-  var auth=firebase.auth();var db=firebase.firestore();
+  var auth=firebase.auth();var db=firebase.firestore();db.settings({experimentalForceLongPolling:true});
   auth.onAuthStateChanged(function(user){
     if(!user)return;
     db.collection('users').doc(user.uid).get().then(function(doc){

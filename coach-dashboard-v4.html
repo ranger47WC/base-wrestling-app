@@ -723,7 +723,10 @@ if(typeof firebase!=='undefined'){
     messagingSenderId:"368548684923",
     appId:"1:368548684923:web:0fc54795d1f375b0e6eede"
   });}
-  auth=firebase.auth();db=firebase.firestore();firebaseReady=true;
+  auth=firebase.auth();
+  db=firebase.firestore();
+  db.settings({experimentalForceLongPolling:true});
+  firebaseReady=true;
 
   auth.onAuthStateChanged(function(user){
     if(user){loadUserData(user)}

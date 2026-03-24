@@ -45,7 +45,7 @@ var baseFirebase = (function() {
     }
 
     auth = firebase.auth();
-    db = firebase.firestore();
+    db = firebase.firestore();db.settings({experimentalForceLongPolling:true});
 
     auth.onAuthStateChanged(function(user) {
       if (user) {
