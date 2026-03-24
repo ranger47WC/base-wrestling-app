@@ -382,14 +382,23 @@ function $(id){return document.getElementById(id)}
 
 // ── FIREBASE SAVE HELPERS ──
 function saveToUser(data){
-  if(!firebaseReady||!auth||!auth.currentUser){console.log('saveToUser SKIPPED — firebaseReady:',firebaseReady,'auth.currentUser:',auth&&auth.currentUser?auth.currentUser.uid:'null');return Promise.resolve()}
+  if(!firebaseReady||!auth||!auth.currentUser){console.log('saveToUser SKIPPED — firebaseReady:',firebaseReady);return Promise.resolve()}
   console.log('saveToUser →',JSON.stringify(data));
   return db.collection('users').doc(auth.currentUser.uid).set(data,{merge:true}).then(function(){showSaved();console.log('saveToUser SUCCESS')}).catch(function(e){console.error('saveToUser FAILED:',e)});
 }
 function saveToTeam(data){
-  if(!firebaseReady||!teamId){console.log('saveToTeam SKIPPED — firebaseReady:',firebaseReady,'teamId:',teamId);return Promise.resolve()}
-  console.log('saveToTeam →',teamId,JSON.stringify(data));
-  return db.collection('teams').doc(teamId).set(data,{merge:true}).then(function(){showSaved();console.log('saveToTeam SUCCESS')}).catch(function(e){console.error('saveToTeam FAILED:',e)});
+  // Save team data inside the user doc under a 'team' field
+  // This avoids the separate teams collection write that's failing
+  if(!firebaseReady||!auth||!auth.currentUser){console.log('saveToTeam SKIPPED');return Promise.resolve()}
+  var wrapped={team:data};
+  console.log('saveToTeam (via user doc) →',JSON.stringify(data));
+  return db.collection('users').doc(auth.currentUser.uid).set(wrapped,{merge:true}).then(function(){
+    showSaved();console.log('saveToTeam SUCCESS');
+    // Also try writing to teams collection — if it works great, if not we have the data in user doc
+    if(teamId){
+      db.collection('teams').doc(teamId).set(data,{merge:true}).catch(function(e){console.log('teams collection write failed (ok, data saved in user doc):',e)});
+    }
+  }).catch(function(e){console.error('saveToTeam FAILED:',e)});
 }
 function showSaved(){
   var el=$('savingEl');el.classList.add('show');setTimeout(function(){el.classList.remove('show')},1500);
