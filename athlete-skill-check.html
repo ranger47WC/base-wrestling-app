@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Skill Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--grd:#999;--gr:#aaa;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk)}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;color:var(--grd);font-size:16px}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:24px 20px 120px}
+
+/* ── TECHNIQUE CARD ── */
+.tech-card{background:var(--cd);border:1px solid var(--gdd);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.tech-thumb{height:160px;background:var(--bk);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.tech-play{width:56px;height:56px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.tech-play:hover{transform:scale(1.08)}
+.tech-play svg{width:20px;height:20px;fill:var(--bk);margin-left:3px}
+.tech-rewatch{position:absolute;bottom:8px;right:8px;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gdd);font-weight:600;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:4px}
+.tech-info{padding:16px}
+.tech-tags{display:flex;gap:6px;margin-bottom:8px}
+.tech-tag{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;padding:3px 8px;border-radius:4px}
+.tech-tag.battle{background:var(--gdg);color:var(--gd)}
+.tech-tag.position{background:var(--blug);color:var(--blu)}
+.tech-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--wh);margin-bottom:4px}
+.tech-desc{font-size:12px;color:var(--gr);line-height:1.4}
+
+/* ── PROMPT ── */
+.prompt{text-align:center;margin-bottom:16px}
+.prompt-text{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gd)}
+.prompt-sub{font-size:12px;color:var(--grd);margin-top:4px}
+
+/* ── RATING CARDS ── */
+.rating-card{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);margin-bottom:10px;cursor:pointer;transition:all .25s}
+.rating-card:hover{border-color:var(--gdd);transform:translateY(-2px)}
+.rating-card:active{transform:translateY(0)}
+.rating-card.selected{border-color:var(--gd);background:var(--gdg)}
+.rating-card.selected:hover{transform:none}
+
+.rating-num{width:40px;height:40px;border-radius:10px;background:var(--bk);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--grd);flex-shrink:0;transition:all .2s}
+.rating-card.selected .rating-num{background:var(--gdg);border-color:var(--gd);color:var(--gd)}
+
+.rating-info{flex:1}
+.rating-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;color:var(--wh);transition:color .2s}
+.rating-card.selected .rating-title{color:var(--gd)}
+.rating-desc{font-size:11px;color:var(--grd);margin-top:2px;line-height:1.3}
+
+.rating-icon{font-size:16px;flex-shrink:0;opacity:0;transition:opacity .2s}
+.rating-card.selected .rating-icon{opacity:1}
+
+/* ── COACH VERIFICATION NOTE ── */
+.verify-note{display:none;margin-top:-4px;margin-bottom:10px;padding:10px 14px;background:rgba(200,168,78,.06);border:1px solid rgba(200,168,78,.15);border-radius:8px;font-size:11px;color:var(--gdd);line-height:1.4;text-align:center}
+.verify-note.show{display:block}
+
+/* ── BOTTOM ── */
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px 28px;background:linear-gradient(transparent,var(--dk) 20%);z-index:10}
+.btn-submit{width:100%;padding:18px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,78,.3)}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" onclick="goBack()">←</div>
+      <div class="hd-info">
+        <div>SKILL CHECK</div>
+        <div>Yesterday's Technique</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CONTENT ═══ -->
+  <div class="content">
+
+    <!-- ═══ TECHNIQUE CARD ═══ -->
+    <div class="tech-card">
+      <div class="tech-thumb" onclick="toast('Playing video...')">
+        <div class="tech-play"><svg viewBox="0 0 24 24"><polygon points="6,3 21,12 6,21"/></svg></div>
+        <div class="tech-rewatch">Rewatch</div>
+      </div>
+      <div class="tech-info">
+        <div class="tech-tags">
+          <div class="tech-tag battle">UPPER BODY</div>
+          <div class="tech-tag position">FRONT HEADLOCK</div>
+        </div>
+        <div class="tech-name">GO BEHIND</div>
+        <div class="tech-desc">From front headlock, circle to the back to take control. Snap and circle — don't go straight behind.</div>
+      </div>
+    </div>
+
+    <!-- ═══ PROMPT ═══ -->
+    <div class="prompt">
+      <div class="prompt-text">WHERE ARE YOU WITH THIS?</div>
+      <div class="prompt-sub">Be honest. There's no wrong answer.</div>
+    </div>
+
+    <!-- ═══ RATING OPTIONS ═══ -->
+    <div class="rating-card" onclick="selectRating(1)">
+      <div class="rating-num">1</div>
+      <div class="rating-info">
+        <div class="rating-title">I DON'T KNOW IT</div>
+        <div class="rating-desc">Never seen it or just heard of it. Starting from zero.</div>
+      </div>
+      <div class="rating-icon">✓</div>
+    </div>
+
+    <div class="rating-card" onclick="selectRating(2)">
+      <div class="rating-num">2</div>
+      <div class="rating-info">
+        <div class="rating-title">I'M LEARNING IT</div>
+        <div class="rating-desc">I've seen it and I'm working on it. Not smooth yet.</div>
+      </div>
+      <div class="rating-icon">✓</div>
+    </div>
+
+    <div class="rating-card" onclick="selectRating(3)">
+      <div class="rating-num">3</div>
+      <div class="rating-info">
+        <div class="rating-title">I CAN DRILL IT</div>
+        <div class="rating-desc">I can rep it with a partner. Getting the feel for it.</div>
+      </div>
+      <div class="rating-icon">✓</div>
+    </div>
+
+    <div class="rating-card" onclick="selectRating(4)">
+      <div class="rating-num">4</div>
+      <div class="rating-info">
+        <div class="rating-title">I CAN HIT IT IN PRACTICE</div>
+        <div class="rating-desc">I'm comfortable executing it in live wrestling in the room.</div>
+      </div>
+      <div class="rating-icon">✓</div>
+    </div>
+
+    <div class="rating-card" onclick="selectRating(5)">
+      <div class="rating-num">5</div>
+      <div class="rating-info">
+        <div class="rating-title">I CAN HIT IT IN A MATCH</div>
+        <div class="rating-desc">I trust this move. I'll use it when it counts.</div>
+      </div>
+      <div class="rating-icon">✓</div>
+    </div>
+
+    <div class="verify-note" id="verify-note">🔒 Level 5 requires coach verification. Your coach will be notified to confirm.</div>
+
+  </div>
+
+  <!-- ═══ BOTTOM ═══ -->
+  <div class="bottom">
+    <button class="btn-submit" id="btn-submit" onclick="submitRating()" disabled>SUBMIT</button>
+  </div>
+
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast-el"></div>
+
+<script>
+function toast(msg){var t=document.getElementById('toast-el');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);}
+
+var selectedLevel=0;
+
+function selectRating(level){
+  selectedLevel=level;
+
+  // Update card states
+  document.querySelectorAll('.rating-card').forEach(function(card,i){
+    card.classList.toggle('selected',i+1===level);
+  });
+
+  // Show verify note for level 5
+  document.getElementById('verify-note').classList.toggle('show',level===5);
+
+  // Enable submit
+  document.getElementById('btn-submit').disabled=false;
+  document.getElementById('btn-submit').textContent=level===5?'SUBMIT & REQUEST VERIFICATION':'SUBMIT';
+}
+
+function submitRating(){
+  if(!selectedLevel) return;
+
+  var labels=['','I Don\'t Know It','I\'m Learning It','I Can Drill It','I Can Hit It In Practice','I Can Hit It In A Match'];
+
+  if(selectedLevel===5){
+    toast('Submitted — Coach notified for verification');
+    // In production: saves rating + sends coach verification request to notifications
+  } else {
+    toast('Go Behind → Level '+selectedLevel+' ✓');
+    // In production: saves rating to Firebase, awards XP based on progression
+  }
+
+  // In production: navigates back to dashboard after short delay
+}
+
+function goBack(){
+  toast('← Back to Dashboard');
+}
+</script>
+</body>
+</html>

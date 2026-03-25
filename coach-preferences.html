@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Coach Preferences</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--grd:#999;--gr:#aaa;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column}
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk)}
+.hd-brand{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--gd)}
+.hd-sub{font-size:11px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.pg{padding:14px 20px 0;flex-shrink:0}
+.pg-steps{display:flex;gap:6px}
+.pg-dot{flex:1;height:3px;border-radius:2px;background:var(--bd);transition:background .3s}
+.pg-dot.done{background:var(--gn)}.pg-dot.on{background:var(--gd)}
+.pg-labels{display:flex;justify-content:space-between;padding:6px 0 0}
+.pg-label{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--bd);font-weight:700;transition:color .3s}
+.pg-label.done{color:var(--gn)}.pg-label.on{color:var(--gd)}
+.scr{display:none;flex-direction:column;flex:1;overflow:hidden}
+.scr.active{display:flex;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+.sc{flex:1;overflow-y:auto;padding:24px 20px 120px}
+.hero{text-align:center;padding:4px 0 20px}
+.hero-ic{width:72px;height:72px;border-radius:18px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 0 32px rgba(200,168,78,.12)}
+.hero-tag{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--gdd);font-weight:600;margin-bottom:6px}
+.hero-t{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;color:var(--wh);line-height:1;margin-bottom:8px}
+.hero-s{font-size:13px;color:var(--gr);line-height:1.6;max-width:300px;margin:0 auto}
+.ib{background:var(--gdg2);border:1px solid rgba(200,168,78,.2);border-radius:var(--r);padding:12px 14px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start}
+.ib-e{font-size:16px;flex-shrink:0;margin-top:1px}
+.ib-t{font-size:12px;color:var(--gr);line-height:1.5}
+.ib-t strong{color:var(--gd)}
+.step-prompt{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gd);text-align:center;margin-bottom:16px}
+
+/* ── ITEM CARD (unified for both pickable and locked states) ── */
+.item-card{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--cd);border:2px solid var(--bd);border-radius:var(--r);margin-bottom:10px;cursor:pointer;transition:all .25s}
+.item-card:hover{border-color:var(--gdd)}
+.item-card.pickable{cursor:pointer}
+.item-card.pickable:hover{border-color:var(--gdd);transform:translateY(-2px)}
+.item-card.pickable:active{transform:translateY(0)}
+.item-card.ranked{cursor:default}
+.item-card.ranked:hover{transform:none}
+.item-card.r1{border-color:var(--gd);background:var(--gdg)}
+.item-card.r2{border-color:var(--gdd);background:var(--gdg2)}
+.item-card.r3{border-color:rgba(200,168,78,.15);background:rgba(200,168,78,.03)}
+.item-card.r4{border-color:var(--bd);background:var(--cd)}
+.item-card.locked{border-color:var(--gd);background:var(--gdg);cursor:default}
+.item-card.locked:hover{transform:none}
+.item-card.waiting{opacity:.35;cursor:default;pointer-events:none}
+.item-card.waiting:hover{transform:none;border-color:var(--bd)}
+
+.item-rank{width:36px;height:36px;border-radius:10px;background:var(--bk);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--grd);flex-shrink:0;transition:all .2s}
+.item-card.r1 .item-rank{background:var(--gdg);border-color:var(--gd);color:var(--gd)}
+.item-card.r2 .item-rank{background:var(--gdg2);border-color:var(--gdd);color:var(--gdd)}
+.item-card.r3 .item-rank{background:rgba(200,168,78,.04);border-color:rgba(200,168,78,.15);color:var(--gdd)}
+.item-card.r4 .item-rank{background:var(--bk);border-color:var(--bd);color:var(--grd)}
+.item-card.locked .item-rank{background:var(--gdg);border-color:var(--gd);color:var(--gd)}
+.item-card.pickable .item-rank{background:var(--bk);border-color:var(--bd);color:var(--grd)}
+
+.item-info{flex:1;min-width:0}
+.item-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--wh);transition:color .2s}
+.item-card.r1 .item-name{color:var(--gd)}
+.item-card.locked .item-name{color:var(--gd)}
+.item-desc{font-size:11px;color:var(--grd);margin-top:2px;line-height:1.4}
+.item-card.r1 .item-desc{color:var(--gdd)}
+
+.item-check{color:var(--gn);font-size:16px;flex-shrink:0;opacity:0;transition:opacity .2s}
+.item-card.ranked .item-check{opacity:1}
+.item-card.locked .item-check{opacity:1}
+.item-lock{font-size:14px;color:var(--gdd);flex-shrink:0}
+
+.redo{text-align:center;margin-top:6px}
+.redo a{font-size:11px;color:var(--grd);text-decoration:none;text-transform:uppercase;letter-spacing:2px;font-weight:600;cursor:pointer;transition:color .2s}
+.redo a:hover{color:var(--gd)}
+
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:16px 20px 28px;background:linear-gradient(transparent,var(--dk) 20%);z-index:10}
+.btn-next{width:100%;padding:18px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,78,.3)}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hd"><div><div class="hd-brand">BASE WRESTLING</div></div><div class="hd-sub">Preferences</div></div>
+  <div class="pg"><div class="pg-steps" id="pg-steps"></div><div class="pg-labels" id="pg-labels"></div></div>
+
+  <div class="scr active" id="s0"><div class="sc">
+    <div class="hero"><div class="hero-ic">🥊</div><div class="hero-tag">Preference 1 of 7</div><div class="hero-t">UPPER BODY</div><div class="hero-s">Rank the four upper body positions. Your #1 gets the most drill and technique time.</div></div>
+    <div class="ib"><div class="ib-e">💡</div><div class="ib-t"><strong>Underhook</strong> is the position you actively fight for. The rest happen through handfighting.</div></div>
+    <div id="area-0"></div>
+  </div></div>
+
+  <div class="scr" id="s1"><div class="sc">
+    <div class="hero"><div class="hero-ic">🦵</div><div class="hero-tag">Preference 2 of 7</div><div class="hero-t">LEG ATTACKS</div><div class="hero-s">Rank your leg attacks. Your #1 gets the majority of drill and technique time.</div></div>
+    <div class="ib"><div class="ib-e">💡</div><div class="ib-t">Your top pick gets the most time. <strong>Double Leg</strong> and <strong>Fireman's Carry</strong> still get distributed automatically.</div></div>
+    <div id="area-1"></div>
+  </div></div>
+
+  <div class="scr" id="s2"><div class="sc">
+    <div class="hero"><div class="hero-ic">🤝</div><div class="hero-tag">Preference 3 of 7</div><div class="hero-t">LOOSE TIES</div><div class="hero-s">Rank your three primary ties. Your #1 gets the most handfighting drill time. Wrist control pairs with all of them.</div></div>
+    <div class="ib"><div class="ib-e">💡</div><div class="ib-t"><strong>Collar Tie</strong> and <strong>Inside Tie</strong> connect to the most attacks.</div></div>
+    <div id="area-2"></div>
+  </div></div>
+
+  <div class="scr" id="s3"><div class="sc">
+    <div class="hero"><div class="hero-ic">🛡️</div><div class="hero-tag">Preference 4 of 7</div><div class="hero-t">FAILED ATTACKS</div><div class="hero-s">This order is preset. Front Headlock is the most connected position in the system.</div></div>
+    <div class="ib"><div class="ib-e">💡</div><div class="ib-t">These are already set in the right order. Review and move on.</div></div>
+    <div id="area-3"></div>
+  </div></div>
+
+  <div class="scr" id="s4"><div class="sc">
+    <div class="hero"><div class="hero-ic">⬆️</div><div class="hero-tag">Preference 5 of 7</div><div class="hero-t">TOP</div><div class="hero-s">Pick your top position focus. Upper body turns or leg-based turns.</div></div>
+    <div id="area-4"></div>
+  </div></div>
+
+  <div class="scr" id="s5"><div class="sc">
+    <div class="hero"><div class="hero-ic">💥</div><div class="hero-tag">Preference 6 of 7</div><div class="hero-t">BREAKDOWNS</div><div class="hero-s">Rank your three primary breakdowns. Your #1 gets the most drill time from top position.</div></div>
+    <div id="area-5"></div>
+  </div></div>
+
+  <div class="scr" id="s6"><div class="sc">
+    <div class="hero"><div class="hero-ic">⬇️</div><div class="hero-tag">Preference 7 of 7</div><div class="hero-t">BOTTOM</div><div class="hero-s">Pick your bottom position focus. This determines what your athletes drill from bottom.</div></div>
+    <div id="area-6"></div>
+  </div></div>
+
+  <div class="bottom"><button class="btn-next" id="btn-next" onclick="advance()" disabled></button></div>
+</div>
+<div class="toast" id="toast-el"></div>
+
+<script>
+function toast(msg){var t=document.getElementById('toast-el');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);}
+
+var SCREENS=[
+  {key:'upper',label:'Upper',items:[
+    {id:'underhook',name:'UNDERHOOK',desc:'The position you actively fight for. Most common upper body tie.'},
+    {id:'overhook',name:'OVERHOOK',desc:'Byproduct of their underhook. More finishes than most coaches think.'},
+    {id:'over-under',name:'OVER / UNDER',desc:'Chest-to-chest 50/50. Neither wins the underhook cleanly.'},
+    {id:'2on1',name:'2-ON-1',desc:'Both hands controlling one arm. Actively attacked from collar or wrist.'}
+  ]},
+  {key:'legs',label:'Legs',items:[
+    {id:'his',name:'HEAD INSIDE SINGLE',desc:'Three levels: tree top, medium, low.'},
+    {id:'hos',name:'HEAD OUTSIDE SINGLE',desc:'High crotch, sweep, run the pipe.'},
+    {id:'double',name:'DOUBLE LEG',desc:'Both legs. Drive through or lift.'},
+    {id:'firemans',name:'FIREMAN\'S CARRY',desc:'Entries from overhook, inside tie, and 2-on-1.'}
+  ]},
+  {key:'ties',label:'Ties',items:[
+    {id:'collar',name:'COLLAR TIE',desc:'Head and neck control. Snaps, drags, front headlock entries.'},
+    {id:'inside',name:'INSIDE TIE',desc:'Bicep control. Duck unders, underhooks, fireman\'s carry.'},
+    {id:'elbow',name:'ELBOW TIE',desc:'Elbow control. Limits offense, opens leg attacks and snaps.'}
+  ]},
+  {key:'failed',label:'Failed',displayOnly:true,presetOrder:[
+    {id:'fhl',name:'FRONT HEADLOCK',desc:'Most connected position in the system.'},
+    {id:'seatbelt',name:'SEATBELT / WHIZZER',desc:'Primary defense when your leg attack is stopped.'},
+    {id:'5050',name:'50/50',desc:'Scramble position. Far ankle, near ankle, head outside variations.'}
+  ],items:[]},
+  {key:'top',label:'Top',items:[
+    {id:'top-ub',name:'UPPER BODY',desc:'Arm bars, wrist rides, half nelsons, chicken wings.'},
+    {id:'top-legs',name:'LEGS',desc:'Leg riding, ankle control, leg-based turns.'}
+  ]},
+  {key:'breakdowns',label:'Breakdowns',items:[
+    {id:'spiral',name:'SPIRAL RIDE',desc:'Control the wrist, drive the shoulder, spiral them to the mat.'},
+    {id:'deepwaist',name:'DEEP WAIST CHOP',desc:'Lock the waist, chop the arm, flatten them out.'},
+    {id:'anklepick',name:'ANKLE PICK',desc:'Control the wrist, reach the ankle, bring them down.'}
+  ]},
+  {key:'bottom',label:'Bottom',items:[
+    {id:'escapes',name:'ESCAPES',desc:'Stand up, sit out, switch. Create distance, get to neutral.'},
+    {id:'reversals',name:'REVERSALS',desc:'Go from bottom to top. Take control.'}
+  ]}
+];
+
+var LABELS=['Upper','Legs','Ties','Failed','Top','Breakdowns','Bottom'];
+var currentScreen=0;
+var stepStates={};
+
+function init(){
+  var dH='',lH='';
+  LABELS.forEach(function(l,i){dH+='<div class="pg-dot" id="dot-'+i+'"></div>';lH+='<div class="pg-label" id="lbl-'+i+'">'+l+'</div>';});
+  document.getElementById('pg-steps').innerHTML=dH;
+  document.getElementById('pg-labels').innerHTML=lH;
+  SCREENS.forEach(function(s){stepStates[s.key]=[];});
+  updateProgress();renderScreen(0);updateButton();
+}
+
+function updateProgress(){
+  LABELS.forEach(function(l,i){
+    var d=document.getElementById('dot-'+i),lb=document.getElementById('lbl-'+i);
+    d.className='pg-dot';lb.className='pg-label';
+    if(i<currentScreen){d.classList.add('done');lb.classList.add('done');}
+    else if(i===currentScreen){d.classList.add('on');lb.classList.add('on');}
+  });
+}
+
+function renderScreen(idx){
+  var s=SCREENS[idx];
+  var area=document.getElementById('area-'+idx);
+
+  // Display-only screens — no interaction, just show preset order
+  if(s.displayOnly){
+    var html='';
+    s.presetOrder.forEach(function(item,i){
+      var rClass=i===0?'r1':i===1?'r2':'r3';
+      html+='<div class="item-card ranked '+rClass+'">';
+      html+='<div class="item-rank">'+(i+1)+'</div>';
+      html+='<div class="item-info"><div class="item-name">'+item.name+'</div><div class="item-desc">'+item.desc+'</div></div>';
+      html+='<div class="item-check">✓</div>';
+      html+='</div>';
+    });
+    area.innerHTML=html;
+    stepStates[s.key]=s.presetOrder.map(function(x){return x.id;});
+    updateButton();
+    return;
+  }
+
+  var ranked=stepStates[s.key];
+  var total=s.items.length;
+  var allItems=s.items;
+  var lockedItems=s.lockedItems||[];
+  var startRank=lockedItems.length+1;
+  var done=ranked.length>=total;
+  var nextPick=startRank+ranked.length;
+  var html='';
+
+  // Prompt
+  if(!done){
+    if(total===2 && lockedItems.length===0 && ranked.length===0){
+      // No locked, only 2 items — just say pick
+    }
+    html+='<div class="step-prompt">'+(done?'RANKED ✓':'WHAT\'S YOUR #'+nextPick+'?')+'</div>';
+  } else {
+    html+='<div class="step-prompt">RANKED ✓</div>';
+  }
+
+  // Show locked items first
+  lockedItems.forEach(function(li,i){
+    html+='<div class="item-card locked">';
+    html+='<div class="item-rank">'+(i+1)+'</div>';
+    html+='<div class="item-info"><div class="item-name">'+li.name+'</div><div class="item-desc">'+li.desc+'</div></div>';
+    html+='<div class="item-lock">🔒</div>';
+    html+='</div>';
+  });
+
+  // Show all items — ranked ones at top in order, then remaining
+  var rankedItems=ranked.map(function(id){return allItems.find(function(x){return x.id===id;});});
+  var unrankedItems=allItems.filter(function(x){return ranked.indexOf(x.id)===-1;});
+
+  // Ranked items
+  rankedItems.forEach(function(item,i){
+    var rNum=startRank+i;
+    html+='<div class="item-card ranked r'+Math.min(rNum,4)+'">';
+    html+='<div class="item-rank">'+rNum+'</div>';
+    html+='<div class="item-info"><div class="item-name">'+item.name+'</div><div class="item-desc">'+item.desc+'</div></div>';
+    html+='<div class="item-check">✓</div>';
+    html+='</div>';
+  });
+
+  // Unranked items
+  if(!done){
+    // Auto-fill last one
+    if(unrankedItems.length===1){
+      ranked.push(unrankedItems[0].id);
+      stepStates[s.key]=ranked;
+      renderScreen(idx);
+      return;
+    }
+    unrankedItems.forEach(function(item){
+      html+='<div class="item-card pickable" onclick="pickItem('+idx+',\''+item.id+'\')">';
+      html+='<div class="item-rank">—</div>';
+      html+='<div class="item-info"><div class="item-name">'+item.name+'</div><div class="item-desc">'+item.desc+'</div></div>';
+      html+='<div class="item-check">✓</div>';
+      html+='</div>';
+    });
+  }
+
+  // Redo
+  if(ranked.length>0){
+    html+='<div class="redo"><a onclick="resetScreen('+idx+')">Start over</a></div>';
+  }
+
+  area.innerHTML=html;
+  updateButton();
+}
+
+function pickItem(idx,id){
+  var s=SCREENS[idx];
+  stepStates[s.key].push(id);
+  var item=s.items.find(function(x){return x.id===id;});
+  var rNum=(s.lockedItems||[]).length+stepStates[s.key].length;
+  toast(item.name+' → #'+rNum);
+  renderScreen(idx);
+}
+
+function resetScreen(idx){
+  stepStates[SCREENS[idx].key]=[];
+  renderScreen(idx);
+}
+
+function updateButton(){
+  var btn=document.getElementById('btn-next');
+  var s=SCREENS[currentScreen];
+  var ranked=stepStates[s.key];
+  if(s.displayOnly) btn.disabled=false;
+  else btn.disabled=ranked.length<s.items.length;
+  if(currentScreen<6) btn.textContent='NEXT → '+LABELS[currentScreen+1].toUpperCase();
+  else btn.textContent='SAVE PREFERENCES ✓';
+}
+
+function advance(){
+  if(currentScreen<6){
+    document.getElementById('s'+currentScreen).classList.remove('active');
+    currentScreen++;
+    document.getElementById('s'+currentScreen).classList.add('active');
+    updateProgress();renderScreen(currentScreen);updateButton();
+    window.scrollTo(0,0);
+  } else {
+    var results={};
+    SCREENS.forEach(function(s){results[s.key]=stepStates[s.key];});
+    toast('Preferences Saved ✓');
+    console.log('PREFERENCES:',results);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

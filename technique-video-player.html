@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Technique Video</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--grd:#999;--gr:#aaa;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--gng:rgba(39,174,96,.12);--rd:#c8102e;--blu:#3b82f6;--blug:rgba(59,130,246,.12);--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk);z-index:10}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;color:var(--grd);font-size:16px}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info{flex:1;min-width:0}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-info div:last-child{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.hd-xp{padding:4px 10px;border-radius:6px;background:var(--gdg);border:1px solid var(--gdd);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--gd);flex-shrink:0}
+
+/* ── VIDEO AREA ── */
+.video-zone{background:var(--bk);position:relative;flex-shrink:0}
+.video-container{width:100%;aspect-ratio:9/16;max-height:400px;background:var(--bk);position:relative;overflow:hidden}
+.video-container iframe{width:100%;height:100%;border:none}
+.video-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer}
+.vp-play{width:72px;height:72px;border-radius:50%;background:rgba(200,168,78,.9);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.vp-play:hover{transform:scale(1.08)}
+.vp-play svg{width:28px;height:28px;fill:var(--bk);margin-left:4px}
+.vp-label{font-size:12px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ── WATCH PROGRESS BAR ── */
+.watch-bar{height:4px;background:var(--bd);flex-shrink:0}
+.watch-fill{height:100%;background:var(--gd);border-radius:0 2px 2px 0;transition:width .3s ease;width:0%}
+
+/* ── XP BANNER (shows after completion) ── */
+.xp-banner{display:none;padding:12px 20px;background:var(--gdg);border-bottom:1px solid var(--gdd);flex-shrink:0;text-align:center}
+.xp-banner.show{display:block}
+.xp-banner-text{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gd)}
+
+/* ── SCROLLABLE CONTENT ── */
+.scroll-content{flex:1;overflow-y:auto;padding-bottom:32px}
+
+/* ── TECHNIQUE INFO ── */
+.tech-info-zone{padding:20px}
+.tech-tag-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.tech-tag{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;padding:3px 8px;border-radius:4px}
+.tech-tag.battle{background:var(--gdg);color:var(--gd)}
+.tech-tag.position{background:var(--blug);color:var(--blu)}
+.tech-tag.type-drill{background:var(--gng);color:var(--gn)}
+.tech-tag.type-technique{background:rgba(200,16,46,.12);color:var(--rd)}
+.tech-tag.type-both{background:var(--gdg);color:var(--gd)}
+.tech-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--wh);line-height:1.1;margin-bottom:8px}
+.tech-desc{font-size:13px;color:var(--gr);line-height:1.6;margin-bottom:16px}
+.tech-meta{display:flex;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
+.tech-meta-item{font-size:11px;color:var(--grd);display:flex;align-items:center;gap:4px}
+.tech-meta-item span{color:var(--gd);font-weight:600}
+
+/* ── KEY POINTS ── */
+.key-points{padding:16px 20px;border-bottom:1px solid var(--bd)}
+.kp-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.kp-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--wh);display:flex;align-items:center;gap:8px}
+.kp-arrow{color:var(--grd);font-size:12px;transition:transform .2s}
+.kp-arrow.open{transform:rotate(90deg);color:var(--gd)}
+.kp-body{display:none;margin-top:12px}
+.kp-body.open{display:block}
+.kp-item{display:flex;gap:10px;padding:8px 0}
+.kp-num{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gdd);width:20px;flex-shrink:0;text-align:center}
+.kp-text{font-size:13px;color:var(--gr);line-height:1.5}
+.kp-text strong{color:var(--wh)}
+
+/* ── COACH NOTES ── */
+.coach-note{margin:16px 20px;padding:14px 16px;background:var(--cd);border:1px solid var(--gdd);border-radius:var(--r);border-left:3px solid var(--gd)}
+.cn-header{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--gd);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.cn-text{font-size:12px;color:var(--gr);line-height:1.5;font-style:italic}
+
+/* ── ACTION BUTTONS ── */
+.action-zone{padding:16px 20px;display:flex;gap:10px;border-bottom:1px solid var(--bd)}
+.act-btn{flex:1;padding:14px;border-radius:var(--r);border:none;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;text-align:center;transition:all .2s}
+.act-btn.primary{background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk)}
+.act-btn.primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,168,78,.3)}
+.act-btn.primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.act-btn.secondary{background:var(--cd);color:var(--gd);border:1px solid var(--gdd)}
+.act-btn.secondary:hover{background:var(--gdg)}
+.act-btn.completed{background:var(--gng);color:var(--gn);border:1px solid rgba(39,174,96,.3);cursor:default}
+
+/* ── RELATED TECHNIQUES ── */
+.related-section{padding:16px 20px}
+.related-label{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--gdd);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.related-label::after{content:'';flex:1;height:1px;background:var(--bd)}
+.related-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;cursor:pointer;transition:all .2s}
+.related-card:hover{border-color:var(--gdd);transform:translateX(4px)}
+.related-thumb{width:48px;height:48px;border-radius:8px;background:var(--bk);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.related-info{flex:1;min-width:0}
+.related-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh)}
+.related-meta{font-size:10px;color:var(--grd);margin-top:1px}
+.related-arrow{color:var(--grd);font-size:14px}
+.related-xp{font-family:'Bebas Neue',sans-serif;font-size:11px;color:var(--gdd);letter-spacing:1px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" onclick="goBack()">←</div>
+      <div class="hd-info">
+        <div id="hd-title">GO BEHIND</div>
+        <div id="hd-sub">Front Headlock · Upper Body</div>
+      </div>
+    </div>
+    <div class="hd-xp" id="hd-xp">+10 XP</div>
+  </div>
+
+  <!-- ═══ VIDEO ZONE ═══ -->
+  <div class="video-zone">
+    <div class="video-container" id="video-container">
+      <div class="video-placeholder" id="video-placeholder" onclick="playVideo()">
+        <div class="vp-play">
+          <svg viewBox="0 0 24 24"><polygon points="6,3 21,12 6,21"/></svg>
+        </div>
+        <div class="vp-label">Tap to Play</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ WATCH PROGRESS BAR ═══ -->
+  <div class="watch-bar">
+    <div class="watch-fill" id="watch-fill"></div>
+  </div>
+
+  <!-- ═══ XP BANNER ═══ -->
+  <div class="xp-banner" id="xp-banner">
+    <div class="xp-banner-text">✨ +10 XP EARNED — VIDEO COMPLETE</div>
+  </div>
+
+  <!-- ═══ SCROLLABLE CONTENT ═══ -->
+  <div class="scroll-content">
+
+    <!-- ═══ TECHNIQUE INFO ═══ -->
+    <div class="tech-info-zone">
+      <div class="tech-tag-row">
+        <div class="tech-tag battle">UPPER BODY</div>
+        <div class="tech-tag position">FRONT HEADLOCK</div>
+        <div class="tech-tag type-drill">DRILL</div>
+      </div>
+      <div class="tech-title">GO BEHIND</div>
+      <div class="tech-desc">From the front headlock position, circle to the back to take control. One of the most high-percentage finishes in wrestling — the front headlock is only as good as your ability to get to the back from it.</div>
+      <div class="tech-meta">
+        <div class="tech-meta-item">⏱ <span>45 sec</span></div>
+        <div class="tech-meta-item">🎯 <span>Offense</span></div>
+        <div class="tech-meta-item">📊 <span>+10 XP</span></div>
+      </div>
+    </div>
+
+    <!-- ═══ KEY POINTS ═══ -->
+    <div class="key-points">
+      <div class="kp-header" onclick="toggleKeyPoints()">
+        <div class="kp-title">🔑 KEY POINTS</div>
+        <div class="kp-arrow" id="kp-arrow">›</div>
+      </div>
+      <div class="kp-body" id="kp-body">
+        <div class="kp-item">
+          <div class="kp-num">1</div>
+          <div class="kp-text"><strong>Snap and circle</strong> — don't try to go straight behind. Circle pressure breaks their base and creates the opening.</div>
+        </div>
+        <div class="kp-item">
+          <div class="kp-num">2</div>
+          <div class="kp-text"><strong>Chin stays on their back</strong> — if your head comes off, you lose control. Head pressure keeps them down.</div>
+        </div>
+        <div class="kp-item">
+          <div class="kp-num">3</div>
+          <div class="kp-text"><strong>Lock hands behind the elbow</strong> — not around the waist yet. Control the arm first, then transition to waist control once you're behind.</div>
+        </div>
+        <div class="kp-item">
+          <div class="kp-num">4</div>
+          <div class="kp-text"><strong>Feet never stop moving</strong> — dead feet = dead position. Keep your feet active the entire time you're circling.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COACH NOTE (if assigned) ═══ -->
+    <div class="coach-note">
+      <div class="cn-header">📋 COACH'S NOTE</div>
+      <div class="cn-text">Focus on the circle pressure this week. We drilled this Tuesday — rewatch before Thursday's practice. This is your #1 finish from front headlock.</div>
+    </div>
+
+    <!-- ═══ ACTION BUTTONS ═══ -->
+    <div class="action-zone">
+      <button class="act-btn secondary" id="btn-rewatch" onclick="rewatch()">↻ REWATCH</button>
+      <button class="act-btn primary" id="btn-complete" onclick="markComplete()">✓ MARK WATCHED</button>
+    </div>
+
+    <!-- ═══ RELATED TECHNIQUES ═══ -->
+    <div class="related-section">
+      <div class="related-label">From This Position</div>
+
+      <div class="related-card" onclick="loadTechnique('snapdown')">
+        <div class="related-thumb">🎬</div>
+        <div class="related-info">
+          <div class="related-name">SNAP DOWN</div>
+          <div class="related-meta">Front Headlock · Offense · Drill</div>
+        </div>
+        <div class="related-xp">+10 XP</div>
+        <div class="related-arrow">→</div>
+      </div>
+
+      <div class="related-card" onclick="loadTechnique('shuck')">
+        <div class="related-thumb">🎬</div>
+        <div class="related-info">
+          <div class="related-name">SHUCK BY</div>
+          <div class="related-meta">Front Headlock · Offense · Technique</div>
+        </div>
+        <div class="related-xp">+10 XP</div>
+        <div class="related-arrow">→</div>
+      </div>
+
+      <div class="related-card" onclick="loadTechnique('cement')">
+        <div class="related-thumb">🎬</div>
+        <div class="related-info">
+          <div class="related-name">CEMENT JOB</div>
+          <div class="related-meta">Front Headlock · Offense · Technique</div>
+        </div>
+        <div class="related-xp">+10 XP</div>
+        <div class="related-arrow">→</div>
+      </div>
+
+      <div class="related-label" style="margin-top:16px">How to Get Here</div>
+
+      <div class="related-card" onclick="loadTechnique('entry-snap')">
+        <div class="related-thumb">🎬</div>
+        <div class="related-info">
+          <div class="related-name">SNAP DOWN ENTRY</div>
+          <div class="related-meta">Upper Body Attack · Entry · Drill</div>
+        </div>
+        <div class="related-xp">+10 XP</div>
+        <div class="related-arrow">→</div>
+      </div>
+
+      <div class="related-card" onclick="loadTechnique('entry-underhook')">
+        <div class="related-thumb">🎬</div>
+        <div class="related-info">
+          <div class="related-name">FROM UNDERHOOK</div>
+          <div class="related-meta">Upper Body Attack · Entry · Both</div>
+        </div>
+        <div class="related-xp">+10 XP</div>
+        <div class="related-arrow">→</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ── TOAST ──
+function toast(msg){
+  var t=document.getElementById('toast-el');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+var videoPlaying=false;
+var watchProgress=0;
+var watchComplete=false;
+var markedComplete=false;
+var progressInterval=null;
+
+// ══════════════════════════════════════
+// VIDEO PLAYBACK
+// ══════════════════════════════════════
+function playVideo(){
+  if(videoPlaying) return;
+  videoPlaying=true;
+
+  var container=document.getElementById('video-container');
+  // In production this loads the real YouTube embed:
+  // container.innerHTML='<iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&playsinline=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
+
+  // Demo: simulate video playback with progress
+  document.getElementById('video-placeholder').innerHTML=
+    '<div style="text-align:center">'+
+    '<div style="font-size:48px;margin-bottom:12px">▶️</div>'+
+    '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:var(--gd)">VIDEO PLAYING</div>'+
+    '<div style="font-size:11px;color:var(--grd);margin-top:6px" id="video-timer">0:00 / 0:45</div>'+
+    '</div>';
+
+  // Simulate progress (45 second video compressed to 10 seconds for demo)
+  var totalSec=45;
+  var elapsed=0;
+  var demoDuration=10000; // 10 seconds real time
+  var stepMs=100;
+  var steps=demoDuration/stepMs;
+  var progressPerStep=100/steps;
+
+  progressInterval=setInterval(function(){
+    elapsed+=totalSec/(demoDuration/stepMs);
+    watchProgress+=progressPerStep;
+
+    if(watchProgress>=100){
+      watchProgress=100;
+      clearInterval(progressInterval);
+      onVideoComplete();
+    }
+
+    document.getElementById('watch-fill').style.width=Math.min(watchProgress,100)+'%';
+
+    var mins=Math.floor(elapsed/60);
+    var secs=Math.floor(elapsed%60);
+    var timer=document.getElementById('video-timer');
+    if(timer) timer.textContent=mins+':'+(secs<10?'0':'')+secs+' / 0:45';
+  },stepMs);
+}
+
+function onVideoComplete(){
+  watchComplete=true;
+  videoPlaying=false;
+  document.getElementById('xp-banner').classList.add('show');
+  document.getElementById('hd-xp').textContent='✓ EARNED';
+  document.getElementById('hd-xp').style.background='var(--gng)';
+  document.getElementById('hd-xp').style.borderColor='rgba(39,174,96,.3)';
+  document.getElementById('hd-xp').style.color='var(--gn)';
+
+  // Auto-mark complete
+  var btn=document.getElementById('btn-complete');
+  btn.className='act-btn completed';
+  btn.textContent='✓ WATCHED';
+  btn.onclick=null;
+  markedComplete=true;
+
+  toast('+10 XP — Technique ✓');
+}
+
+function markComplete(){
+  if(markedComplete) return;
+  if(!watchComplete){
+    toast('Watch the full video first');
+    return;
+  }
+}
+
+function rewatch(){
+  watchProgress=0;
+  videoPlaying=false;
+  document.getElementById('watch-fill').style.width='0%';
+  clearInterval(progressInterval);
+  document.getElementById('video-container').innerHTML=
+    '<div class="video-placeholder" id="video-placeholder" onclick="playVideo()">'+
+    '<div class="vp-play"><svg viewBox="0 0 24 24"><polygon points="6,3 21,12 6,21"/></svg></div>'+
+    '<div class="vp-label">Tap to Play</div></div>';
+}
+
+// ══════════════════════════════════════
+// KEY POINTS TOGGLE
+// ══════════════════════════════════════
+function toggleKeyPoints(){
+  var body=document.getElementById('kp-body');
+  var arrow=document.getElementById('kp-arrow');
+  var isOpen=body.classList.contains('open');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function goBack(){
+  toast('← Back to Content Library');
+}
+
+function loadTechnique(id){
+  toast('Loading technique: '+id+'...');
+  // In production: reloads this screen with new technique data
+}
+
+// ══════════════════════════════════════
+// INIT — Key points start collapsed
+// ══════════════════════════════════════
+</script>
+</body>
+</html>

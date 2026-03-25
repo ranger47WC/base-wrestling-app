@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BASE Wrestling — Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#0a0a0a;--dk:#141414;--cd:#1a1a1a;--bd:#2a2a2a;--grd:#999;--gr:#aaa;--lt:#ccc;--wh:#f0f0f0;--ph:#3a3a3a;--gd:#c8a84e;--gdd:#a08030;--gdg:rgba(200,168,78,.12);--gdg2:rgba(200,168,78,.06);--gn:#27ae60;--rd:#c8102e;--blu:#3b82f6;--r:12px;--rl:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--bk);color:var(--wh);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--dk);display:flex;flex-direction:column;position:relative}
+
+/* ── HEADER ── */
+.hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--dk);z-index:10}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;color:var(--grd);font-size:16px}
+.hd-back:hover{border-color:var(--gd);color:var(--gd)}
+.hd-info div:first-child{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gd)}
+.hd-info div:last-child{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:2px;font-weight:600}
+
+/* ── SCROLLABLE CONTENT ── */
+.scroll-content{flex:1;overflow-y:auto;padding-bottom:32px}
+
+/* ── NEW MESSAGE BUTTON ── */
+.new-msg-zone{padding:16px 20px 8px}
+.btn-new{width:100%;padding:16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;border-radius:var(--r);cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
+.btn-new:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,78,.3)}
+.btn-new:active{transform:translateY(0)}
+.btn-new .btn-pulse{position:absolute;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+
+/* ── SECTION LABEL ── */
+.section-label{padding:20px 20px 8px;display:flex;align-items:center;justify-content:space-between}
+.sl-left{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gdd);font-weight:600;display:flex;align-items:center;gap:8px}
+.sl-left::after{content:'';width:40px;height:1px;background:var(--bd)}
+.sl-right{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.sl-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:10px;background:var(--rd);color:var(--wh);font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;padding:0 6px;margin-left:6px}
+
+/* ══════════════════════════════════════
+   NEEDS YOUR ATTENTION — ACTION ITEMS
+   ══════════════════════════════════════ */
+.action-list{padding:0 20px}
+.action-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;transition:all .2s}
+.action-card:hover{border-color:var(--gdd)}
+.action-card.urgent{border-color:rgba(200,168,78,.3)}
+.action-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.action-icon{width:36px;height:36px;border-radius:8px;background:var(--gdg);border:1px solid var(--gdd);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.action-info{flex:1;min-width:0}
+.action-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;color:var(--wh)}
+.action-desc{font-size:12px;color:var(--gr);line-height:1.4;margin-top:2px}
+.action-desc strong{color:var(--gd)}
+.action-time{font-size:10px;color:var(--grd);margin-top:3px}
+.action-btns{display:flex;gap:8px}
+.action-btn{flex:1;padding:10px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;cursor:pointer;transition:all .2s;text-align:center;border:none}
+.action-btn.approve{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.3);color:var(--gn)}
+.action-btn.approve:hover{background:rgba(39,174,96,.25);border-color:var(--gn)}
+.action-btn.review{background:var(--bk);border:1px solid var(--bd);color:var(--grd)}
+.action-btn.review:hover{border-color:var(--gdd);color:var(--wh)}
+
+/* ══════════════════════════════════════
+   MILESTONES FEED
+   ══════════════════════════════════════ */
+.milestone-list{padding:0 20px}
+.milestone-card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;transition:all .2s}
+.milestone-top{display:flex;align-items:flex-start;gap:12px}
+.milestone-icon{width:36px;height:36px;border-radius:8px;background:var(--bk);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.milestone-info{flex:1;min-width:0}
+.milestone-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--wh)}
+.milestone-desc{font-size:12px;color:var(--gr);line-height:1.4;margin-top:2px}
+.milestone-time{font-size:10px;color:var(--grd);margin-top:3px}
+.milestone-respond{display:flex;gap:6px;margin-top:10px}
+.milestone-btn{padding:8px 14px;border-radius:20px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid var(--bd);background:var(--bk);color:var(--gr)}
+.milestone-btn:hover{border-color:var(--gdd);color:var(--gd);background:var(--gdg)}
+.milestone-btn.sent{border-color:var(--gn);background:rgba(39,174,96,.1);color:var(--gn);cursor:default;pointer-events:none}
+
+/* ══════════════════════════════════════
+   SENT MESSAGES
+   ══════════════════════════════════════ */
+.sent-list{padding:0 20px}
+.sent-item{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.sent-item:hover{border-color:var(--gdd)}
+.sent-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.sent-subject{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;color:var(--wh);flex:1;margin-right:8px}
+.sent-time{font-size:10px;color:var(--grd);white-space:nowrap;flex-shrink:0;margin-top:3px}
+.sent-preview{font-size:12px;color:var(--gr);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px}
+.sent-footer{display:flex;align-items:center;justify-content:space-between}
+.sent-recipients{font-size:10px;color:var(--grd);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.sent-read{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px}
+.sent-read.all{background:rgba(39,174,96,.12);color:var(--gn)}
+.sent-read.partial{background:rgba(200,168,78,.12);color:var(--gd)}
+
+/* ── DETAIL VIEW ── */
+.detail-view{display:none;flex:1;flex-direction:column;overflow:hidden;position:absolute;top:0;left:0;width:100%;height:100%;background:var(--dk);z-index:20}
+.detail-view.open{display:flex}
+.detail-hd{padding:14px 20px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.detail-back{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--grd);font-size:16px}
+.detail-back:hover{border-color:var(--gd);color:var(--gd)}
+.detail-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gd);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail-body{flex:1;overflow-y:auto;padding:20px}
+.detail-meta{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.detail-date{font-size:11px;color:var(--grd);margin-bottom:4px}
+.detail-recipients{font-size:11px;color:var(--grd)}
+.detail-recipients span{color:var(--gd)}
+.detail-stats{display:flex;gap:12px;margin-top:10px}
+.detail-stat{padding:8px 12px;border-radius:8px;background:var(--bk);border:1px solid var(--bd);text-align:center;flex:1}
+.detail-stat-num{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--gd)}
+.detail-stat-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--grd);font-weight:600;margin-top:2px}
+.detail-content{font-size:14px;color:var(--lt);line-height:1.7}
+.detail-content p{margin-bottom:12px}
+
+/* ── COMPOSE VIEW ── */
+.compose-view{display:none;flex:1;flex-direction:column;overflow:hidden;position:absolute;top:0;left:0;width:100%;height:100%;background:var(--dk);z-index:30}
+.compose-view.open{display:flex}
+.compose-hd{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.compose-cancel{font-size:13px;color:var(--grd);cursor:pointer;transition:color .2s;font-weight:600}
+.compose-cancel:hover{color:var(--gd)}
+.compose-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gd)}
+.compose-send{padding:8px 16px;background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;border:none;border-radius:8px;cursor:pointer;transition:all .2s}
+.compose-send:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,168,78,.3)}
+.compose-send:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.compose-body{flex:1;overflow-y:auto;padding:0}
+.compose-to{padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.compose-to-label{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--gdd);flex-shrink:0}
+.compose-to-value{font-size:13px;color:var(--gd);font-weight:600}
+.compose-field{padding:14px 20px;border-bottom:1px solid var(--bd)}
+.compose-field-label{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--gdd);margin-bottom:8px}
+.compose-field-input{width:100%;background:transparent;border:none;color:var(--wh);font-family:'Barlow',sans-serif;font-size:14px;outline:none}
+.compose-field-input::placeholder{color:var(--ph)}
+.compose-textarea{width:100%;min-height:200px;background:transparent;border:none;color:var(--wh);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;outline:none;resize:none}
+.compose-textarea::placeholder{color:var(--ph)}
+
+/* ── CONFIRM MODAL ── */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:40;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:24px;max-width:320px;width:90%;text-align:center}
+.modal-icon{font-size:36px;margin-bottom:12px}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gd);margin-bottom:8px}
+.modal-desc{font-size:13px;color:var(--gr);line-height:1.5;margin-bottom:20px}
+.modal-desc strong{color:var(--wh)}
+.modal-btns{display:flex;gap:10px}
+.modal-btn{flex:1;padding:12px;border-radius:var(--r);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;transition:all .2s;border:none}
+.modal-btn.cancel{background:var(--bk);border:1px solid var(--bd);color:var(--grd)}
+.modal-btn.cancel:hover{border-color:var(--gdd);color:var(--wh)}
+.modal-btn.confirm{background:linear-gradient(135deg,var(--gd),var(--gdd));color:var(--bk)}
+.modal-btn.confirm:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,168,78,.3)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gd);color:var(--bk);padding:10px 22px;border-radius:30px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-back" onclick="goBack()">←</div>
+      <div class="hd-info">
+        <div>NOTIFICATIONS</div>
+        <div>Team Announcements</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCROLLABLE CONTENT ═══ -->
+  <div class="scroll-content">
+
+    <!-- ═══ NEW MESSAGE BUTTON ═══ -->
+    <div class="new-msg-zone">
+      <button class="btn-new" onclick="openCompose()">
+        <span class="btn-pulse"></span>
+        ✏️ NEW TEAM MESSAGE
+      </button>
+    </div>
+
+    <!-- ═══ NEEDS YOUR ATTENTION ═══ -->
+    <div class="section-label" id="action-section">
+      <div class="sl-left">Needs Your Attention <span class="sl-badge" id="action-count">2</span></div>
+    </div>
+    <div class="action-list" id="action-list"></div>
+
+    <!-- ═══ MILESTONES ═══ -->
+    <div class="section-label">
+      <div class="sl-left">Milestones</div>
+      <div class="sl-right" id="milestone-count"></div>
+    </div>
+    <div class="milestone-list" id="milestone-list"></div>
+
+    <!-- ═══ SENT MESSAGES ═══ -->
+    <div class="section-label">
+      <div class="sl-left">Sent Messages</div>
+      <div class="sl-right" id="sent-count"></div>
+    </div>
+    <div class="sent-list" id="sent-list"></div>
+
+  </div>
+
+  <!-- ═══ DETAIL VIEW ═══ -->
+  <div class="detail-view" id="detail-view">
+    <div class="detail-hd">
+      <div class="detail-back" onclick="closeDetail()">←</div>
+      <div class="detail-title" id="detail-title"></div>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+
+  <!-- ═══ COMPOSE VIEW ═══ -->
+  <div class="compose-view" id="compose-view">
+    <div class="compose-hd">
+      <div class="compose-cancel" onclick="closeCompose()">Cancel</div>
+      <div class="compose-title">NEW MESSAGE</div>
+      <button class="compose-send" id="compose-send-btn" onclick="confirmSend()" disabled>SEND</button>
+    </div>
+    <div class="compose-body">
+      <div class="compose-to">
+        <div class="compose-to-label">TO:</div>
+        <div class="compose-to-value">📢 All Athletes & Parents — <span id="compose-team-name">Rockwall Boys</span></div>
+      </div>
+      <div class="compose-field">
+        <div class="compose-field-label">SUBJECT</div>
+        <input class="compose-field-input" id="compose-subject" placeholder="What's this about?" oninput="checkSendReady()">
+      </div>
+      <div class="compose-field" style="border-bottom:none">
+        <div class="compose-field-label">MESSAGE</div>
+        <textarea class="compose-textarea" id="compose-message" placeholder="Type your message to the team..." oninput="checkSendReady()"></textarea>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ CONFIRM MODAL ═══ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-icon">📢</div>
+    <div class="modal-title">SEND TO TEAM?</div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal()">CANCEL</button>
+      <button class="modal-btn confirm" onclick="sendMessage()">SEND</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ── TOAST ──
+function toast(msg){
+  var t=document.getElementById('toast-el');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+var TEAM_SIZE=24;
+var TEAM_NAME='Rockwall Boys';
+
+// ══════════════════════════════════════
+// DEMO DATA — ACTION ITEMS
+// ══════════════════════════════════════
+var ACTION_DATA=[
+  {
+    id:'act1',
+    icon:'🎯',
+    athlete:'Marcus Johnson',
+    desc:'Requesting <strong>5-star approval</strong> on <strong>Front Headlock — Go Behind</strong>. Has logged 50+ verified reps.',
+    time:'3h ago'
+  },
+  {
+    id:'act2',
+    icon:'🎯',
+    athlete:'Tyler Chen',
+    desc:'Requesting <strong>5-star approval</strong> on <strong>Head Inside Single — High Crotch Finish</strong>. Has logged 50+ verified reps.',
+    time:'Yesterday'
+  }
+];
+
+// ══════════════════════════════════════
+// DEMO DATA — MILESTONES
+// ══════════════════════════════════════
+var MILESTONE_DATA=[
+  {
+    id:'m1',icon:'🔥',
+    athlete:'Elijah Washington',
+    desc:'Hit <strong>Level 25</strong> — promoted to <strong>Varsity</strong> tier.',
+    time:'1h ago',responded:false
+  },
+  {
+    id:'m2',icon:'💪',
+    athlete:'Ryan Martinez',
+    desc:'Completed the <strong>Gold Standard Circuit</strong> with a new personal record.',
+    time:'4h ago',responded:false
+  },
+  {
+    id:'m3',icon:'📅',
+    athlete:'Noah Williams',
+    desc:'Completed a <strong>full training week</strong> — 5 out of 5 sessions.',
+    time:'Yesterday',responded:false
+  },
+  {
+    id:'m4',icon:'🎯',
+    athlete:'Aiden Brooks',
+    desc:'Mastered <strong>Double Leg — Run the Pipe</strong> — 50 verified reps.',
+    time:'Yesterday',responded:false
+  },
+  {
+    id:'m5',icon:'⬆️',
+    athlete:'Jordan Davis',
+    desc:'Hit <strong>Level 10</strong> — promoted to <strong>Novice</strong> tier.',
+    time:'2 days ago',responded:false
+  }
+];
+
+// ══════════════════════════════════════
+// DEMO DATA — SENT HISTORY
+// ══════════════════════════════════════
+var SENT_DATA=[
+  {
+    id:'s1',
+    subject:'Practice Schedule Change — This Week',
+    preview:'Team — we\'re shifting Thursday\'s practice to a cross-training day. Bring your bands and be ready for circuits.',
+    body:'<p>Team —</p><p>We\'re shifting Thursday\'s practice to a cross-training day. Friday stays as a regular training day.</p><p>Thursday plan: Game → Drill → Technique → Bands. Bring your bands and be ready for circuits.</p><p>Friday we\'re going hard on upper body situations. Be locked in.</p><p>— Coach Hrovat</p>',
+    time:'Yesterday',date:'Mar 23, 2026 · 3:00 PM',
+    readCount:21,totalCount:24
+  },
+  {
+    id:'s2',
+    subject:'Tournament Gear Checklist — District Duals',
+    preview:'Make sure you have everything packed for Saturday: singlet, headgear, shoes, knee pads, mouth guard.',
+    body:'<p>District Duals at Allen HS is this Saturday. Bus departs Rockwall at 6:30 AM. Weigh-ins at 8:00 AM.</p><p>Gear checklist — no exceptions:</p><p>Singlet, headgear, wrestling shoes, knee pads, mouth guard. Bring a backup singlet if you have one. Water bottle. Snacks for between matches — nothing heavy.</p><p>If you don\'t have your physical on file you will not compete. Check with the athletic office before Friday.</p><p>— Coach Hrovat</p>',
+    time:'3 days ago',date:'Mar 21, 2026 · 4:30 PM',
+    readCount:24,totalCount:24
+  },
+  {
+    id:'s3',
+    subject:'Welcome to the Season',
+    preview:'Athletes and parents — welcome to Rockwall Wrestling 2025-26. Here\'s what to expect this year.',
+    body:'<p>Athletes and Parents —</p><p>Welcome to Rockwall Wrestling 2025-26. We\'re building something different here, and I want you to understand what that looks like from day one.</p><p>This program runs on the BASE system — Battle, Athletic, Skill, Exercise. Every practice, every training day, and every competition connects back to these four pillars.</p><p>Parents: you\'ll get regular updates through this app. Your athlete\'s growth will be visible through their character level and BASE stats — not just wins and losses.</p><p>Let\'s have a great year.</p><p>— Coach Hrovat</p>',
+    time:'2 weeks ago',date:'Mar 10, 2026 · 9:00 AM',
+    readCount:24,totalCount:24
+  }
+];
+
+var QUICK_RESPONSES=['🎉 Congrats!','💪 Great Work!','🔥 Keep It Up!'];
+
+// ══════════════════════════════════════
+// RENDER ACTIONS
+// ══════════════════════════════════════
+function renderActions(){
+  var list=document.getElementById('action-list');
+  var section=document.getElementById('action-section');
+
+  if(ACTION_DATA.length===0){
+    section.style.display='none';
+    list.innerHTML='';
+    return;
+  }
+
+  section.style.display='flex';
+  document.getElementById('action-count').textContent=ACTION_DATA.length;
+
+  var html='';
+  ACTION_DATA.forEach(function(a){
+    html+='<div class="action-card urgent" id="action-'+a.id+'">';
+    html+='<div class="action-top">';
+    html+='<div class="action-icon">'+a.icon+'</div>';
+    html+='<div class="action-info">';
+    html+='<div class="action-name">'+a.athlete+'</div>';
+    html+='<div class="action-desc">'+a.desc+'</div>';
+    html+='<div class="action-time">'+a.time+'</div>';
+    html+='</div></div>';
+    html+='<div class="action-btns">';
+    html+='<button class="action-btn review" onclick="reviewAction(\''+a.id+'\')">REVIEW</button>';
+    html+='<button class="action-btn approve" onclick="approveAction(\''+a.id+'\',\''+a.athlete+'\')">✓ APPROVE</button>';
+    html+='</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+function approveAction(id,name){
+  ACTION_DATA=ACTION_DATA.filter(function(a){return a.id!==id;});
+  renderActions();
+  toast(name+' — Approved ✓');
+}
+
+function reviewAction(id){
+  toast('Opening athlete profile...');
+}
+
+// ══════════════════════════════════════
+// RENDER MILESTONES
+// ══════════════════════════════════════
+function renderMilestones(){
+  var list=document.getElementById('milestone-list');
+  document.getElementById('milestone-count').textContent=MILESTONE_DATA.length+' recent';
+
+  var html='';
+  MILESTONE_DATA.forEach(function(m){
+    html+='<div class="milestone-card" id="ms-'+m.id+'">';
+    html+='<div class="milestone-top">';
+    html+='<div class="milestone-icon">'+m.icon+'</div>';
+    html+='<div class="milestone-info">';
+    html+='<div class="milestone-name">'+m.athlete+'</div>';
+    html+='<div class="milestone-desc">'+m.desc+'</div>';
+    html+='<div class="milestone-time">'+m.time+'</div>';
+    html+='</div></div>';
+    html+='<div class="milestone-respond" id="ms-btns-'+m.id+'">';
+    if(m.responded){
+      html+='<div class="milestone-btn sent">✓ '+m.respondedWith+'</div>';
+    } else {
+      QUICK_RESPONSES.forEach(function(r){
+        html+='<div class="milestone-btn" onclick="respondMilestone(\''+m.id+'\',\''+r.replace(/'/g,"\\'")+'\')">'+r+'</div>';
+      });
+    }
+    html+='</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+function respondMilestone(id,response){
+  var m=MILESTONE_DATA.find(function(x){return x.id===id;});
+  if(!m) return;
+  m.responded=true;
+  m.respondedWith=response;
+  renderMilestones();
+  toast('Sent to '+m.athlete+' ✓');
+}
+
+// ══════════════════════════════════════
+// RENDER SENT
+// ══════════════════════════════════════
+function renderSent(){
+  var list=document.getElementById('sent-list');
+
+  if(SENT_DATA.length===0){
+    list.innerHTML='<div style="padding:20px;text-align:center;color:var(--grd);font-size:12px">No messages sent yet.</div>';
+    document.getElementById('sent-count').textContent='';
+    return;
+  }
+
+  document.getElementById('sent-count').textContent=SENT_DATA.length+' message'+(SENT_DATA.length!==1?'s':'');
+
+  var html='';
+  SENT_DATA.forEach(function(s){
+    var allRead=s.readCount>=s.totalCount;
+    html+='<div class="sent-item" onclick="openDetail(\''+s.id+'\')">';
+    html+='<div class="sent-top">';
+    html+='<div class="sent-subject">'+s.subject+'</div>';
+    html+='<div class="sent-time">'+s.time+'</div>';
+    html+='</div>';
+    html+='<div class="sent-preview">'+s.preview+'</div>';
+    html+='<div class="sent-footer">';
+    html+='<div class="sent-recipients">All Athletes & Parents</div>';
+    html+='<div class="sent-read '+(allRead?'all':'partial')+'">'+s.readCount+'/'+s.totalCount+' READ</div>';
+    html+='</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+// ══════════════════════════════════════
+// DETAIL VIEW (SENT MESSAGES)
+// ══════════════════════════════════════
+function openDetail(id){
+  var s=SENT_DATA.find(function(x){return x.id===id;});
+  if(!s) return;
+  document.getElementById('detail-title').textContent=s.subject;
+
+  var bodyHtml='';
+  bodyHtml+='<div class="detail-meta">';
+  bodyHtml+='<div class="detail-date">Sent '+s.date+'</div>';
+  bodyHtml+='<div class="detail-recipients">To: <span>All Athletes & Parents — '+TEAM_NAME+'</span></div>';
+  bodyHtml+='<div class="detail-stats">';
+  bodyHtml+='<div class="detail-stat"><div class="detail-stat-num">'+s.totalCount+'</div><div class="detail-stat-label">Sent</div></div>';
+  bodyHtml+='<div class="detail-stat"><div class="detail-stat-num">'+s.readCount+'</div><div class="detail-stat-label">Read</div></div>';
+  bodyHtml+='<div class="detail-stat"><div class="detail-stat-num">'+(s.totalCount-s.readCount)+'</div><div class="detail-stat-label">Unread</div></div>';
+  bodyHtml+='</div></div>';
+  bodyHtml+='<div class="detail-content">'+s.body+'</div>';
+
+  document.getElementById('detail-body').innerHTML=bodyHtml;
+  document.getElementById('detail-view').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detail-view').classList.remove('open');
+}
+
+// ══════════════════════════════════════
+// COMPOSE
+// ══════════════════════════════════════
+function openCompose(){
+  document.getElementById('compose-subject').value='';
+  document.getElementById('compose-message').value='';
+  document.getElementById('compose-team-name').textContent=TEAM_NAME;
+  checkSendReady();
+  document.getElementById('compose-view').classList.add('open');
+  setTimeout(function(){document.getElementById('compose-subject').focus();},300);
+}
+
+function closeCompose(){
+  document.getElementById('compose-view').classList.remove('open');
+}
+
+function checkSendReady(){
+  var subj=document.getElementById('compose-subject').value.trim();
+  var msg=document.getElementById('compose-message').value.trim();
+  document.getElementById('compose-send-btn').disabled=!(subj && msg);
+}
+
+function confirmSend(){
+  document.getElementById('modal-desc').innerHTML='This message will be sent to <strong>all athletes and parents</strong> on '+TEAM_NAME+'.';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function sendMessage(){
+  closeModal();
+  var subj=document.getElementById('compose-subject').value.trim();
+  var msg=document.getElementById('compose-message').value.trim();
+  var bodyHtml=msg.split('\n').filter(function(l){return l.trim();}).map(function(l){return '<p>'+l+'</p>';}).join('');
+
+  SENT_DATA.unshift({
+    id:'s'+Date.now(),subject:subj,preview:msg.substring(0,100),body:bodyHtml,
+    time:'Just now',
+    date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}),
+    readCount:0,totalCount:TEAM_SIZE
+  });
+
+  renderSent();
+  closeCompose();
+  toast('Message Sent to Team ✓');
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function goBack(){
+  toast('← Back to Dashboard');
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+renderActions();
+renderMilestones();
+renderSent();
+</script>
+</body>
+</html>
